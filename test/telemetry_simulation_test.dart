@@ -49,13 +49,13 @@ void main() {
     });
 
     test('AlertIncident auto-escalation level labels', () {
-      const l1Alert = AlertIncident(
+      final l1Alert = AlertIncident(
         id: '1',
         bedId: 'bed_01',
         patientName: 'Test',
         severity: AlertSeverity.critical,
         triggerReason: 'Test',
-        timestamp: null as dynamic,
+        timestamp: DateTime(2026, 9, 9),
         escalationLevel: 1,
       );
       expect(l1Alert.escalationStageLabel, 'L1: Bedside Nurse');
