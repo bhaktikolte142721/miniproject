@@ -191,21 +191,44 @@ app.post('/api/alarms/acknowledge', (req, res) => {
   const { alarmId, nurseName = 'Nurse Sarah' } = req.body;
   const alarm = activeAlarms.find(a => a.id === alarmId);
   if (!alarm) {
-    return res.status(404).json({ error: 'Alarm not found' });
+    return res.json({ success: true, message: 'Alarm already acknowledged or cleared' });
   }
 
   alarm.isAcknowledged = true;
   alarm.acknowledgedBy = nurseName;
 
-  io.emit('critical_alarm', activeAlarms);
-
   auditTrail.unshift({
     timestamp: new Date().toISOString(),
     action: 'ALARM_ACKNOWLEDGED',
-    details: `Alarm ${alarmId} acknowledged by ${nurseName}`
+    details: `Alarm ${alarmId} acknowledged by ${nurseName}. Audio alarm silenced.`
   });
 
+  console.log(`🔕 [Alarm Acknowledged] ${alarmId} acknowledged by ${nurseName}. Auto-escalation stopped.`);
+  io.emit('alarm_acknowledged', { alarmId, nurseName });
+  io.emit('critical_alarm', activeAlarms);
+
   res.json({ success: true, alarm });
+});
+
+// 5b. Clear / Silence Alarm
+app.post('/api/alarms/clear', (req, res) => {
+  const { alarmId } = req.body || {};
+  if (alarmId) {
+    activeAlarms = activeAlarms.filter(a => a.id !== alarmId);
+  } else {
+    activeAlarms = [];
+  }
+
+  auditTrail.unshift({
+    timestamp: new Date().toISOString(),
+    action: 'ALARM_CLEARED',
+    details: `Alarm ${alarmId || 'ALL'} cleared and silenced by clinician.`
+  });
+
+  console.log(`🔕 [Alarm Cleared] Alarm ${alarmId || 'ALL'} cleared. Remaining active: ${activeAlarms.length}`);
+  io.emit('alarm_cleared', { alarmId: alarmId || 'ALL' });
+  io.emit('critical_alarm', activeAlarms);
+  res.json({ success: true, activeAlarms });
 });
 
 // 6. Audit Trail
@@ -225,14 +248,28 @@ io.on('connection', (socket) => {
 
   // Client acknowledges alarm
   socket.on('acknowledge_alarm', (data) => {
-    const { alarm_id, nurse } = data;
+    const { alarm_id, nurse } = data || {};
     const alarm = activeAlarms.find(a => a.id === alarm_id);
     if (alarm) {
       alarm.isAcknowledged = true;
       alarm.acknowledgedBy = nurse || 'Nurse Sarah';
-      console.log(`✅ [Alarm Ack] ${alarm_id} acknowledged by ${alarm.acknowledgedBy}`);
+      console.log(`✅ [Alarm Ack] ${alarm_id} acknowledged by ${alarm.acknowledgedBy}. Audio silenced.`);
+      io.emit('alarm_acknowledged', { alarmId: alarm_id, nurseName: alarm.acknowledgedBy });
       io.emit('critical_alarm', activeAlarms);
     }
+  });
+
+  // Client clears alarm
+  socket.on('clear_alarm', (data) => {
+    const { alarm_id } = data || {};
+    if (alarm_id) {
+      activeAlarms = activeAlarms.filter(a => a.id !== alarm_id);
+    } else {
+      activeAlarms = [];
+    }
+    console.log(`🔕 [Socket.IO] Alarm ${alarm_id || 'ALL'} cleared.`);
+    io.emit('alarm_cleared', { alarmId: alarm_id || 'ALL' });
+    io.emit('critical_alarm', activeAlarms);
   });
 
   socket.on('disconnect', () => {
@@ -263,6 +300,7 @@ setInterval(() => {
 setInterval(() => {
   let changed = false;
   activeAlarms.forEach((alarm) => {
+    // Only tick down if unacknowledged
     if (!alarm.isAcknowledged) {
       if (alarm.secondsRemaining > 0) {
         alarm.secondsRemaining--;
@@ -274,13 +312,17 @@ setInterval(() => {
           alarm.secondsRemaining = 60;
           changed = true;
           console.log(`🚨 [Auto-Escalation] Alert ${alarm.id} escalated to Level ${alarm.escalationLevel}`);
+          // Emit critical alarm only when a new escalation occurs!
+          io.emit('critical_alarm', activeAlarms);
         }
       }
     }
   });
 
-  if (changed) {
-    io.emit('critical_alarm', activeAlarms);
+  // Emit timer tick so frontend countdown updates smoothly without triggering sound
+  const hasUnack = activeAlarms.some(a => !a.isAcknowledged);
+  if (changed && hasUnack) {
+    io.emit('alarm_tick', activeAlarms);
   }
 }, 1000);
 

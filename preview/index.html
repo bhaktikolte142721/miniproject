@@ -421,6 +421,12 @@
     </div>
   </header>
 
+  <!-- Clinical Toast Notification System -->
+  <div id="toastNotification" style="position: fixed; top: 76px; right: 24px; z-index: 9999; transform: translateY(-20px); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; background: #FFFFFF; border: 1.5px solid var(--primary-mint); border-radius: 18px; padding: 12px 20px; box-shadow: 0 14px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px;">
+    <span id="toastIcon" style="font-size: 20px;">🔕</span>
+    <div id="toastText" style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Alarm Silenced</div>
+  </div>
+
   <!-- App Layout Container -->
   <div class="app-layout" id="appLayout">
 
@@ -698,18 +704,29 @@
       <section class="section-view" id="section-4">
         <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 18px;">Active Telemetry Alarms</h2>
 
-        <div class="clay-card critical" style="background: #FFF5F5;">
+        <!-- Active Alarm Card -->
+        <div class="clay-card critical" id="alarmCard-ALT-1001" style="background: #FFF5F5;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
+            <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
             <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
           </div>
           <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
           <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
-          <div style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
+          <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
 
           <div style="display: flex; gap: 12px; margin-top: 16px;">
-            <button class="clay-btn" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert()">Acknowledge Alarm</button>
-            <button class="clay-btn" style="height: 42px; font-size: 13px; background: #eee; color: #444; box-shadow: none;" onclick="clearAlert()">Clear</button>
+            <button class="clay-btn" id="btnAckAlarm" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert('ALT-1001')">🔕 Silence & Acknowledge</button>
+            <button class="clay-btn" id="btnClearAlarm" style="height: 42px; font-size: 13px; background: #E2E8F0; color: #334155; box-shadow: none;" onclick="clearAlert('ALT-1001')">Clear Alarm</button>
+          </div>
+        </div>
+
+        <!-- Stable / No Alarms State Card -->
+        <div id="noAlarmsState" class="clay-card" style="text-align: center; padding: 36px 20px; display: none;">
+          <div style="font-size: 44px; margin-bottom: 12px;">✅</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">Ward 3B Telemetry Stable</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;">All patient nodes transmitting nominal vitals. Auditory sirens extinguished.</p>
+          <div style="margin-top: 18px;">
+            <button class="clay-btn" style="height: 38px; font-size: 12px; padding: 0 20px;" onclick="simulateTestAlarm()">Simulate Test Alarm</button>
           </div>
         </div>
       </section>
@@ -769,9 +786,46 @@
       }, 100);
     }
 
-    // Audio Alarm Synthesizer (IEC 60601-1-8 standard medical alarms)
+    // Clinical Audio Alarm Synthesizer (IEC 60601-1-8 Standard)
+    let isAlarmSilenced = false;
+    let audioTimeouts = [];
+    let activeOscillators = [];
+    let lastAlarmSoundTime = 0;
+    let socket = null;
+
+    function showToast(icon, message) {
+      const toast = document.getElementById('toastNotification');
+      const iconEl = document.getElementById('toastIcon');
+      const textEl = document.getElementById('toastText');
+      if (!toast) return;
+      iconEl.innerText = icon;
+      textEl.innerText = message;
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.opacity = '0';
+      }, 4000);
+    }
+
+    function stopAudioAlarm() {
+      isAlarmSilenced = true;
+      // Clear all scheduled tones
+      audioTimeouts.forEach(t => clearTimeout(t));
+      audioTimeouts = [];
+
+      // Immediately terminate any sounding oscillator
+      activeOscillators.forEach(osc => {
+        try {
+          osc.stop();
+          osc.disconnect();
+        } catch (e) {}
+      });
+      activeOscillators = [];
+    }
+
     function playMedicalTone(freq, durationMs, type = 'sine') {
-      if (isMuted) return;
+      if (isMuted || isAlarmSilenced) return;
       try {
         if (!audioCtx) {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -783,11 +837,17 @@
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (durationMs / 1000));
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
+        activeOscillators.push(osc);
+        const tEnd = setTimeout(() => {
+          const idx = activeOscillators.indexOf(osc);
+          if (idx !== -1) activeOscillators.splice(idx, 1);
+        }, durationMs);
+        audioTimeouts.push(tEnd);
         osc.stop(audioCtx.currentTime + (durationMs / 1000));
       } catch (e) {
         console.log('Audio requires user gesture');
@@ -795,10 +855,15 @@
     }
 
     function playCriticalTriplet() {
-      if (isMuted) return;
+      if (isMuted || isAlarmSilenced) return;
       playMedicalTone(987.77, 100);
-      setTimeout(() => playMedicalTone(987.77, 100), 140);
-      setTimeout(() => playMedicalTone(1318.51, 180), 280);
+      const t1 = setTimeout(() => {
+        if (!isMuted && !isAlarmSilenced) playMedicalTone(987.77, 100);
+      }, 140);
+      const t2 = setTimeout(() => {
+        if (!isMuted && !isAlarmSilenced) playMedicalTone(1318.51, 180);
+      }, 280);
+      audioTimeouts.push(t1, t2);
     }
 
     function toggleAudioAlarm() {
@@ -809,35 +874,122 @@
       const btn = document.getElementById('audioToggleBtn');
       const text = document.getElementById('audioStatusText');
       if (isMuted) {
+        stopAudioAlarm();
         btn.classList.add('muted');
-        text.innerText = 'MUTED';
+        text.innerText = 'MUTED (Silenced)';
+        showToast('🔇', 'Master Audio Alarm Muted');
       } else {
+        isAlarmSilenced = false;
         btn.classList.remove('muted');
         text.innerText = 'ONLINE';
         playCriticalTriplet();
+        showToast('🔊', 'Master Audio Alarm Online');
       }
     }
 
-    function acknowledgeAlert() {
-      alert('Alarm acknowledged by Nurse Sarah! Logged to shift audit trail.');
-      document.getElementById('countdown-timer').innerText = 'Acknowledged';
-      document.getElementById('sidebarBadge').style.display = 'none';
+    function acknowledgeAlert(alarmId = 'ALT-1001') {
+      stopAudioAlarm();
+
+      // Update UI Card
+      const el = document.getElementById('countdown-timer');
+      if (el) {
+        el.innerText = '🔕 Silenced & Acknowledged';
+        el.style.color = 'var(--primary-teal)';
+      }
+      const badge = document.getElementById('sidebarBadge');
+      if (badge) badge.style.display = 'none';
+
+      const btnAck = document.getElementById('btnAckAlarm');
+      if (btnAck) {
+        btnAck.innerText = '✅ Acknowledged (Nurse Sarah)';
+        btnAck.style.background = 'var(--mint-light)';
+        btnAck.style.color = 'var(--primary-teal)';
+        btnAck.disabled = true;
+      }
+      const notice = document.getElementById('escalationNotice');
+      if (notice) notice.innerText = 'Auto-escalation halted. Auditory sirens extinguished.';
+
+      // Notify backend via WebSocket and REST API
+      if (socket) {
+        socket.emit('acknowledge_alarm', { alarm_id: alarmId, nurse: 'Nurse Sarah' });
+      }
+      fetch('/api/alarms/acknowledge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alarmId, nurseName: 'Nurse Sarah' })
+      }).catch(() => {});
+
+      showToast('🔕', 'Alarm ALT-1001 Silenced & Acknowledged by Nurse Sarah');
     }
 
-    function clearAlert() {
-      alert('Alarm cleared from active buffer.');
-      document.getElementById('section-4').querySelector('.clay-card.critical').style.display = 'none';
-      document.getElementById('sidebarBadge').style.display = 'none';
+    function clearAlert(alarmId = 'ALT-1001') {
+      stopAudioAlarm();
+
+      // Hide active alarm card, show all-clear stable state
+      const card = document.getElementById('alarmCard-ALT-1001');
+      if (card) card.style.display = 'none';
+      const noAlarms = document.getElementById('noAlarmsState');
+      if (noAlarms) noAlarms.style.display = 'block';
+
+      const badge = document.getElementById('sidebarBadge');
+      if (badge) badge.style.display = 'none';
+
+      // Stabilize Bed 3 in summary cards
+      const elHr3 = document.getElementById('live-hr-3');
+      const elSpo23 = document.getElementById('live-spo2-3');
+      const elTemp3 = document.getElementById('live-temp-3');
+      if (elHr3) { elHr3.innerText = '78 BPM'; elHr3.style.color = 'var(--text-primary)'; }
+      if (elSpo23) { elSpo23.innerText = '97%'; elSpo23.style.color = 'var(--primary-teal)'; }
+      if (elTemp3) { elTemp3.innerText = '36.9°C'; elTemp3.style.color = 'var(--text-primary)'; }
+
+      // Notify backend via WebSocket and REST API
+      if (socket) {
+        socket.emit('clear_alarm', { alarm_id: alarmId });
+      }
+      fetch('/api/alarms/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alarmId })
+      }).catch(() => {});
+
+      showToast('✅', 'Alarm ALT-1001 Cleared from Ward Buffer. Bed 03 Stabilized.');
+    }
+
+    function simulateTestAlarm() {
+      isAlarmSilenced = false;
+      countdown = 58;
+      const card = document.getElementById('alarmCard-ALT-1001');
+      if (card) card.style.display = 'block';
+      const noAlarms = document.getElementById('noAlarmsState');
+      if (noAlarms) noAlarms.style.display = 'none';
+      const badge = document.getElementById('sidebarBadge');
+      if (badge) { badge.style.display = 'inline-block'; badge.innerText = '1'; }
+
+      const el = document.getElementById('countdown-timer');
+      if (el) {
+        el.innerText = '58s remaining';
+        el.style.color = 'var(--alert-critical)';
+      }
+      const btnAck = document.getElementById('btnAckAlarm');
+      if (btnAck) {
+        btnAck.innerText = '🔕 Silence & Acknowledge';
+        btnAck.style.background = '';
+        btnAck.style.color = '';
+        btnAck.disabled = false;
+      }
+      playCriticalTriplet();
+      showToast('🚨', 'Test Alarm Triggered: Bed 03 Hypoxemia');
     }
 
     // Auto countdown timer
     setInterval(() => {
-      if (countdown > 0) {
+      if (!isAlarmSilenced && countdown > 0) {
         countdown--;
         const el = document.getElementById('countdown-timer');
-        if (el && el.innerText !== 'Acknowledged') {
+        if (el && !el.innerText.includes('Silenced')) {
           el.innerText = countdown + 's remaining';
-          document.getElementById('countdown-bar').innerText = countdown + 's';
+          const bar = document.getElementById('countdown-bar');
+          if (bar) bar.innerText = countdown + 's';
         }
       }
     }, 1000);
@@ -862,12 +1014,14 @@
       if (gSpo2) gSpo2.innerText = spo21 + '%';
       if (gTemp) gTemp.innerText = temp1 + '°C';
 
-      const hr3 = 115 + Math.floor(Math.random() * 7);
-      const spo23 = 86 + Math.floor(Math.random() * 3);
-      const elHr3 = document.getElementById('live-hr-3');
-      const elSpo23 = document.getElementById('live-spo2-3');
-      if (elHr3) elHr3.innerText = hr3 + ' BPM';
-      if (elSpo23) elSpo23.innerText = spo23 + '%';
+      if (!isAlarmSilenced) {
+        const hr3 = 115 + Math.floor(Math.random() * 7);
+        const spo23 = 86 + Math.floor(Math.random() * 3);
+        const elHr3 = document.getElementById('live-hr-3');
+        const elSpo23 = document.getElementById('live-spo2-3');
+        if (elHr3) elHr3.innerText = hr3 + ' BPM';
+        if (elSpo23) elSpo23.innerText = spo23 + '%';
+      }
     }, 1500);
 
     // Real-Time ECG Sweep Waveform Animation
@@ -929,42 +1083,89 @@
     // Real-Time Socket.IO Telemetry Sync with Backend Gateway
     try {
       if (typeof io !== 'undefined') {
-        const socket = io();
+        socket = io();
         socket.on('connect', () => {
           console.log('Connected to SENTINEL-Ward ESP32 Telemetry Gateway');
         });
+
         socket.on('vitals_update', (data) => {
-          if (data.bedId === 'bed_01') {
+          if (data.bed_01 || data.bedId === 'bed_01') {
+            const b1 = data.bed_01 || data;
             const elHr1 = document.getElementById('live-hr-1');
             const elSpo21 = document.getElementById('live-spo2-1');
             const elTemp1 = document.getElementById('live-temp-1');
-            if (elHr1) elHr1.innerText = data.heartRate + ' BPM';
-            if (elSpo21) elSpo21.innerText = data.spo2 + '%';
-            if (elTemp1) elTemp1.innerText = data.temperature + '°C';
-            const gHr = document.getElementById('grid-hr');
-            const gSpo2 = document.getElementById('grid-spo2');
-            const gTemp = document.getElementById('grid-temp');
-            if (gHr) gHr.innerText = data.heartRate + ' BPM';
-            if (gSpo2) gSpo2.innerText = data.spo2 + '%';
-            if (gTemp) gTemp.innerText = data.temperature + '°C';
-          } else if (data.bedId === 'bed_02') {
+            if (elHr1) elHr1.innerText = b1.heartRate + ' BPM';
+            if (elSpo21) elSpo21.innerText = b1.spo2 + '%';
+            if (elTemp1) elTemp1.innerText = b1.temperature + '°C';
+          }
+          if (data.bed_02 || data.bedId === 'bed_02') {
+            const b2 = data.bed_02 || data;
             const elHr2 = document.getElementById('live-hr-2');
             const elSpo22 = document.getElementById('live-spo2-2');
             const elTemp2 = document.getElementById('live-temp-2');
-            if (elHr2) elHr2.innerText = data.heartRate + ' BPM';
-            if (elSpo22) elSpo22.innerText = data.spo2 + '%';
-            if (elTemp2) elTemp2.innerText = data.temperature + '°C';
-          } else if (data.bedId === 'bed_03') {
+            if (elHr2) elHr2.innerText = b2.heartRate + ' BPM';
+            if (elSpo22) elSpo22.innerText = b2.spo2 + '%';
+            if (elTemp2) elTemp2.innerText = b2.temperature + '°C';
+          }
+          if ((data.bed_03 || data.bedId === 'bed_03') && !isAlarmSilenced) {
+            const b3 = data.bed_03 || data;
             const elHr3 = document.getElementById('live-hr-3');
             const elSpo23 = document.getElementById('live-spo2-3');
             const elTemp3 = document.getElementById('live-temp-3');
-            if (elHr3) elHr3.innerText = data.heartRate + ' BPM';
-            if (elSpo23) elSpo23.innerText = data.spo2 + '%';
-            if (elTemp3) elTemp3.innerText = data.temperature + '°C';
+            if (elHr3) elHr3.innerText = b3.heartRate + ' BPM';
+            if (elSpo23) elSpo23.innerText = b3.spo2 + '%';
+            if (elTemp3) elTemp3.innerText = b3.temperature + '°C';
           }
         });
-        socket.on('critical_alarm', (alarm) => {
-          playCriticalTriplet();
+
+        // Broadcasted when new critical incident occurs
+        socket.on('critical_alarm', (alarms) => {
+          if (isAlarmSilenced) return;
+          const unack = Array.isArray(alarms) ? alarms.filter(a => !a.isAcknowledged) : [];
+          if (unack.length === 0) {
+            stopAudioAlarm();
+            return;
+          }
+          const now = Date.now();
+          if (now - lastAlarmSoundTime > 8000) {
+            lastAlarmSoundTime = now;
+            playCriticalTriplet();
+          }
+        });
+
+        // Broadcasted on countdown tick without sounding buzzer
+        socket.on('alarm_tick', (alarms) => {
+          if (isAlarmSilenced) return;
+          const unack = Array.isArray(alarms) ? alarms.filter(a => !a.isAcknowledged) : [];
+          if (unack.length > 0) {
+            const el = document.getElementById('countdown-timer');
+            const bar = document.getElementById('countdown-bar');
+            if (el && !el.innerText.includes('Silenced')) {
+              el.innerText = unack[0].secondsRemaining + 's remaining';
+              if (bar) bar.innerText = unack[0].secondsRemaining + 's';
+            }
+          }
+        });
+
+        socket.on('alarm_cleared', () => {
+          stopAudioAlarm();
+          const card = document.getElementById('alarmCard-ALT-1001');
+          if (card) card.style.display = 'none';
+          const noAlarms = document.getElementById('noAlarmsState');
+          if (noAlarms) noAlarms.style.display = 'block';
+          const badge = document.getElementById('sidebarBadge');
+          if (badge) badge.style.display = 'none';
+        });
+
+        socket.on('alarm_acknowledged', () => {
+          stopAudioAlarm();
+          const el = document.getElementById('countdown-timer');
+          if (el) {
+            el.innerText = '🔕 Silenced & Acknowledged';
+            el.style.color = 'var(--primary-teal)';
+          }
+          const badge = document.getElementById('sidebarBadge');
+          if (badge) badge.style.display = 'none';
         });
       }
     } catch (e) {
