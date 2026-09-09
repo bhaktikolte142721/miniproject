@@ -1,0 +1,11 @@
+{
+  "name": "SENTINEL-Ward Acute Vitals",
+  "short_name": "SENTINEL-Ward",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F5F9FA",
+  "theme_color": "#00BFA5",
+  "description": "Multi-Patient Vitals Monitoring System for Acute Wards",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

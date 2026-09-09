@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTINEL-Ward • Multi-Patient Vitals Telemetry (Interactive 3D Preview)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-start: #F5F9FA;
+      --bg-end: #EDF4F6;
+      --primary-mint: #00BFA5;
+      --primary-teal: #00838F;
+      --mint-light: #E0F2F1;
+      --card-surface: #FFFFFF;
+      --card-border: #E0F2F1;
+      --alert-critical: #FF5252;
+      --alert-warning: #FFB300;
+      --alert-stable: #00C853;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --text-muted: #94A3B8;
+      --clay-shadow: 0 10px 24px rgba(0,0,0,0.06), -4px -4px 14px rgba(255,255,255,0.9);
+      --clay-card-shadow: 0 12px 28px rgba(0,0,0,0.05), -5px -5px 16px #ffffff;
+      --button-shadow: 0 8px 20px rgba(0, 191, 165, 0.35), -2px -2px 6px rgba(255,255,255,0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Poppins', 'Inter', sans-serif;
+      background: linear-gradient(135deg, #E6F4F6 0%, #D8ECEF 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 16px;
+      color: var(--text-primary);
+    }
+
+    .preview-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .preview-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .preview-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Screen Selector Navigation Bar */
+    .screen-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      padding: 6px;
+      border-radius: 30px;
+      box-shadow: var(--clay-shadow);
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .screen-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 18px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .screen-tab-btn.active {
+      background: var(--primary-mint);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 191, 165, 0.4);
+    }
+
+    /* Sound Control Pill */
+    .audio-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--primary-mint);
+      color: var(--primary-teal);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+
+    .audio-toggle-btn.muted {
+      border-color: var(--alert-critical);
+      color: var(--alert-critical);
+    }
+
+    /* Mobile Device Frame */
+    .phone-container {
+      width: 100%;
+      max-width: 412px;
+      height: 844px;
+      background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      border-radius: 46px;
+      border: 12px solid #FFFFFF;
+      box-shadow: 0 25px 60px rgba(0, 77, 64, 0.18), 0 8px 20px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Phone Status Bar */
+    .status-bar {
+      height: 44px;
+      padding: 12px 24px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      z-index: 10;
+    }
+
+    .screen-view {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 90px 20px;
+      display: none;
+    }
+
+    .screen-view.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Claymorphic Card */
+    .clay-card {
+      background: var(--card-surface);
+      border-radius: 24px;
+      border: 1.4px solid var(--card-border);
+      box-shadow: var(--clay-card-shadow);
+      padding: 18px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .clay-card.critical {
+      border-color: var(--alert-critical);
+    }
+
+    /* Pill Button */
+    .clay-btn {
+      width: 100%;
+      height: 54px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal));
+      border: none;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--button-shadow);
+      padding: 0 24px;
+      transition: transform 0.1s ease;
+    }
+
+    .clay-btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-circle-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* Floating Bottom Nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 18px;
+      left: 20px;
+      right: 20px;
+      height: 64px;
+      background: #FFFFFF;
+      border-radius: 32px;
+      border: 1.2px solid var(--card-border);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.08), -4px -4px 12px rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 10px;
+      z-index: 20;
+    }
+
+    .nav-item {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      background: var(--mint-light);
+      color: var(--primary-teal);
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--alert-critical);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      border-radius: 10px;
+      padding: 1px 5px;
+      border: 1.5px solid #fff;
+    }
+
+    /* Live ECG Canvas */
+    .ecg-box {
+      width: 100%;
+      height: 140px;
+      background: #0F172A;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(0, 191, 165, 0.2);
+      border: 1px solid rgba(0, 191, 165, 0.4);
+    }
+
+    canvas.ecg-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preview-header">
+    <h1>🛡️ SENTINEL-Ward <span>Clinical Telemetry</span></h1>
+    <p>Interactive 3D Claymorphic Medical UI & Vitals Monitor (IEC 60601-1-8 Compliant)</p>
+  </div>
+
+  <!-- Audio Controls -->
+  <div>
+    <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudioAlarm()">
+      🔊 Alarm Audio: <span id="audioStatusText">ONLINE (Click to Test Siren)</span>
+    </button>
+  </div>
+
+  <!-- Screen Selector Tabs -->
+  <div class="screen-tabs">
+    <button class="screen-tab-btn active" onclick="switchScreen(0)">1. Onboarding</button>
+    <button class="screen-tab-btn" onclick="switchScreen(1)">2. Ward Home</button>
+    <button class="screen-tab-btn" onclick="switchScreen(2)">3. Ward Grid</button>
+    <button class="screen-tab-btn" onclick="switchScreen(3)">4. Schedule</button>
+    <button class="screen-tab-btn" onclick="switchScreen(4)">5. Vitals & ECG</button>
+    <button class="screen-tab-btn" onclick="switchScreen(5)">6. Alerts & Console</button>
+  </div>
+
+  <!-- Phone Container -->
+  <div class="phone-container">
+    <div class="status-bar">
+      <span>09:41</span>
+      <span>5G • 100% 🔋</span>
+    </div>
+
+    <!-- SCREEN 1: ONBOARDING -->
+    <div class="screen-view active" id="screen-0">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="width: 40px; height: 40px; background: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); font-weight: 700;">❮</div>
+        <span style="font-size: 11px; font-weight: 700; background: var(--mint-light); color: var(--primary-teal); padding: 4px 10px; border-radius: 10px;">WARD 3B</span>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px; position: relative;">
+        <div style="width: 220px; height: 220px; background: rgba(0, 191, 165, 0.18); filter: blur(35px); border-radius: 50%; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);"></div>
+        <img src="../assets/images/vital_heart_3d.png" style="width: 230px; height: 230px; object-fit: contain; position: relative; z-index: 2;" alt="3D Heart">
+      </div>
+
+      <div style="text-align: center; margin-top: 24px;">
+        <h2 style="font-size: 28px; font-weight: 800; line-height: 1.15; color: var(--text-primary);">Healthy Pulse<br>Safe Ward</h2>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5; padding: 0 16px;">
+          Continuous acute telemetry & rapid response for Ward 3B. Keeping your patients safe and stable.
+        </p>
+      </div>
+
+      <div style="margin-top: 40px;">
+        <button class="clay-btn" onclick="switchScreen(1)">
+          Get Started
+          <div class="btn-circle-arrow">➔</div>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 16px; font-size: 12px; color: var(--text-secondary);">
+        Already on shift? <strong style="color: var(--primary-teal); cursor: pointer;" onclick="switchScreen(1)">Sign In</strong>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: WARD HOME -->
+    <div class="screen-view" id="screen-1">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Good Morning,</div>
+          <div style="font-size: 18px; font-weight: 800;">Nurse Sarah 👋</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <div style="width: 40px; height: 40px; background: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); cursor: pointer;" onclick="switchScreen(5)">
+            🔔
+          </div>
+          <div style="width: 40px; height: 40px; background: var(--mint-light); border: 2px solid var(--primary-mint); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary-teal);">
+            SJ
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Pill -->
+      <div style="background: #fff; height: 46px; border-radius: 23px; display: flex; align-items: center; padding: 0 16px; gap: 10px; box-shadow: var(--clay-shadow); margin-bottom: 16px; font-size: 13px; color: var(--text-muted);">
+        🔍 Search patient, doctor, bed...
+      </div>
+
+      <!-- Teal Hero Card -->
+      <div style="background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal)); border-radius: 26px; padding: 20px; color: #fff; box-shadow: 0 12px 28px rgba(0, 191, 165, 0.35); margin-bottom: 20px; display: flex; align-items: center;">
+        <div style="flex: 1;">
+          <span style="background: rgba(255,255,255,0.22); font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 8px;">● ESP32 Gateway: Online</span>
+          <h3 style="font-size: 18px; font-weight: 800; margin-top: 8px;">Ward 3B Telemetry</h3>
+          <p style="font-size: 11px; opacity: 0.9; margin-top: 2px;">3 Nodes Synchronized • Acute Care</p>
+          <button style="margin-top: 12px; background: #fff; color: var(--primary-teal); border: none; padding: 6px 14px; border-radius: 16px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="switchScreen(2)">View Live Grid</button>
+        </div>
+        <img src="../assets/images/vital_monitor_3d.png" style="width: 90px; height: 90px; object-fit: contain;" alt="Monitor">
+      </div>
+
+      <!-- 4 Quick Actions -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-bottom: 20px;">
+        <div onclick="switchScreen(3)" style="cursor: pointer;">
+          <div style="width: 52px; height: 52px; margin: 0 auto; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); font-size: 22px;">📅</div>
+          <div style="font-size: 11px; font-weight: 600; margin-top: 6px;">Rounds</div>
+        </div>
+        <div onclick="switchScreen(2)" style="cursor: pointer;">
+          <div style="width: 52px; height: 52px; margin: 0 auto; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); font-size: 22px;">📊</div>
+          <div style="font-size: 11px; font-weight: 600; margin-top: 6px;">Grid</div>
+        </div>
+        <div onclick="switchScreen(5)" style="cursor: pointer;">
+          <div style="width: 52px; height: 52px; margin: 0 auto; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); font-size: 22px; position: relative;">
+            🚨
+            <span style="position: absolute; top: -3px; right: -3px; background: var(--alert-critical); color:#fff; font-size: 9px; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">1</span>
+          </div>
+          <div style="font-size: 11px; font-weight: 600; margin-top: 6px;">Alarms</div>
+        </div>
+        <div onclick="switchScreen(4)" style="cursor: pointer;">
+          <div style="width: 52px; height: 52px; margin: 0 auto; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--clay-shadow); font-size: 22px;">🩺</div>
+          <div style="font-size: 11px; font-weight: 600; margin-top: 6px;">Vitals</div>
+        </div>
+      </div>
+
+      <!-- Ward Stability Score -->
+      <div class="clay-card" style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; border: 6px solid var(--primary-mint); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--primary-teal);">
+          96%
+        </div>
+        <div>
+          <div style="font-size: 14px; font-weight: 700; color: var(--primary-teal);">Ward Stable!</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">All 3 patient wireless nodes transmitting nominal vitals to gateway.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: WARD GRID -->
+    <div class="screen-view" id="screen-2">
+      <div style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Ward 3B Telemetry</div>
+
+      <!-- Bed 01 -->
+      <div class="clay-card" onclick="switchScreen(4)" style="cursor: pointer;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <img src="../assets/images/vital_heart_3d.png" style="width: 50px; height: 50px; object-fit: contain;" alt="Heart">
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 2px 8px; border-radius: 6px;">BED 01</span>
+              <span style="font-size: 11px; color: var(--primary-teal); font-weight: 700;">Optimal</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">Elena Rostova (34F)</div>
+            <div style="font-size: 11px; color: var(--text-muted);">RSSI: -58 dBm • Battery 96%</div>
+          </div>
+          <div class="btn-circle-arrow" style="background: var(--primary-mint); color: #fff; width: 34px; height: 34px;">➔</div>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border); text-align: center;">
+          <div><div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div><div style="font-size: 18px; font-weight: 800;" id="live-hr-1">72 BPM</div></div>
+          <div><div style="font-size: 10px; color: var(--text-muted);">SPO2</div><div style="font-size: 18px; font-weight: 800; color: var(--primary-teal);" id="live-spo2-1">99%</div></div>
+          <div><div style="font-size: 10px; color: var(--text-muted);">TEMP</div><div style="font-size: 18px; font-weight: 800;" id="live-temp-1">36.8°C</div></div>
+        </div>
+      </div>
+
+      <!-- Bed 02 -->
+      <div class="clay-card" onclick="switchScreen(4)" style="cursor: pointer;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <img src="../assets/images/pulse_oximeter_3d.png" style="width: 50px; height: 50px; object-fit: contain;" alt="Oximeter">
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 2px 8px; border-radius: 6px;">BED 02</span>
+              <span style="font-size: 11px; color: var(--alert-warning); font-weight: 700;">Checking...</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">Marcus Vance (58M)</div>
+            <div style="font-size: 11px; color: var(--text-muted);">RSSI: -64 dBm • Battery 88%</div>
+          </div>
+          <div class="btn-circle-arrow" style="background: var(--alert-warning); color: #fff; width: 34px; height: 34px;">➔</div>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border); text-align: center;">
+          <div><div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div><div style="font-size: 18px; font-weight: 800;" id="live-hr-2">88 BPM</div></div>
+          <div><div style="font-size: 10px; color: var(--text-muted);">SPO2</div><div style="font-size: 18px; font-weight: 800; color: var(--alert-warning);" id="live-spo2-2">94%</div></div>
+          <div><div style="font-size: 10px; color: var(--text-muted);">TEMP</div><div style="font-size: 18px; font-weight: 800;" id="live-temp-2">37.6°C</div></div>
+        </div>
+      </div>
+
+      <!-- Bed 03 (Critical) -->
+      <div class="clay-card critical" onclick="switchScreen(4)" style="cursor: pointer; background: #FFF5F5;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <img src="../assets/images/vital_monitor_3d.png" style="width: 50px; height: 50px; object-fit: contain;" alt="Monitor">
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 2px 8px; border-radius: 6px;">BED 03</span>
+              <span style="font-size: 11px; color: var(--alert-critical); font-weight: 800;">CRITICAL ALERT</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">David Chen (62M)</div>
+            <div style="font-size: 11px; color: var(--alert-critical); font-weight: 600;">Sustained SpO2 &lt; 88% (Hypoxemia)</div>
+          </div>
+          <div class="btn-circle-arrow" style="background: var(--alert-critical); color: #fff; width: 34px; height: 34px;">➔</div>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2; text-align: center;">
+          <div><div style="font-size: 10px; color: var(--alert-critical);">HEART RATE</div><div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="live-hr-3">118 BPM</div></div>
+          <div><div style="font-size: 10px; color: var(--alert-critical);">SPO2</div><div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="live-spo2-3">87%</div></div>
+          <div><div style="font-size: 10px; color: var(--alert-critical);">TEMP</div><div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="live-temp-3">38.6°C</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: SCHEDULE -->
+    <div class="screen-view" id="screen-3">
+      <div style="font-size: 18px; font-weight: 800; margin-bottom: 14px;">Shift Rounds Schedule</div>
+
+      <div class="clay-card">
+        <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 14px;">
+          <span>❮</span>
+          <span>September 2026</span>
+          <span>❯</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 6px; font-size: 12px;">
+          <span style="color: var(--text-muted);">M</span><span style="color: var(--text-muted);">T</span><span style="color: var(--text-muted);">W</span><span style="color: var(--text-muted);">T</span><span style="color: var(--text-muted);">F</span><span style="color: var(--text-muted);">S</span><span style="color: var(--text-muted);">S</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+          <span>8</span><span style="background: var(--primary-mint); color: #fff; border-radius: 50%; font-weight: 800; padding: 4px;">9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+          <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+        </div>
+      </div>
+
+      <div style="font-size: 14px; font-weight: 700; margin: 16px 0 10px 0;">Rounds Time Slots</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+        <button style="padding: 8px; border-radius: 14px; border: 1px solid var(--card-border); background: #fff; font-weight: 600;">08:00 AM</button>
+        <button style="padding: 8px; border-radius: 14px; border: 1px solid var(--primary-mint); background: var(--primary-mint); color: #fff; font-weight: 700;">10:00 AM</button>
+        <button style="padding: 8px; border-radius: 14px; border: 1px solid var(--card-border); background: #fff; font-weight: 600;">12:00 PM</button>
+      </div>
+
+      <div style="font-size: 14px; font-weight: 700; margin: 20px 0 10px 0;">Shift Attending Lead</div>
+      <div class="clay-card" style="display: flex; gap: 12px; align-items: center;">
+        <div style="width: 46px; height: 46px; background: var(--mint-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px;">👩‍⚕️</div>
+        <div>
+          <div style="font-size: 14px; font-weight: 700;">Dr. Sarah Johnson, MD</div>
+          <div style="font-size: 11px; color: var(--text-secondary);">Critical Care Specialist • ⭐ 4.9</div>
+        </div>
+      </div>
+
+      <button class="clay-btn" style="margin-top: 10px;" onclick="alert('Handover rounds confirmed!')">
+        Confirm Handover & Audit ➔
+      </button>
+    </div>
+
+    <!-- SCREEN 5: PATIENT MONITORING & ECG (Matching exact new reference image) -->
+    <div class="screen-view" id="screen-4">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="width: 36px; height: 36px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--clay-shadow);" onclick="switchScreen(2)">❮</div>
+        <div style="text-align: center;">
+          <div style="font-size: 14px; font-weight: 800;">Bed 01 • Elena Rostova</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Post-Op Recovery • Acute Care</div>
+        </div>
+        <div>⋯</div>
+      </div>
+
+      <!-- Brand Badge with Concentric Ripple Waves -->
+      <div style="text-align: center; margin: 12px 0 16px 0; position: relative;">
+        <div style="width: 90px; height: 90px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; width: 100px; height: 100px; border-radius: 50%; border: 1.5px solid rgba(0, 191, 165, 0.25);"></div>
+          <div style="position: absolute; width: 80px; height: 80px; border-radius: 50%; border: 1.5px solid rgba(0, 191, 165, 0.4);"></div>
+          <img src="../assets/images/sentinel_shield_badge_3d.png" style="width: 60px; height: 60px; object-fit: contain; position: relative; z-index: 2;" alt="Badge">
+        </div>
+        <div style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-top: 6px;">SENTINEL-Ward</div>
+      </div>
+
+      <!-- 2x2 Vitals Grid matching reference image -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <!-- Card 1: Heart Rate -->
+        <div class="clay-card" style="padding: 14px; margin-bottom: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Heart Rate</div>
+          <div style="text-align: center; margin: 6px 0;">
+            <img src="../assets/images/heart_ecg_strip_3d.png" style="height: 64px; object-fit: contain;" alt="Heart Rate">
+          </div>
+          <div style="font-size: 17px; font-weight: 800; color: var(--text-primary);" id="grid-hr">76 BPM</div>
+        </div>
+
+        <!-- Card 2: Blood Oxygen -->
+        <div class="clay-card" style="padding: 14px; margin-bottom: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Blood Oxygen (SpO2)</div>
+          <div style="text-align: center; margin: 6px 0;">
+            <img src="../assets/images/spo2_droplet_3d.png" style="height: 64px; object-fit: contain;" alt="SpO2 Droplet">
+          </div>
+          <div style="font-size: 17px; font-weight: 800; color: var(--primary-teal);"><span id="grid-spo2">98%</span> <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">SpO2</span></div>
+        </div>
+
+        <!-- Card 3: Body Temperature -->
+        <div class="clay-card" style="padding: 14px; margin-bottom: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Body Temperature</div>
+          <div style="text-align: center; margin: 6px 0;">
+            <img src="../assets/images/thermometer_3d.png" style="height: 64px; object-fit: contain;" alt="Thermometer">
+          </div>
+          <div style="font-size: 17px; font-weight: 800; color: var(--text-primary);" id="grid-temp">36.8°C</div>
+        </div>
+
+        <!-- Card 4: Battery Level -->
+        <div class="clay-card" style="padding: 14px; margin-bottom: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Battery Level</div>
+          <div style="text-align: center; margin: 6px 0;">
+            <img src="../assets/images/battery_3d.png" style="height: 64px; object-fit: contain;" alt="Battery">
+          </div>
+          <div style="font-size: 13px; font-weight: 800; color: var(--alert-stable); margin-top: 4px;">92% charged</div>
+        </div>
+      </div>
+
+      <!-- Floating 3D "CALL NURSE" Pill Button matching reference image -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div onclick="playCriticalTriplet(); alert('🚨 Bedside Emergency Alert Transmitted to Nurse Station!');" style="display: inline-flex; align-items: center; background: rgba(128, 203, 196, 0.35); border: 1.5px solid rgba(77, 182, 172, 0.6); border-radius: 30px; padding: 6px 14px; box-shadow: var(--clay-shadow); cursor: pointer; gap: 8px;">
+          <div style="width: 38px; height: 38px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1.5px solid var(--primary-mint);">👩‍⚕️</div>
+          <div style="background: linear-gradient(135deg, #FF7043, #FF5252); color: #fff; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 20px; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(255, 82, 82, 0.35);">CALL NURSE</div>
+          <div style="font-size: 16px;">🔔</div>
+        </div>
+      </div>
+
+      <!-- Live ECG Canvas Strip -->
+      <div class="ecg-box" style="height: 100px; margin-bottom: 12px;">
+        <canvas id="ecgCanvas" class="ecg-canvas"></canvas>
+      </div>
+
+      <button class="clay-btn" style="height: 48px; font-size: 13px;" onclick="alert('Full telemetry exported to Hospital EHR.')">
+        View Full Telemetry Dossier ➔
+      </button>
+    </div>
+
+
+    <!-- SCREEN 6: ALERTS & CONSOLE -->
+    <div class="screen-view" id="screen-5">
+      <div style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Active Telemetry Alarms</div>
+
+      <div class="clay-card critical" style="background: #FFF5F5;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="background: var(--alert-critical); color:#fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">CRITICAL L1</span>
+          <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">BED 03 • David Chen</div>
+        <div style="font-size: 12px; color: var(--text-primary); margin-top: 2px;">Sustained SpO2 &lt; 88% (Clinical Desaturation)</div>
+        <div style="font-size: 10px; color: var(--alert-critical); margin-top: 6px; font-weight: 600;">Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button style="flex: 1; background: var(--primary-mint); color:#fff; border:none; padding: 8px; border-radius: 14px; font-weight: 700; font-size: 12px; cursor: pointer;" onclick="acknowledgeAlert()">Acknowledge</button>
+          <button style="background: #eee; border:none; padding: 8px 14px; border-radius: 14px; font-weight: 600; font-size: 12px; cursor: pointer;" onclick="clearAlert()">Clear</button>
+        </div>
+      </div>
+
+      <div style="font-size: 14px; font-weight: 700; margin: 18px 0 10px 0;">Ward Console Settings</div>
+      <div class="clay-card" style="padding: 10px 16px;">
+        <div style="padding: 10px 0; border-bottom: 1px solid var(--card-border); font-size: 13px; font-weight: 600;">ESP32 Gateway Configuration ❯</div>
+        <div style="padding: 10px 0; border-bottom: 1px solid var(--card-border); font-size: 13px; font-weight: 600;">nRF24 Radio Diagnostics ❯</div>
+        <div style="padding: 10px 0; font-size: 13px; font-weight: 600;">Hospital EMR Sync (FHIR / HL7) ❯</div>
+      </div>
+    </div>
+
+    <!-- Floating Claymorphic Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="switchScreen(1)">🏠</div>
+      <div class="nav-item" onclick="switchScreen(2)">📊</div>
+      <div class="nav-item" onclick="switchScreen(3)">📅</div>
+      <div class="nav-item" onclick="switchScreen(5)">
+        🚨
+        <span class="nav-badge" id="navBadge">1</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentScreen = 0;
+    let isMuted = false;
+    let audioCtx = null;
+    let countdown = 58;
+
+    function switchScreen(index) {
+      currentScreen = index;
+      document.querySelectorAll('.screen-view').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.screen-tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.nav-item').forEach((item, i) => {
+        item.classList.toggle('active', i === (index > 3 ? 3 : index - 1));
+      });
+    }
+
+    // Audio Alarm Synthesizer (IEC 60601-1-8 standard medical alarms)
+    function playMedicalTone(freq, durationMs, type = 'sine') {
+      if (isMuted) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (durationMs / 1000));
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + (durationMs / 1000));
+      } catch (e) {
+        console.log('Audio not allowed yet without user gesture');
+      }
+    }
+
+    function playCriticalTriplet() {
+      if (isMuted) return;
+      playMedicalTone(987.77, 100);
+      setTimeout(() => playMedicalTone(987.77, 100), 140);
+      setTimeout(() => playMedicalTone(1318.51, 180), 280);
+    }
+
+    function toggleAudioAlarm() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      isMuted = !isMuted;
+      const btn = document.getElementById('audioToggleBtn');
+      const text = document.getElementById('audioStatusText');
+      if (isMuted) {
+        btn.classList.add('muted');
+        text.innerText = 'MUTED';
+      } else {
+        btn.classList.remove('muted');
+        text.innerText = 'ACTIVE (Playing Siren Triplet)';
+        playCriticalTriplet();
+      }
+    }
+
+    function acknowledgeAlert() {
+      alert('Alarm acknowledged by Nurse Sarah! Logged to shift audit trail.');
+      document.getElementById('countdown-timer').innerText = 'Acknowledged';
+      document.getElementById('navBadge').style.display = 'none';
+    }
+
+    function clearAlert() {
+      alert('Alarm cleared from active buffer.');
+      document.getElementById('screen-5').querySelector('.clay-card.critical').style.display = 'none';
+      document.getElementById('navBadge').style.display = 'none';
+    }
+
+    // Auto countdown timer
+    setInterval(() => {
+      if (countdown > 0) {
+        countdown--;
+        const el = document.getElementById('countdown-timer');
+        if (el && el.innerText !== 'Acknowledged') {
+          el.innerText = countdown + 's remaining';
+          document.getElementById('countdown-bar').innerText = countdown + 's';
+        }
+      }
+    }, 1000);
+
+    // Live Telemetry simulation tick
+    setInterval(() => {
+      const hr1 = 70 + Math.floor(Math.random() * 4);
+      const spo21 = 98 + Math.floor(Math.random() * 2);
+      const temp1 = (36.7 + Math.random() * 0.2).toFixed(1);
+
+      const elHr1 = document.getElementById('live-hr-1');
+      const elSpo21 = document.getElementById('live-spo2-1');
+      const elTemp1 = document.getElementById('live-temp-1');
+      if (elHr1) elHr1.innerText = hr1 + ' BPM';
+      if (elSpo21) elSpo21.innerText = spo21 + '%';
+      if (elTemp1) elTemp1.innerText = temp1 + '°C';
+
+      const gHr = document.getElementById('grid-hr');
+      const gSpo2 = document.getElementById('grid-spo2');
+      const gTemp = document.getElementById('grid-temp');
+      if (gHr) gHr.innerText = hr1 + ' BPM';
+      if (gSpo2) gSpo2.innerText = spo21 + '%';
+      if (gTemp) gTemp.innerText = temp1 + '°C';
+
+      // Bed 3 Critical variation
+      const hr3 = 116 + Math.floor(Math.random() * 6);
+      const spo23 = 86 + Math.floor(Math.random() * 3);
+      document.getElementById('live-hr-3').innerText = hr3 + ' BPM';
+      document.getElementById('live-spo2-3').innerText = spo23 + '%';
+    }, 1500);
+
+    // ECG Canvas Animation
+    const canvas = document.getElementById('ecgCanvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let t = 0;
+
+      function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function drawEcg() {
+        ctx.fillStyle = '#0F172A';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw grid
+        ctx.strokeStyle = '#1E293B';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 20) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 20) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // Draw wave
+        ctx.strokeStyle = '#00BFA5';
+        ctx.lineWidth = 2.4;
+        ctx.shadowColor = '#00BFA5';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+
+        const mid = canvas.height / 2;
+        for (let x = 0; x < canvas.width; x++) {
+          const sampleT = (x / 70 + t) % (Math.PI * 2);
+          let y = 0;
+          if (sampleT > 2.0 && sampleT < 2.2) y = -14; // P wave
+          else if (sampleT > 2.6 && sampleT < 2.8) y = 10; // Q wave
+          else if (sampleT >= 2.8 && sampleT <= 3.1) y = -50; // R spike
+          else if (sampleT > 3.1 && sampleT < 3.3) y = 16; // S wave
+          else if (sampleT > 3.7 && sampleT < 4.2) y = -20; // T wave
+
+          if (x === 0) ctx.moveTo(x, mid + y);
+          else ctx.lineTo(x, mid + y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        t += 0.045;
+        requestAnimationFrame(drawEcg);
+      }
+      drawEcg();
+    }
+  </script>
+</body>
+</html>
