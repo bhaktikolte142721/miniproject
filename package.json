@@ -1,0 +1,9 @@
+{
+  "name": "sentinel-ward",
+  "version": "1.0.0",
+  "description": "SENTINEL-Ward: Multi-Patient Acute Care Vitals Telemetry & Monitoring System",
+  "private": true,
+  "scripts": {
+    "build": "bash build.sh"
+  }
+}
