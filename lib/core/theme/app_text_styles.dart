@@ -3,108 +3,173 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 /// Typography hierarchy for SENTINEL-Ward.
-/// Uses Poppins / Inter fonts with tabular figures for jitter-free telemetry numbers.
+/// Senior-Legible & Accessible: Large, stately Times New Roman serif aesthetic.
+/// Metric-compatible with Times New Roman & Tinos with tabular figures for telemetry.
 class AppTextStyles {
-  // Headlines & Display
-  static TextStyle get displayLarge => GoogleFonts.poppins(
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
+  // ─── Font Resolver Helper ──────────────────────────────────────────────────
+  static TextStyle _timesRoman({
+    required double fontSize,
+    FontWeight fontWeight = FontWeight.w500,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+    List<FontFeature>? fontFeatures,
+    FontStyle? fontStyle,
+  }) {
+    return GoogleFonts.tinos(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color ?? AppColors.textPrimary,
+      letterSpacing: letterSpacing,
+      height: height,
+      fontFeatures: fontFeatures,
+      fontStyle: fontStyle,
+    ).copyWith(
+      fontFamilyFallback: const ['Times New Roman', 'Times', 'serif'],
+    );
+  }
+
+  // ─── Headlines & Display (Significantly Enlarged & High-Contrast) ───────────
+  static TextStyle get displayLarge => _timesRoman(
+    fontSize: 56,
+    fontWeight: FontWeight.w900,
     color: AppColors.textPrimary,
-    letterSpacing: -0.5,
+    letterSpacing: -0.6,
+    height: 1.15,
   );
 
-  static TextStyle get headlineMedium => GoogleFonts.poppins(
-    fontSize: 22,
-    fontWeight: FontWeight.w700,
+  static TextStyle get headlineMedium => _timesRoman(
+    fontSize: 40,
+    fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
+    height: 1.2,
   );
 
-  static TextStyle get headlineSmall => GoogleFonts.poppins(
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
-
-  // Subtitles & Section Labels
-  static TextStyle get titleMedium => GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
-
-  static TextStyle get titleSmall => GoogleFonts.inter(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
-
-  // Body Content
-  static TextStyle get bodyLarge => GoogleFonts.inter(
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
-    height: 1.4,
-  );
-
-  static TextStyle get bodyMedium => GoogleFonts.inter(
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
-  );
-
-  static TextStyle get bodySmall => GoogleFonts.inter(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: AppColors.textMuted,
-  );
-
-  // Numeric Telemetry (Tabular figures prevent jitter during live updates)
-  static TextStyle get telemetryLarge => GoogleFonts.poppins(
+  static TextStyle get headlineSmall => _timesRoman(
     fontSize: 32,
     fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
+    height: 1.25,
+  );
+
+  // ─── Subtitles & Section Labels ───────────────────────────────────────────
+  static TextStyle get titleLarge => _timesRoman(
+    fontSize: 30,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+    height: 1.3,
+  );
+
+  static TextStyle get titleMedium => _timesRoman(
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.3,
+  );
+
+  static TextStyle get titleSmall => _timesRoman(
+    fontSize: 23,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.3,
+  );
+
+  // ─── Body Content (Senior-Legible, 19.5px - 24px) ─────────────────────────
+  static TextStyle get bodyLarge => _timesRoman(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textSecondary,
+    height: 1.5,
+  );
+
+  static TextStyle get bodyMedium => _timesRoman(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textSecondary,
+    height: 1.45,
+  );
+
+  static TextStyle get bodySmall => _timesRoman(
+    fontSize: 19.5,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textSecondary,
+    height: 1.35,
+  );
+
+  // ─── Numeric Telemetry (Large, Bold & Tabular) ─────────────────────────────
+  static TextStyle get telemetryLarge => _timesRoman(
+    fontSize: 56,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
     letterSpacing: -0.5,
     fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get telemetryMedium => GoogleFonts.poppins(
-    fontSize: 24,
-    fontWeight: FontWeight.w700,
+  static TextStyle get telemetryMedium => _timesRoman(
+    fontSize: 40,
+    fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
     fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get telemetrySmall => GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
+  static TextStyle get telemetrySmall => _timesRoman(
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
     fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  // Labels, Chips & Badges
-  static TextStyle get chipText => GoogleFonts.inter(
-    fontSize: 12,
-    fontWeight: FontWeight.w600,
+  // ─── Labels, Chips & Badges ───────────────────────────────────────────────
+  static TextStyle get chipText => _timesRoman(
+    fontSize: 18.5,
+    fontWeight: FontWeight.w700,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get chipTextSelected => GoogleFonts.inter(
-    fontSize: 12,
-    fontWeight: FontWeight.w700,
+  static TextStyle get chipTextSelected => _timesRoman(
+    fontSize: 18.5,
+    fontWeight: FontWeight.w800,
     color: AppColors.textOnDark,
   );
 
-  static TextStyle get buttonText => GoogleFonts.poppins(
-    fontSize: 15,
-    fontWeight: FontWeight.w600,
+  static TextStyle get buttonText => _timesRoman(
+    fontSize: 22,
+    fontWeight: FontWeight.w800,
     color: AppColors.textOnDark,
-    letterSpacing: 0.2,
+    letterSpacing: 0.4,
   );
 
-  static TextStyle get badgeText => GoogleFonts.inter(
-    fontSize: 11,
+  static TextStyle get badgeText => _timesRoman(
+    fontSize: 17,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle get labelMedium => _timesRoman(
+    fontSize: 20.5,
     fontWeight: FontWeight.w700,
-    letterSpacing: 0.3,
+    color: AppColors.textPrimary,
+  );
+
+  // ─── Form Labels ─────────────────────────────────────────────────────────
+  static TextStyle get formLabel => _timesRoman(
+    fontSize: 21,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  );
+
+  static TextStyle get formHint => _timesRoman(
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    color: AppColors.textMuted,
+  );
+
+  // ─── Section Headers ─────────────────────────────────────────────────────
+  static TextStyle get sectionLabel => _timesRoman(
+    fontSize: 18.5,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textMuted,
+    letterSpacing: 1.2,
   );
 }

@@ -18,6 +18,8 @@ class AppColors {
   static const Color primaryDark = Color(0xFF004D40);
   static const Color mintLight = Color(0xFFE0F2F1);
   static const Color mintGlow = Color(0x3300BFA5);
+  static const Color coralLight = Color(0xFFFFEBEE);
+  static const Color scaffoldBg = Color(0xFFF5F9FA);
 
   static const LinearGradient mintTealGradient = LinearGradient(
     begin: Alignment.topLeft,

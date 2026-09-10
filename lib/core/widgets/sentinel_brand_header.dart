@@ -61,7 +61,7 @@ class SentinelBrandHeader extends StatelessWidget {
         Text(
           'SENTINEL-Ward',
           style: AppTextStyles.headlineMedium.copyWith(
-            fontSize: 22,
+            fontSize: 28,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.3,
             color: AppColors.textPrimary,

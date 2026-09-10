@@ -8,6 +8,8 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Times New Roman',
+      fontFamilyFallback: const ['Times', 'serif'],
       scaffoldBackgroundColor: AppColors.backgroundStart,
       primaryColor: AppColors.primaryMint,
       colorScheme: const ColorScheme.light(

@@ -5,8 +5,22 @@ backend/node_modules/
 # Flutter / Dart
 .dart_tool/
 .packages
+.flutter-plugins
+.flutter-plugins-dependencies
 build/
 *.lock
+
+# Android
+**/android/local.properties
+**/android/.gradle
+**/android/captures/
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
 
 # Environment
 .env

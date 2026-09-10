@@ -39,3 +39,10 @@ final isAudioMutedStreamProvider = StreamProvider<bool>((ref) {
   final audioService = ref.watch(audioAlertServiceProvider);
   return audioService.onMuteStateChanged;
 });
+
+/// Count of clinical alarms successfully handled and resolved during this shift
+final resolvedAlarmsCountProvider = StreamProvider<int>((ref) {
+  final service = ref.watch(mockTelemetryServiceProvider);
+  return service.resolvedAlarmsStream;
+});
+

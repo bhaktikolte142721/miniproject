@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 import '../providers/alerts_provider.dart';
+import '../providers/nurse_provider.dart';
 import 'handover/shift_handover_screen.dart';
 import 'ward_grid/multi_patient_grid_screen.dart';
 import 'handover/schedule_handover_screen.dart';
 import 'alerts/alerts_feed_screen.dart';
+import 'patients/patient_admission_sheet.dart';
+import 'settings/ward_settings_sheet.dart';
 
 /// Central Shell Screen supporting both Desktop Workstation (Laptop) and Mobile viewports.
 class HomeShellScreen extends ConsumerStatefulWidget {
@@ -22,6 +25,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
   @override
   Widget build(BuildContext context) {
     final criticalCount = ref.watch(activeCriticalAlarmsCountProvider);
+    final activeNurse = ref.watch(activeNurseProvider);
     final size = MediaQuery.of(context).size;
     final isDesktop = size.width >= 900;
 
@@ -43,9 +47,9 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
             children: [
               // Left Clinical Navigation Sidebar (Workstation Rail)
               Container(
-                width: 270,
+                width: 290,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.78),
+                  color: Colors.white.withValues(alpha: 0.78),
                   border: const Border(
                     right: BorderSide(color: AppColors.cardBorder, width: 1.5),
                   ),
@@ -83,16 +87,16 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'SENTINEL-Ward',
-                                style: TextStyle(
+                                style: AppTextStyles.titleSmall.copyWith(
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 16,
+                                  fontSize: 22,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
                                   color: AppColors.mintLight,
                                   borderRadius: BorderRadius.circular(6),
@@ -100,7 +104,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                 child: const Text(
                                   'Ward 3B Telemetry',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 13.5,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.primaryTeal,
                                   ),
@@ -113,14 +117,9 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                     ),
 
                     const SizedBox(height: 28),
-                    const Text(
+                    Text(
                       'CLINICAL MODULES',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textMuted,
-                        letterSpacing: 0.8,
-                      ),
+                      style: AppTextStyles.sectionLabel,
                     ),
                     const SizedBox(height: 10),
 
@@ -148,6 +147,36 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                       label: 'Active Alarms',
                       index: 3,
                       badgeCount: criticalCount > 0 ? '$criticalCount' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ─── Admit Patient Button ───────────────────────────
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => PatientAdmissionSheet.show(context),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.mintTealGradient,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [AppColors.clayPillShadow],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.person_add_rounded, color: Colors.white, size: 20),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Admit Patient',
+                                style: AppTextStyles.buttonText.copyWith(fontSize: 17),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
 
                     const Spacer(),
@@ -185,7 +214,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                 Text(
                                   'ESP32-WARD-3B-GW',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.primaryTeal,
                                   ),
@@ -193,7 +222,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                 Text(
                                   '3 Nodes Synchronized',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 13,
                                     color: AppColors.textMuted,
                                   ),
                                 ),
@@ -205,63 +234,79 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Nurse Profile Card
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
+                    // Nurse Profile Card (Interactive: Click to change or register nurse)
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => WardSettingsSheet.show(context, initialTab: 0),
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: AppColors.cardBorder),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x0A000000),
-                            blurRadius: 12,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: AppColors.mintLight,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.primaryMint, width: 2),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'SJ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.primaryTeal,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Nurse Sarah Jenkins',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 12,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              Text(
-                                'Lead Triage • RN #88192',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: AppColors.textMuted,
-                                ),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: AppColors.cardBorder),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x0A000000),
+                                blurRadius: 12,
+                                offset: Offset(0, 4),
                               ),
                             ],
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: AppColors.mintLight,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppColors.primaryMint, width: 2),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  activeNurse.initials,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primaryTeal,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      activeNurse.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15.5,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${activeNurse.designation} • ${activeNurse.registrationNumber}',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.settings_rounded, size: 18, color: AppColors.primaryTeal),
+                                tooltip: 'Ward & Nurse Settings',
+                                onPressed: () => WardSettingsSheet.show(context, initialTab: 1),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -289,7 +334,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 13,
+                                    fontSize: 16,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -305,7 +350,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                   style: TextStyle(
                                     color: AppColors.alertCritical,
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 12,
+                                    fontSize: 15,
                                   ),
                                 ),
                               ),
@@ -314,11 +359,28 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                         ),
                       ),
 
-                    // Active Screen Content
+                    // Active Screen Content with smooth 60fps fade+slide transition
                     Expanded(
-                      child: IndexedStack(
-                        index: _currentIndex,
-                        children: screens,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 240),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.012, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: KeyedSubtree(
+                          key: ValueKey<int>(_currentIndex),
+                          child: screens[_currentIndex],
+                        ),
                       ),
                     ),
                   ],
@@ -338,10 +400,30 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
         ),
         child: Stack(
           children: [
-            // Active Screen
-            IndexedStack(
-              index: _currentIndex,
-              children: screens,
+            // Active Screen with smooth transition and bottom inset
+            Padding(
+              padding: const EdgeInsets.only(bottom: 84),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 240),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.016, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: KeyedSubtree(
+                  key: ValueKey<int>(_currentIndex),
+                  child: screens[_currentIndex],
+                ),
+              ),
             ),
 
             // Top Persistent Emergency Alert Banner if Critical Alarms Active
@@ -359,7 +441,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.alertCritical.withOpacity(0.4),
+                          color: AppColors.alertCritical.withValues(alpha: 0.4),
                           blurRadius: 16,
                           offset: const Offset(0, 6),
                         ),
@@ -375,7 +457,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
-                              fontSize: 12,
+                              fontSize: 15,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -391,7 +473,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                             style: TextStyle(
                               color: AppColors.alertCritical,
                               fontWeight: FontWeight.w800,
-                              fontSize: 11,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -401,53 +483,46 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                 ),
               ),
 
-            // Floating Claymorphic Bottom Navigation Bar matching Reference UI
+            // ── Floating Bottom Navigation Bar ──────────────────────────────
             Positioned(
-              left: 24,
-              right: 24,
-              bottom: 18,
+              left: 16,
+              right: 16,
+              bottom: 16,
               child: Container(
-                height: 68,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   color: AppColors.cardSurface,
-                  borderRadius: BorderRadius.circular(34),
+                  borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.cardBorder, width: 1.2),
                   boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x14000000),
-                      blurRadius: 20,
-                      offset: Offset(0, 10),
-                    ),
-                    BoxShadow(
-                      color: Color(0xE6FFFFFF),
-                      blurRadius: 10,
-                      offset: Offset(-4, -4),
-                    ),
+                    BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 10)),
+                    BoxShadow(color: Color(0xE6FFFFFF), blurRadius: 10, offset: Offset(-4, -4)),
                   ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildNavItem(
-                      icon: Icons.home_rounded,
-                      index: 0,
-                      tooltip: 'Home',
+                    _buildNavItem(icon: Icons.home_rounded,           index: 0, tooltip: 'Home',      label: 'Home'),
+                    _buildNavItem(icon: Icons.grid_view_rounded,      index: 1, tooltip: 'Ward',      label: 'Ward'),
+                    // Add patient FAB center
+                    GestureDetector(
+                      onTap: () => PatientAdmissionSheet.show(context),
+                      child: Container(
+                        width: 52, height: 52,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.mintTealGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [AppColors.clayPillShadow],
+                        ),
+                        child: const Icon(Icons.person_add_rounded, color: Colors.white, size: 22),
+                      ),
                     ),
-                    _buildNavItem(
-                      icon: Icons.grid_view_rounded,
-                      index: 1,
-                      tooltip: 'Ward Grid',
-                    ),
-                    _buildNavItem(
-                      icon: Icons.calendar_today_rounded,
-                      index: 2,
-                      tooltip: 'Rounds',
-                    ),
+                    _buildNavItem(icon: Icons.calendar_today_rounded, index: 2, tooltip: 'Rounds',    label: 'Rounds'),
                     _buildNavItem(
                       icon: Icons.notifications_rounded,
                       index: 3,
                       tooltip: 'Alarms',
+                      label: 'Alarms',
                       badgeCount: criticalCount > 0 ? '$criticalCount' : null,
                     ),
                   ],
@@ -505,7 +580,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 16.5,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     color: isSelected ? AppColors.primaryTeal : AppColors.textSecondary,
                   ),
@@ -522,7 +597,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                     badgeCount,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 10,
+                      fontSize: 13,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -538,6 +613,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
     required IconData icon,
     required int index,
     required String tooltip,
+    required String label,
     String? badgeCount,
   }) {
     final isSelected = _currentIndex == index;
@@ -548,40 +624,50 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.mintLight : Colors.transparent,
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isSelected ? AppColors.primaryTeal : AppColors.textMuted,
-            ),
-            if (badgeCount != null)
-              Positioned(
-                top: -4,
-                right: -6,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColors.alertCritical,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white, width: 1.5),
-                  ),
-                  child: Text(
-                    badgeCount,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  icon,
+                  size: 26,
+                  color: isSelected ? AppColors.primaryTeal : AppColors.textMuted,
+                ),
+                if (badgeCount != null)
+                  Positioned(
+                    top: -4,
+                    right: -7,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: AppColors.alertCritical,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Text(
+                        badgeCount,
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800),
+                      ),
                     ),
                   ),
-                ),
+              ],
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? AppColors.primaryTeal : AppColors.textMuted,
               ),
+            ),
           ],
         ),
       ),

@@ -29,11 +29,11 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 3000;
 const START_TIME = Date.now();
 
-// Clinical Telemetry State
+// Clinical Telemetry State (Supports up to 6 Bedside Nodes)
 const telemetryState = {
   bed_01: {
     bedId: 'bed_01',
-    patientName: 'Elena Rostova',
+    patientName: 'Priya Sharma',
     heartRate: 72,
     spo2: 99,
     temperature: 36.8,
@@ -45,7 +45,7 @@ const telemetryState = {
   },
   bed_02: {
     bedId: 'bed_02',
-    patientName: 'Marcus Vance',
+    patientName: 'Rajesh Kulkarni',
     heartRate: 88,
     spo2: 94,
     temperature: 37.6,
@@ -57,7 +57,7 @@ const telemetryState = {
   },
   bed_03: {
     bedId: 'bed_03',
-    patientName: 'David Chen',
+    patientName: 'Sunita Patel',
     heartRate: 118,
     spo2: 87,
     temperature: 38.6,
@@ -66,20 +66,59 @@ const telemetryState = {
     bloodPressureDia: 60,
     status: 'critical',
     timestamp: new Date().toISOString()
+  },
+  bed_04: {
+    bedId: 'bed_04',
+    patientName: 'Amit Verma',
+    heartRate: 76,
+    spo2: 98,
+    temperature: 36.9,
+    respiratoryRate: 18,
+    bloodPressureSys: 122,
+    bloodPressureDia: 80,
+    status: 'optimal',
+    timestamp: new Date().toISOString()
+  },
+  bed_05: {
+    bedId: 'bed_05',
+    patientName: 'Kavita Joshi',
+    heartRate: 82,
+    spo2: 97,
+    temperature: 37.1,
+    respiratoryRate: 17,
+    bloodPressureSys: 126,
+    bloodPressureDia: 82,
+    status: 'optimal',
+    timestamp: new Date().toISOString()
+  },
+  bed_06: {
+    bedId: 'bed_06',
+    patientName: 'Suresh Rao',
+    heartRate: 70,
+    spo2: 99,
+    temperature: 36.7,
+    respiratoryRate: 15,
+    bloodPressureSys: 116,
+    bloodPressureDia: 74,
+    status: 'optimal',
+    timestamp: new Date().toISOString()
   }
 };
 
 const nodeHealthState = {
-  bed_01: { bedId: 'bed_01', rssi: -58, batteryPercent: 96, isOnline: true },
-  bed_02: { bedId: 'bed_02', rssi: -64, batteryPercent: 88, isOnline: true },
-  bed_03: { bedId: 'bed_03', rssi: -78, batteryPercent: 74, isOnline: true }
+  bed_01: { bedId: 'bed_01', rssi: -58, batteryPercent: 100, isOnline: true },
+  bed_02: { bedId: 'bed_02', rssi: -64, batteryPercent: 100, isOnline: true },
+  bed_03: { bedId: 'bed_03', rssi: -72, batteryPercent: 100, isOnline: true },
+  bed_04: { bedId: 'bed_04', rssi: -61, batteryPercent: 100, isOnline: true },
+  bed_05: { bedId: 'bed_05', rssi: -66, batteryPercent: 100, isOnline: true },
+  bed_06: { bedId: 'bed_06', rssi: -59, batteryPercent: 100, isOnline: true }
 };
 
 let activeAlarms = [
   {
     id: 'ALT-1001',
     bedId: 'bed_03',
-    patientName: 'David Chen',
+    patientName: 'Sunita Patel',
     severity: 'critical',
     triggerReason: 'Sustained SpO2 < 88% for 15s (Clinical Desaturation)',
     timestamp: new Date().toISOString(),
@@ -89,6 +128,8 @@ let activeAlarms = [
     escalationLevel: 1
   }
 ];
+
+let resolvedAlarmsCount = 0;
 
 const auditTrail = [
   {
@@ -112,6 +153,7 @@ app.get('/api/status', (req, res) => {
     uptimeSeconds,
     uptimeFormatted: `${Math.floor(uptimeSeconds / 3600)}h ${Math.floor((uptimeSeconds % 3600) / 60)}m`,
     activeAlarmsCount: activeAlarms.filter(a => !a.isAcknowledged).length,
+    resolvedAlarmsCount,
     timestamp: new Date().toISOString()
   });
 });
@@ -128,8 +170,30 @@ app.get('/api/beds', (req, res) => {
 // 3. Ingest Hardware Telemetry from ESP32 Microcontroller
 app.post('/api/telemetry/ingest', (req, res) => {
   const { bedId, heartRate, spo2, temperature, rssi, batteryPercent } = req.body;
-  if (!bedId || !telemetryState[bedId]) {
-    return res.status(400).json({ error: 'Invalid bedId' });
+  if (!bedId) {
+    return res.status(400).json({ error: 'Missing bedId' });
+  }
+
+  // Auto-initialize bed state if not already existing (up to 6 beds or dynamic)
+  if (!telemetryState[bedId]) {
+    telemetryState[bedId] = {
+      bedId,
+      patientName: `Patient (${bedId.toUpperCase()})`,
+      heartRate: heartRate || 75,
+      spo2: spo2 || 98,
+      temperature: temperature || 37.0,
+      respiratoryRate: 16,
+      bloodPressureSys: 120,
+      bloodPressureDia: 80,
+      status: 'optimal',
+      timestamp: new Date().toISOString()
+    };
+    nodeHealthState[bedId] = {
+      bedId,
+      rssi: rssi || -60,
+      batteryPercent: batteryPercent !== undefined ? batteryPercent : 100,
+      isOnline: true
+    };
   }
 
   // Update Telemetry
@@ -138,7 +202,7 @@ app.post('/api/telemetry/ingest', (req, res) => {
   if (temperature !== undefined) telemetryState[bedId].temperature = temperature;
   telemetryState[bedId].timestamp = new Date().toISOString();
 
-  // Evaluate status
+  // Evaluate clinical status
   if (telemetryState[bedId].spo2 < 90 || telemetryState[bedId].heartRate > 120) {
     telemetryState[bedId].status = 'critical';
   } else if (telemetryState[bedId].spo2 < 94 || telemetryState[bedId].heartRate > 100) {
@@ -150,6 +214,7 @@ app.post('/api/telemetry/ingest', (req, res) => {
   // Update Node radio metrics
   if (rssi !== undefined) nodeHealthState[bedId].rssi = rssi;
   if (batteryPercent !== undefined) nodeHealthState[bedId].batteryPercent = batteryPercent;
+  nodeHealthState[bedId].isOnline = true;
 
   // Broadcast instantly to all connected mobile & console clients
   io.emit('vitals_update', telemetryState);
@@ -188,47 +253,68 @@ app.post('/api/alarms/trigger', (req, res) => {
 
 // 5. Acknowledge Alarm
 app.post('/api/alarms/acknowledge', (req, res) => {
-  const { alarmId, nurseName = 'Nurse Sarah' } = req.body;
+  const { alarmId, nurseName = 'Sister Sunita Rao' } = req.body;
   const alarm = activeAlarms.find(a => a.id === alarmId);
   if (!alarm) {
-    return res.json({ success: true, message: 'Alarm already acknowledged or cleared' });
+    return res.json({ success: true, message: 'Alarm already acknowledged or cleared', resolvedAlarmsCount });
   }
 
-  alarm.isAcknowledged = true;
-  alarm.acknowledgedBy = nurseName;
+  if (!alarm.isAcknowledged) {
+    alarm.isAcknowledged = true;
+    alarm.acknowledgedBy = nurseName;
+    resolvedAlarmsCount++;
+  }
 
   auditTrail.unshift({
     timestamp: new Date().toISOString(),
     action: 'ALARM_ACKNOWLEDGED',
-    details: `Alarm ${alarmId} acknowledged by ${nurseName}. Audio alarm silenced.`
+    details: `Alarm ${alarmId} acknowledged and handled by ${nurseName}. Audio alarm silenced.`
   });
 
-  console.log(`🔕 [Alarm Acknowledged] ${alarmId} acknowledged by ${nurseName}. Auto-escalation stopped.`);
-  io.emit('alarm_acknowledged', { alarmId, nurseName });
+  console.log(`🔕 [Alarm Handled] ${alarmId} acknowledged by ${nurseName}. Total resolved: ${resolvedAlarmsCount}`);
+  io.emit('alarm_acknowledged', { alarmId, nurseName, resolvedAlarmsCount });
+  io.emit('alarm_stats', { resolvedAlarmsCount, activeAlarmsCount: activeAlarms.filter(a => !a.isAcknowledged).length });
   io.emit('critical_alarm', activeAlarms);
 
-  res.json({ success: true, alarm });
+  res.json({ success: true, alarm, resolvedAlarmsCount });
 });
 
 // 5b. Clear / Silence Alarm
 app.post('/api/alarms/clear', (req, res) => {
   const { alarmId } = req.body || {};
   if (alarmId) {
+    const alarm = activeAlarms.find(a => a.id === alarmId);
+    if (alarm && !alarm.isAcknowledged) {
+      resolvedAlarmsCount++;
+    }
     activeAlarms = activeAlarms.filter(a => a.id !== alarmId);
   } else {
+    const unack = activeAlarms.filter(a => !a.isAcknowledged).length;
+    resolvedAlarmsCount += unack;
     activeAlarms = [];
   }
 
   auditTrail.unshift({
     timestamp: new Date().toISOString(),
     action: 'ALARM_CLEARED',
-    details: `Alarm ${alarmId || 'ALL'} cleared and silenced by clinician.`
+    details: `Alarm ${alarmId || 'ALL'} cleared and resolved by clinician.`
   });
 
-  console.log(`🔕 [Alarm Cleared] Alarm ${alarmId || 'ALL'} cleared. Remaining active: ${activeAlarms.length}`);
-  io.emit('alarm_cleared', { alarmId: alarmId || 'ALL' });
+  console.log(`🔕 [Alarm Cleared] Alarm ${alarmId || 'ALL'} cleared. Total resolved: ${resolvedAlarmsCount}`);
+  io.emit('alarm_cleared', { alarmId: alarmId || 'ALL', resolvedAlarmsCount });
+  io.emit('alarm_stats', { resolvedAlarmsCount, activeAlarmsCount: activeAlarms.length });
   io.emit('critical_alarm', activeAlarms);
-  res.json({ success: true, activeAlarms });
+  res.json({ success: true, activeAlarms, resolvedAlarmsCount });
+});
+
+// 5c. Alarm Statistics (for live appreciation and reporting)
+app.get('/api/alarms/stats', (req, res) => {
+  res.json({
+    resolvedAlarmsCount,
+    activeAlarmsCount: activeAlarms.filter(a => !a.isAcknowledged).length,
+    auditTrailCount: auditTrail.length,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // 6. Audit Trail
@@ -245,16 +331,24 @@ io.on('connection', (socket) => {
   socket.emit('vitals_update', telemetryState);
   socket.emit('node_status', nodeHealthState);
   socket.emit('critical_alarm', activeAlarms);
+  socket.emit('alarm_stats', {
+    resolvedAlarmsCount,
+    activeAlarmsCount: activeAlarms.filter(a => !a.isAcknowledged).length
+  });
 
   // Client acknowledges alarm
   socket.on('acknowledge_alarm', (data) => {
     const { alarm_id, nurse } = data || {};
     const alarm = activeAlarms.find(a => a.id === alarm_id);
     if (alarm) {
-      alarm.isAcknowledged = true;
-      alarm.acknowledgedBy = nurse || 'Nurse Sarah';
-      console.log(`✅ [Alarm Ack] ${alarm_id} acknowledged by ${alarm.acknowledgedBy}. Audio silenced.`);
-      io.emit('alarm_acknowledged', { alarmId: alarm_id, nurseName: alarm.acknowledgedBy });
+      if (!alarm.isAcknowledged) {
+        alarm.isAcknowledged = true;
+        resolvedAlarmsCount++;
+      }
+      alarm.acknowledgedBy = nurse || 'Sister Sunita Rao';
+      console.log(`✅ [Alarm Ack] ${alarm_id} acknowledged by ${alarm.acknowledgedBy}. Total resolved: ${resolvedAlarmsCount}`);
+      io.emit('alarm_acknowledged', { alarmId: alarm_id, nurseName: alarm.acknowledgedBy, resolvedAlarmsCount });
+      io.emit('alarm_stats', { resolvedAlarmsCount, activeAlarmsCount: activeAlarms.filter(a => !a.isAcknowledged).length });
       io.emit('critical_alarm', activeAlarms);
     }
   });
@@ -263,12 +357,18 @@ io.on('connection', (socket) => {
   socket.on('clear_alarm', (data) => {
     const { alarm_id } = data || {};
     if (alarm_id) {
+      const alarm = activeAlarms.find(a => a.id === alarm_id);
+      if (alarm && !alarm.isAcknowledged) {
+        resolvedAlarmsCount++;
+      }
       activeAlarms = activeAlarms.filter(a => a.id !== alarm_id);
     } else {
+      resolvedAlarmsCount += activeAlarms.filter(a => !a.isAcknowledged).length;
       activeAlarms = [];
     }
-    console.log(`🔕 [Socket.IO] Alarm ${alarm_id || 'ALL'} cleared.`);
-    io.emit('alarm_cleared', { alarmId: alarm_id || 'ALL' });
+    console.log(`🔕 [Socket.IO] Alarm ${alarm_id || 'ALL'} cleared. Total resolved: ${resolvedAlarmsCount}`);
+    io.emit('alarm_cleared', { alarmId: alarm_id || 'ALL', resolvedAlarmsCount });
+    io.emit('alarm_stats', { resolvedAlarmsCount, activeAlarmsCount: activeAlarms.length });
     io.emit('critical_alarm', activeAlarms);
   });
 

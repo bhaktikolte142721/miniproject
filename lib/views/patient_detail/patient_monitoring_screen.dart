@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_button.dart';
 import '../../core/widgets/ecg_sweep_painter.dart';
@@ -11,7 +10,8 @@ import '../../core/widgets/sentinel_vitals_grid.dart';
 import '../../models/patient.dart';
 import '../../models/telemetry_data.dart';
 import '../../providers/telemetry_provider.dart';
-import '../../providers/alerts_provider.dart';
+import '../../providers/nurse_provider.dart';
+import '../reports/clinical_report_dialog.dart';
 
 /// Screen 5: Detailed Patient Monitoring & Waveform View (Reference: Bottom-Center).
 class PatientMonitoringScreen extends ConsumerStatefulWidget {
@@ -80,7 +80,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                           'ID: ${widget.patient.id} • ${widget.patient.diagnosis}',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
-                            fontSize: 11,
+                            fontSize: 14.5,
                           ),
                         ),
                       ],
@@ -253,7 +253,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                                       ],
                                     ),
                                     content: Text(
-                                      'Emergency bedside call alert transmitted to Nurse Sarah Jenkins for ${widget.patient.bedLabel} (${widget.patient.name}).',
+                                      'Emergency bedside call alert transmitted to ${ref.read(activeNurseProvider).name} for ${widget.patient.bedLabel} (${widget.patient.name}).',
                                       style: AppTextStyles.bodyMedium,
                                     ),
                                     actions: [
@@ -271,7 +271,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                             // 2. Real-time ECG Sweep Line Waveform
                             const Text(
                               'Live Hospital Monitor Rhythm (Lead II)',
-                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
                             ),
                             const SizedBox(height: 12),
                             EcgSweepView(
@@ -305,7 +305,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                             // 3. 15-Minute Historical Trend Charts (fl_chart)
                             const Text(
                               '15-Minute Telemetry Trend Trends',
-                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
                             ),
                             const SizedBox(height: 12),
                             Container(
@@ -369,9 +369,10 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                             solidColor: isCritical ? AppColors.alertCritical : null,
                             onPressed: () {
                               if (isCritical) {
+                                final activeNurse = ref.read(activeNurseProvider);
                                 mockService.acknowledgeAlert(
                                   'ALT-${widget.patient.bedId}',
-                                  'Nurse Sarah',
+                                  activeNurse.name,
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -382,14 +383,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                                   ),
                                 );
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.primaryTeal,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                    content: const Text('Full Telemetry Dossier Exported to Ward EMR.'),
-                                  ),
-                                );
+                                ClinicalReportDialog.show(context);
                               }
                             },
                           ),
@@ -478,105 +472,13 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 15.5,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               color: isSelected ? AppColors.primaryTeal : AppColors.textSecondary,
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailMetricTile({
-    required String label,
-    required String value,
-    required String unit,
-    required String status,
-    required Color color,
-  }) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-      decoration: BoxDecoration(
-        color: AppColors.cardSurface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardBorder, width: 1.2),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Color(0xD9FFFFFF),
-            blurRadius: 8,
-            offset: Offset(-2, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(label, style: AppTextStyles.bodySmall),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                value,
-                style: AppTextStyles.telemetryMedium.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
-              ),
-              if (unit.isNotEmpty) ...[
-                const SizedBox(width: 2),
-                Text(
-                  unit,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              status,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRangeRow(String label, String normalRange, String current, bool isViolation) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-            Text('Target: $normalRange', style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted)),
-          ],
-        ),
-        Text(
-          current,
-          style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w700,
-            color: isViolation ? AppColors.alertCritical : AppColors.textPrimary,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -14,18 +14,21 @@ class SocketService {
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _alarmStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<int> _resolvedAlarmsCountController =
+      StreamController<int>.broadcast();
   final StreamController<bool> _connectionStreamController =
       StreamController<bool>.broadcast();
 
   Stream<Map<String, dynamic>> get onVitalsUpdate => _vitalsStreamController.stream;
   Stream<Map<String, dynamic>> get onNodeStatus => _nodeStatusStreamController.stream;
   Stream<Map<String, dynamic>> get onCriticalAlarm => _alarmStreamController.stream;
+  Stream<int> get onResolvedAlarmsCount => _resolvedAlarmsCountController.stream;
   Stream<bool> get onConnectionChanged => _connectionStreamController.stream;
 
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 
-  SocketService({String serverUrl = 'http://192.168.1.142:3000'})
+  SocketService({String serverUrl = 'http://localhost:3000'})
       : _serverUrl = serverUrl;
 
   /// Connects to the telemetry socket server.
@@ -78,6 +81,27 @@ class SocketService {
         }
       });
 
+      _socket?.on('alarm_stats', (data) {
+        if (data is Map<String, dynamic> && data['resolvedAlarmsCount'] != null) {
+          final count = (data['resolvedAlarmsCount'] as num).toInt();
+          _resolvedAlarmsCountController.add(count);
+        }
+      });
+
+      _socket?.on('alarm_acknowledged', (data) {
+        if (data is Map<String, dynamic> && data['resolvedAlarmsCount'] != null) {
+          final count = (data['resolvedAlarmsCount'] as num).toInt();
+          _resolvedAlarmsCountController.add(count);
+        }
+      });
+
+      _socket?.on('alarm_cleared', (data) {
+        if (data is Map<String, dynamic> && data['resolvedAlarmsCount'] != null) {
+          final count = (data['resolvedAlarmsCount'] as num).toInt();
+          _resolvedAlarmsCountController.add(count);
+        }
+      });
+
       _socket?.connect();
     } catch (e) {
       debugPrint('⚠️ [SocketService] Socket initialization error: $e');
@@ -92,6 +116,13 @@ class SocketService {
       'alarm_id': alarmId,
       'nurse': nurseName,
       'timestamp': DateTime.now().toIso8601String(),
+    });
+  }
+
+  /// Clears an active alarm on the backend
+  void clearAlarm(String alarmId) {
+    _socket?.emit('clear_alarm', {
+      'alarm_id': alarmId,
     });
   }
 

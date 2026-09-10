@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'web_audio_helper.dart';
 
 /// Clinical Alarm Priority levels according to IEC 60601-1-8.
 enum AlarmPriority {
@@ -28,6 +28,13 @@ class AudioAlertService {
   final StreamController<bool> _muteStateController = StreamController<bool>.broadcast();
   Stream<bool> get onMuteStateChanged => _muteStateController.stream;
 
+  /// Call this once on first user interaction to unlock AudioContext on web.
+  void unlockAudio() {
+    if (kIsWeb) {
+      unlockWebAudio();
+    }
+  }
+
   void toggleMute() {
     _isMuted = !_isMuted;
     if (_isMuted) {
@@ -53,10 +60,10 @@ class AudioAlertService {
   /// Plays a warning notification tone (two-tone chime)
   void playWarningTone() {
     if (_isMuted) return;
-    _playTone(frequency: 659.25, durationMs: 120, volume: 0.35); // E5
+    _playTone(frequency: 659.25, durationMs: 120, volume: 0.4); // E5
     Future.delayed(const Duration(milliseconds: 140), () {
       if (!_isMuted) {
-        _playTone(frequency: 523.25, durationMs: 160, volume: 0.35); // C5
+        _playTone(frequency: 523.25, durationMs: 160, volume: 0.4); // C5
       }
     });
   }
@@ -85,11 +92,11 @@ class AudioAlertService {
   void _playCriticalBurst() {
     if (_isMuted) return;
 
-    // Standard clinical 3-pulse urgent triplet
-    const tones = [
-      {'freq': 987.77, 'delay': 0, 'dur': 100},    // B5
-      {'freq': 987.77, 'delay': 140, 'dur': 100},  // B5
-      {'freq': 1318.51, 'delay': 280, 'dur': 180}, // E6 (high spike)
+    // Standard clinical 3-pulse urgent triplet (IEC 60601-1-8 HIGH priority)
+    final tones = [
+      {'freq': 987.77,  'delay': 0,   'dur': 120},  // B5
+      {'freq': 987.77,  'delay': 160, 'dur': 120},  // B5
+      {'freq': 1318.51, 'delay': 320, 'dur': 200},  // E6 (high spike)
     ];
 
     for (final tone in tones) {
@@ -98,62 +105,31 @@ class AudioAlertService {
           _playTone(
             frequency: (tone['freq'] as num).toDouble(),
             durationMs: tone['dur'] as int,
-            volume: 0.6,
+            volume: 0.7,
           );
         }
       });
     }
   }
 
-  /// Dispatches audio tone via platform channel or web synth
+  /// Dispatches audio tone via Web Audio API (web) or system sound (native)
   void _playTone({
     required double frequency,
     required int durationMs,
     required double volume,
   }) {
-    // Attempt standard system haptics & audio click
+    // Native: haptics + system sound click
     try {
       if (frequency > 900) {
         HapticFeedback.heavyImpact();
-        SystemSound.play(SystemSoundType.alert);
       } else {
         HapticFeedback.lightImpact();
-        SystemSound.play(SystemSoundType.click);
       }
     } catch (_) {}
 
-    // On Web, instantiate Web Audio API synthesizer if running in browser
+    // Web: synthesise tone via Web Audio API through JS interop
     if (kIsWeb) {
-      _playWebAudioTone(frequency, durationMs, volume);
+      evalWebAudio(frequency, durationMs, volume);
     }
-  }
-
-  void _playWebAudioTone(double freq, int durMs, double vol) {
-    // Dynamically invokes Web Audio API via JS interop on Flutter Web
-    try {
-      final script = '''
-        if (!window.__sentinelAudioCtx) {
-          window.__sentinelAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        var ctx = window.__sentinelAudioCtx;
-        if (ctx.state === 'suspended') { ctx.resume(); }
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime($freq, ctx.currentTime);
-        gain.gain.setValueAtTime($vol, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + ${durMs / 1000.0});
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + ${durMs / 1000.0});
-      ''';
-      // In web builds, this can execute through web interop
-      _evalWebScript(script);
-    } catch (_) {}
-  }
-
-  void _evalWebScript(String script) {
-    // Handled safely without crashes across mobile / desktop / web
   }
 }

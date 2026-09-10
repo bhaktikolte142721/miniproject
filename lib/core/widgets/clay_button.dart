@@ -52,7 +52,7 @@ class _ClayButtonState extends State<ClayButton> {
       child: GestureDetector(
         onTapDown: isEnabled ? (_) => setState(() => _isDown = true) : null,
         onTapUp: isEnabled ? (_) => setState(() => _isDown = false) : null,
-        onTapCancel: isEnabled ? (_) => setState(() => _isDown = false) : null,
+        onTapCancel: isEnabled ? () => setState(() => _isDown = false) : null,
         onTap: isEnabled ? widget.onPressed : null,
         behavior: HitTestBehavior.opaque,
         child: Container(

@@ -5,13 +5,162 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="SENTINEL-Ward: Multi-Patient Acute Care Vitals Telemetry System">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="SENTINEL-Ward">
   <title>SENTINEL-Ward • Acute Vitals Telemetry</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Preload Google Fonts for offline-safe rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #F0F7F9 0%, #E8F5F7 50%, #F5F0FF 100%);
+      font-family: 'Inter', 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #F0F7F9 0%, #E8F5F7 50%, #F5F0FF 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .pulse-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #4ECDC4;
+      animation: pulse 1.4s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pulse-ring::before {
+      content: '♥';
+      font-size: 28px;
+      color: #4ECDC4;
+      animation: heartbeat 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(78,205,196,0.4); }
+      50% { transform: scale(1.08); box-shadow: 0 0 0 20px rgba(78,205,196,0); }
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .loading-text {
+      margin-top: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4ECDC4;
+      letter-spacing: 0.05em;
+    }
+    .loading-sub {
+      margin-top: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #90A4AE;
+    }
+    #flutter-target { width: 100%; height: 100vh; }
+  </style>
 </head>
-<body style="margin: 0; background: #F5F9FA; font-family: sans-serif;">
-  <script src="flutter.js" defer></script>
+<body>
+
+  <!-- Loading screen shown while Flutter bootstraps -->
+  <div id="loading-overlay">
+    <div class="pulse-ring"></div>
+    <div class="loading-text">SENTINEL-Ward</div>
+    <div class="loading-sub">Initializing vitals monitor…</div>
+  </div>
+
+  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // ─── Web Audio API for SENTINEL-Ward Alarm System ─────────────────────────
+    // Shared AudioContext (created lazily on first user interaction)
+    window.__sentinelAudioCtx = null;
+
+    function _getAudioCtx() {
+      if (!window.__sentinelAudioCtx) {
+        window.__sentinelAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return window.__sentinelAudioCtx;
+    }
+
+    // Called by Flutter via dart:js to play a synthesised tone
+    window.sentinelPlayTone = function(freq, durMs, vol) {
+      try {
+        var ctx = _getAudioCtx();
+        if (ctx.state === 'suspended') { ctx.resume(); }
+
+        var osc  = ctx.createOscillator();
+        var gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + durMs / 1000.0);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + durMs / 1000.0);
+      } catch(e) {
+        console.warn('sentinelPlayTone error:', e);
+      }
+    };
+
+    // Called once after first user click to unlock AudioContext (browser policy)
+    window.sentinelUnlockAudio = function() {
+      try {
+        var ctx = _getAudioCtx();
+        if (ctx.state === 'suspended') { ctx.resume(); }
+      } catch(e) {}
+    };
+
+    // Auto-unlock on any first interaction with the page
+    var _audioUnlocked = false;
+    function _unlockOnInteraction() {
+      if (_audioUnlocked) return;
+      _audioUnlocked = true;
+      window.sentinelUnlockAudio();
+      document.removeEventListener('click',     _unlockOnInteraction);
+      document.removeEventListener('touchstart', _unlockOnInteraction);
+      document.removeEventListener('keydown',   _unlockOnInteraction);
+    }
+    document.addEventListener('click',      _unlockOnInteraction);
+    document.addEventListener('touchstart', _unlockOnInteraction);
+    document.addEventListener('keydown',    _unlockOnInteraction);
+
+    // ─── Flutter first-frame: hide loading overlay ────────────────────────────
+    window.addEventListener('flutter-first-frame', function() {
+      var overlay = document.getElementById('loading-overlay');
+      if (overlay) {
+        overlay.classList.add('hidden');
+        setTimeout(function() { overlay.remove(); }, 600);
+      }
+    });
+  </script>
 </body>
 </html>
+
+
+
