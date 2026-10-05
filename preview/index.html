@@ -9,7 +9,7 @@
   <title>SENTINEL-Ward • Multi-Patient Vitals Telemetry Workstation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-start: #F5F9FA;
@@ -38,26 +38,28 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
+    /* Fixed Workstation Viewport Frame Constraints */
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
       font-family: 'Poppins', 'Inter', sans-serif;
       background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-      min-height: 100vh;
       color: var(--text-primary);
-      display: flex;
-      flex-direction: column;
     }
 
-    /* Top Universal Workstation Bar */
+    /* Top Universal Workstation Header (Fixed 64px) */
     .top-workstation-bar {
-      background: rgba(255, 255, 255, 0.88);
+      height: 64px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(14px);
       border-bottom: 1.5px solid var(--card-border);
-      padding: 12px 28px;
+      padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
+      position: relative;
       z-index: 100;
       box-shadow: 0 4px 16px rgba(0,0,0,0.03);
     }
@@ -69,13 +71,13 @@
     }
 
     .brand-logo-area img {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       object-fit: contain;
     }
 
     .brand-titles h1 {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.4px;
       color: var(--text-primary);
@@ -146,24 +148,30 @@
       color: var(--alert-critical);
     }
 
-    /* Main App Layout */
+    /* Main App Layout Container (Fills exact remaining viewport) */
     .app-layout {
       display: flex;
-      flex: 1;
-      min-height: calc(100vh - 68px);
+      height: calc(100vh - 64px);
+      max-height: calc(100vh - 64px);
+      overflow: hidden;
+      position: relative;
       transition: all 0.3s ease;
     }
 
     /* Sidebar Navigation (Desktop) */
     .app-sidebar {
       width: 270px;
-      background: rgba(255, 255, 255, 0.7);
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(16px);
       border-right: 1.5px solid var(--card-border);
-      padding: 24px 18px;
+      padding: 22px 18px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .sidebar-heading {
@@ -172,7 +180,7 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin: 14px 12px 6px 12px;
+      margin: 12px 12px 6px 12px;
     }
 
     .nav-button {
@@ -240,33 +248,62 @@
       font-weight: 800;
       color: var(--primary-teal);
       font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    /* Phone Device Frame Container */
+    .phone-device-frame {
+      display: contents; /* In default laptop mode, acts as invisible pass-through */
+    }
+
+    .phone-notch-bar {
+      display: none;
+    }
+
+    .phone-home-indicator {
+      display: none;
     }
 
     /* Main Viewport Content */
     .main-viewport {
       flex: 1;
-      padding: 28px 36px 60px 36px;
+      height: 100%;
+      padding: 24px 32px 64px 32px;
       overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
-    /* When Phone View Mode is Toggled */
-    .app-layout.phone-mode {
-      justify-content: center;
-      padding: 24px 0;
+    /* Responsive Workstation Container Constraint */
+    .workstation-container {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    .app-layout.phone-mode .app-sidebar {
+    /* Section Views */
+    .section-view {
       display: none;
+      animation: fadeIn 0.25s ease-out;
     }
 
-    .app-layout.phone-mode .main-viewport {
-      max-width: 420px;
-      padding: 16px;
-      background: #FFFFFF;
-      border-radius: 44px;
-      border: 10px solid #FFFFFF;
-      box-shadow: 0 25px 60px rgba(0, 77, 64, 0.18);
-      position: relative;
+    .section-view.active {
+      display: block;
+    }
+
+    .section-heading {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      margin-top: 0;
+      padding-top: 2px;
+      line-height: 1.25;
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Claymorphic Card */
@@ -282,21 +319,6 @@
 
     .clay-card.critical {
       border-color: var(--alert-critical);
-    }
-
-    /* Section Views */
-    .section-view {
-      display: none;
-      animation: fadeIn 0.25s ease-out;
-    }
-
-    .section-view.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Grid Layouts */
@@ -334,64 +356,409 @@
 
     /* Pill Button */
     .clay-btn {
-      height: 52px;
+      height: 48px;
       border-radius: 30px;
       background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal));
       border: none;
       color: #FFFFFF;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       box-shadow: var(--button-shadow);
-      padding: 0 28px;
+      padding: 0 24px;
       transition: transform 0.1s ease;
-      gap: 12px;
+      gap: 10px;
     }
 
     .clay-btn:active {
       transform: scale(0.98);
     }
 
-    /* Mobile Bottom Navigation (Visible only on mobile/phone mode) */
+    /* ========================================================
+       STAFF PRAISE & ATTENDED PATIENTS RECOGNITION HERO CARD
+       ======================================================== */
+    .nurse-praise-card {
+      background: linear-gradient(135deg, #093832 0%, #0F4C43 45%, #18655A 100%);
+      border-radius: 26px;
+      border: 1.8px solid rgba(77, 182, 172, 0.55);
+      padding: 22px 24px;
+      color: #FFFFFF;
+      box-shadow: 0 16px 36px rgba(9, 56, 50, 0.32), 0 0 0 1px rgba(255,255,255,0.12) inset;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .nurse-praise-card::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(0, 191, 165, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .nurse-praise-card.pulse-celebrate {
+      animation: praisePulse 0.6s ease;
+    }
+
+    @keyframes praisePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); filter: brightness(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .praise-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .praise-gold-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 213, 79, 0.2);
+      border: 1.5px solid rgba(255, 213, 79, 0.8);
+      color: #FFE082;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      box-shadow: 0 2px 8px rgba(255, 213, 79, 0.2);
+    }
+
+    .praise-teal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #E0F2F1;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .praise-main-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .praise-shield-box {
+      width: 74px;
+      height: 74px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255, 213, 79, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25), 0 0 16px rgba(255, 213, 79, 0.35);
+    }
+
+    .praise-shield-box img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+    }
+
+    .praise-metrics-grid {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .praise-metric-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .praise-metric-number {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .praise-metric-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #E0F2F1;
+      margin-top: 4px;
+    }
+
+    .praise-affirmation-row {
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 16px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .praise-quote {
+      font-style: italic;
+      font-size: 13.5px;
+      color: #E0F2F1;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .praise-action-btn {
+      background: linear-gradient(135deg, #FFD54F, #FFB300);
+      color: #3E2723;
+      font-weight: 800;
+      font-size: 13px;
+      border-radius: 12px;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    .praise-action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Modal Overlay & Appreciation Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      border-radius: 28px;
+      max-width: 520px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+      border: 1.5px solid var(--card-border);
+      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #F1F5F9;
+      color: #64748B;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .modal-close-btn:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(16px) scale(0.97); }
+      to { transform: translateY(0) scale(1); }
+    }
+
+    /* Mobile Bottom Navigation */
     .mobile-bottom-nav {
       display: none;
     }
 
+    /* ========================================================
+       FRAME CONSTRAINTS: WHEN PHONE VIEW MODE IS TOGGLED
+       ======================================================== */
+    .app-layout.phone-mode {
+      justify-content: center;
+      align-items: center;
+      padding: 12px 0;
+      background: rgba(15, 23, 42, 0.06);
+    }
+
+    .app-layout.phone-mode .app-sidebar {
+      display: none;
+    }
+
+    .app-layout.phone-mode .phone-device-frame {
+      display: flex;
+      flex-direction: column;
+      max-width: 412px;
+      width: 100%;
+      height: calc(100vh - 88px);
+      max-height: 820px;
+      background: #FFFFFF;
+      border-radius: 46px;
+      border: 12px solid #1E293B;
+      box-shadow: 0 25px 60px rgba(0, 77, 64, 0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+      position: relative;
+      overflow: hidden;
+      margin: auto;
+    }
+
+    .app-layout.phone-mode .phone-notch-bar {
+      display: flex;
+      justify-content: center;
+      padding-top: 8px;
+      padding-bottom: 4px;
+      background: #FFFFFF;
+      z-index: 20;
+    }
+
+    .phone-notch-pill {
+      width: 90px;
+      height: 16px;
+      background: #1E293B;
+      border-radius: 10px;
+    }
+
+    .app-layout.phone-mode .phone-home-indicator {
+      display: block;
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: #94A3B8;
+      border-radius: 3px;
+      z-index: 101;
+    }
+
+    .app-layout.phone-mode .main-viewport {
+      padding: 12px 14px 84px 14px;
+      background: #F8FAFC;
+    }
+
+    .app-layout.phone-mode .mobile-bottom-nav {
+      display: flex;
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      border: 1.2px solid var(--card-border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      align-items: center;
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .mobile-nav-item {
+      font-size: 20px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 16px;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .mobile-nav-item.active {
+      background: var(--mint-light);
+      color: var(--primary-teal);
+    }
+
+    .mobile-badge {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      background: var(--alert-critical);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 8px;
+    }
+
+    /* ========================================================
+       FRAME CONSTRAINTS: RESPONSIVE MEDIA QUERIES (TABLET / MOBILE)
+       ======================================================== */
     @media (max-width: 900px) {
+      .top-workstation-bar {
+        padding: 0 16px;
+      }
+      .brand-titles h1 {
+        font-size: 16px;
+      }
+      .brand-titles span.tag {
+        display: none;
+      }
       .app-sidebar {
         display: none;
       }
       .main-viewport {
-        padding: 16px 18px 90px 18px;
+        padding: 16px 14px 84px 14px;
       }
       .mobile-bottom-nav {
         display: flex;
         position: fixed;
-        bottom: 16px;
-        left: 20px;
-        right: 20px;
-        height: 64px;
-        background: #FFFFFF;
-        border-radius: 32px;
+        bottom: 12px;
+        left: 14px;
+        right: 14px;
+        height: 58px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 30px;
         border: 1.2px solid var(--card-border);
-        box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.1);
         align-items: center;
         justify-content: space-around;
         z-index: 90;
       }
-      .mobile-nav-item {
-        font-size: 22px;
-        cursor: pointer;
-        padding: 8px 16px;
-        border-radius: 20px;
-        color: var(--text-muted);
+      .beds-grid {
+        grid-template-columns: 1fr;
       }
-      .mobile-nav-item.active {
-        background: var(--mint-light);
-        color: var(--primary-teal);
+      .vitals-2x2-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .praise-main-row {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -452,295 +819,452 @@
       </div>
 
       <div class="nurse-profile-card">
-        <div class="nurse-avatar">AR</div>
+        <div class="nurse-avatar">SJ</div>
         <div>
-          <div style="font-size: 13px; font-weight: 800;">Sister Ananya Roy</div>
+          <div style="font-size: 13px; font-weight: 800;">Nurse Sarah Jenkins</div>
           <div style="font-size: 11px; color: var(--text-secondary);">Lead Triage • RN #88192</div>
         </div>
       </div>
     </aside>
 
-    <!-- Main Viewport Content -->
-    <main class="main-viewport">
+    <!-- Phone Device Shell (Active in Phone Mode, transparent wrapper in Laptop Mode) -->
+    <div class="phone-device-frame" id="phoneDeviceFrame">
+      <div class="phone-notch-bar">
+        <div class="phone-notch-pill"></div>
+      </div>
 
-      <!-- SECTION 0: SHIFT OVERVIEW -->
-      <section class="section-view active" id="section-0">
-        <!-- Wide Teal Hero Banner -->
-        <div style="background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal)); border-radius: 28px; padding: 28px 36px; color: #fff; box-shadow: 0 16px 36px rgba(0, 191, 165, 0.3); margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <span style="background: rgba(255,255,255,0.22); font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 12px;">● ESP32 Gateway: Synchronized</span>
-            <h2 style="font-size: 26px; font-weight: 800; margin-top: 10px;">Acute Ward 3B Central Telemetry</h2>
-            <p style="font-size: 13px; opacity: 0.95; margin-top: 4px;">Continuous physiological monitoring across Bed 01, Bed 02, and Bed 03 via nRF24 wireless nodes.</p>
-            <div style="display: flex; gap: 12px; margin-top: 18px;">
-              <button class="clay-btn" style="background: #fff; color: var(--primary-teal); box-shadow: 0 6px 16px rgba(0,0,0,0.1);" onclick="switchSection(1)">View Live Patient Grid ➔</button>
-              <button class="clay-btn" style="background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.4);" onclick="switchSection(4)">Inspect Alarms Feed</button>
-            </div>
-          </div>
-          <img src="assets/images/vital_monitor_3d.png" style="width: 140px; height: 140px; object-fit: contain;" alt="Monitor">
-        </div>
+      <!-- Main Viewport Content -->
+      <main class="main-viewport" id="mainViewport">
+        <div class="workstation-container">
 
-        <!-- 3-Bed Status Metric Row -->
-        <div class="beds-grid" style="margin-bottom: 24px;">
-          <div class="clay-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
-              <span style="font-size: 12px; font-weight: 700; color: var(--primary-teal);">Optimal (98%)</span>
+          <!-- ==========================================
+               SECTION 0: SHIFT OVERVIEW
+               ========================================== -->
+          <section class="section-view active" id="section-0">
+            <!-- Wide Teal Hero Banner -->
+            <div style="background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal)); border-radius: 28px; padding: 26px 32px; color: #fff; box-shadow: 0 16px 36px rgba(0, 191, 165, 0.3); margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+              <div style="flex: 1; min-width: 260px;">
+                <span style="background: rgba(255,255,255,0.22); font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 12px;">● ESP32 Gateway: Synchronized</span>
+                <h2 style="font-size: 24px; font-weight: 800; margin-top: 10px;">Acute Ward 3B Central Telemetry</h2>
+                <p style="font-size: 13px; opacity: 0.95; margin-top: 4px;">Continuous physiological monitoring across Bed 01, Bed 02, and Bed 03 via nRF24 wireless nodes.</p>
+                <div style="display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+                  <button class="clay-btn" style="background: #fff; color: var(--primary-teal); box-shadow: 0 6px 16px rgba(0,0,0,0.1);" onclick="switchSection(1)">View Live Patient Grid ➔</button>
+                  <button class="clay-btn" style="background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.4);" onclick="switchSection(4)">Inspect Alarms Feed</button>
+                </div>
+              </div>
+              <img src="assets/images/vital_monitor_3d.png" style="width: 120px; height: 120px; object-fit: contain;" alt="Monitor">
             </div>
-            <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Priya Sharma (34F)</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Post-Op Laparoscopic • RSSI -58 dBm</div>
-            <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
-              <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-1">72 BPM</strong></div>
-              <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--primary-teal);" id="live-spo2-1">99%</strong></div>
-              <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-1">36.8°C</strong></div>
-            </div>
-          </div>
 
-          <div class="clay-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
-              <span style="font-size: 12px; font-weight: 700; color: var(--alert-warning);">Checking...</span>
-            </div>
-            <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Rajesh Kulkarni (58M)</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">COPD Observation • RSSI -64 dBm</div>
-            <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
-              <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-2">88 BPM</strong></div>
-              <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--alert-warning);" id="live-spo2-2">94%</strong></div>
-              <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-2">37.6°C</strong></div>
-            </div>
-          </div>
-
-          <div class="clay-card critical" style="background: #FFF5F5;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
-              <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
-            </div>
-            <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Sunita Patel (62F)</div>
-            <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600; margin-top: 2px;">Hypoxemia: Sustained SpO2 &lt; 88%</div>
-            <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2;">
-              <div><span style="font-size: 10px; color: var(--alert-critical);">HR:</span> <strong style="color: var(--alert-critical);" id="live-hr-3">118 BPM</strong></div>
-              <div><span style="font-size: 10px; color: var(--alert-critical);">SpO2:</span> <strong style="color: var(--alert-critical);" id="live-spo2-3">87%</strong></div>
-              <div><span style="font-size: 10px; color: var(--alert-critical);">Temp:</span> <strong style="color: var(--alert-critical);" id="live-temp-3">38.6°C</strong></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 1: LIVE WARD GRID -->
-      <section class="section-view" id="section-1">
-        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 18px;">Live Multi-Patient Grid Dashboard</h2>
-        <div class="beds-grid">
-          <!-- Bed 01 Full Card -->
-          <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
-            <div style="display: flex; gap: 16px; align-items: center;">
-              <img src="assets/images/vital_heart_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Heart">
-              <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between;">
+            <!-- 3-Bed Status Metric Row -->
+            <div class="beds-grid" style="margin-bottom: 22px;">
+              <div class="clay-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                   <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
-                  <span style="font-weight: 700; color: var(--primary-teal);">Optimal</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--primary-teal);">Optimal (98%)</span>
                 </div>
-                <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Priya Sharma (34F)</div>
-                <div style="font-size: 12px; color: var(--text-muted);">Post-Op Laparoscopic • Sister Ananya Roy</div>
+                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Elena Rostova (34F)</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Post-Op Laparoscopic • RSSI -58 dBm</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
+                  <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-1">72 BPM</strong></div>
+                  <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--primary-teal);" id="live-spo2-1">99%</strong></div>
+                  <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-1">36.8°C</strong></div>
+                </div>
               </div>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
-                <div style="font-size: 18px; font-weight: 800;">72 BPM</div>
-              </div>
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">99%</div>
-              </div>
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
-                <div style="font-size: 18px; font-weight: 800;">36.8°C</div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Bed 02 Full Card -->
-          <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
-            <div style="display: flex; gap: 16px; align-items: center;">
-              <img src="assets/images/pulse_oximeter_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Oximeter">
-              <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between;">
+              <div class="clay-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                   <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
-                  <span style="font-weight: 700; color: var(--alert-warning);">Checking...</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--alert-warning);">Checking...</span>
                 </div>
-                <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Rajesh Kulkarni (58M)</div>
-                <div style="font-size: 12px; color: var(--text-muted);">Acute COPD • Brother Deepak Nair</div>
+                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Marcus Vance (58M)</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">COPD Observation • RSSI -64 dBm</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
+                  <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-2">88 BPM</strong></div>
+                  <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--alert-warning);" id="live-spo2-2">94%</strong></div>
+                  <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-2">37.6°C</strong></div>
+                </div>
               </div>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
-                <div style="font-size: 18px; font-weight: 800;">88 BPM</div>
-              </div>
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--alert-warning);">94%</div>
-              </div>
-              <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
-                <div style="font-size: 18px; font-weight: 800;">37.6°C</div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Bed 03 Full Card (Critical) -->
-          <div class="clay-card critical" style="background: #FFF5F5; cursor: pointer;" onclick="switchSection(2)">
-            <div style="display: flex; gap: 16px; align-items: center;">
-              <img src="assets/images/vital_monitor_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Monitor">
-              <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between;">
+              <div class="clay-card critical" style="background: #FFF5F5;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                   <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
-                  <span style="font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
+                  <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
                 </div>
-                <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Sunita Patel (62F)</div>
-                <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600;">Pneumonia & Sepsis • Desaturation</div>
+                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">David Chen (62M)</div>
+                <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600; margin-top: 2px;">Hypoxemia: Sustained SpO2 &lt; 88%</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2;">
+                  <div><span style="font-size: 10px; color: var(--alert-critical);">HR:</span> <strong style="color: var(--alert-critical);" id="live-hr-3">118 BPM</strong></div>
+                  <div><span style="font-size: 10px; color: var(--alert-critical);">SpO2:</span> <strong style="color: var(--alert-critical);" id="live-spo2-3">87%</strong></div>
+                  <div><span style="font-size: 10px; color: var(--alert-critical);">Temp:</span> <strong style="color: var(--alert-critical);" id="live-temp-3">38.6°C</strong></div>
+                </div>
               </div>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-              <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--alert-critical);">HEART RATE</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">118 BPM</div>
+
+            <!-- RESTORED: Staff Praise & Attended Patients Recognition Hero Card -->
+            <div class="nurse-praise-card" id="shiftOverviewPraiseCard">
+              <div class="praise-top-row">
+                <div class="praise-gold-badge">
+                  <span>🏆</span>
+                  <span>NURSE APPRECIATION</span>
+                </div>
+                <div class="praise-teal-badge">
+                  <span>⚡</span>
+                  <span>Quick Clinical Response</span>
+                </div>
               </div>
-              <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--alert-critical);">SPO2</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">87%</div>
+
+              <div class="praise-main-row">
+                <div class="praise-shield-box">
+                  <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
+                </div>
+
+                <div class="praise-metrics-grid">
+                  <div class="praise-metric-item">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                      <span class="praise-metric-number praise-resolved-val" id="praiseResolvedCount">1</span>
+                      <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
+                    </div>
+                    <div class="praise-metric-label">Alarms Handled Successfully</div>
+                  </div>
+
+                  <div class="praise-metric-item">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                      <span class="praise-metric-number" style="color: #80CBC4;" id="praisePatientsCount">3 / 3</span>
+                      <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
+                    </div>
+                    <div class="praise-metric-label">Patients Attended Today (100% Ward Coverage)</div>
+                  </div>
+                </div>
               </div>
-              <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                <div style="font-size: 10px; color: var(--alert-critical);">TEMP</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">38.6°C</div>
+
+              <div style="font-size: 13.5px; color: rgba(255,255,255,0.92); line-height: 1.45; margin-bottom: 14px;">
+                All acute patient alerts were checked and safely attended to by Sister Sarah Jenkins. Continuous wireless physiological monitoring active across Ward 3B.
+              </div>
+
+              <div class="praise-affirmation-row">
+                <div class="praise-quote">
+                  <span>🌟</span>
+                  <span>“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
+                </div>
+                <button class="praise-action-btn" onclick="openPraiseModal()">
+                  <span>👏</span>
+                  <span>Praise Staff</span>
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      <!-- SECTION 2: DETAILED PATIENT DIAGNOSTICS & WAVEFORMS (MATCHING REFERENCE UI) -->
-      <section class="section-view" id="section-2">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <div>
-            <h2 style="font-size: 22px; font-weight: 800;">Bed 01 • Elena Rostova (34F)</h2>
-            <p style="font-size: 13px; color: var(--text-secondary);">ID: P-8821 • Post-Op Laparoscopic • Room 304</p>
-          </div>
-          <button class="clay-btn" style="height: 44px; font-size: 13px;" onclick="alert('Full telemetry dossier exported to Hospital EHR.')">Export Medical EMR ➔</button>
-        </div>
+          <!-- ==========================================
+               SECTION 1: LIVE WARD GRID
+               ========================================== -->
+          <section class="section-view" id="section-1">
+            <h2 class="section-heading">Live Multi-Patient Grid Dashboard</h2>
+            <div class="beds-grid">
+              <!-- Bed 01 Full Card -->
+              <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
+                <div style="display: flex; gap: 16px; align-items: center;">
+                  <img src="assets/images/vital_heart_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Heart">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
+                      <span style="font-weight: 700; color: var(--primary-teal);">Optimal</span>
+                    </div>
+                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Elena Rostova (34F)</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Post-Op Laparoscopic • Nurse Sarah Jenkins</div>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
+                    <div style="font-size: 18px; font-weight: 800;">72 BPM</div>
+                  </div>
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">99%</div>
+                  </div>
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
+                    <div style="font-size: 18px; font-weight: 800;">36.8°C</div>
+                  </div>
+                </div>
+              </div>
 
-        <!-- Live ECG Rhythm Strip -->
-        <div class="ecg-box">
-          <canvas id="ecgCanvas" class="ecg-canvas"></canvas>
-        </div>
+              <!-- Bed 02 Full Card -->
+              <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
+                <div style="display: flex; gap: 16px; align-items: center;">
+                  <img src="assets/images/pulse_oximeter_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Oximeter">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
+                      <span style="font-weight: 700; color: var(--alert-warning);">Checking...</span>
+                    </div>
+                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Marcus Vance (58M)</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Acute COPD • Nurse Michael Chen</div>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
+                    <div style="font-size: 18px; font-weight: 800;">88 BPM</div>
+                  </div>
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-warning);">94%</div>
+                  </div>
+                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
+                    <div style="font-size: 18px; font-weight: 800;">37.6°C</div>
+                  </div>
+                </div>
+              </div>
 
-        <!-- 2x2 Telemetry Cards Grid matching Reference Image -->
-        <div class="vitals-2x2-grid">
-          <!-- Card 1: Heart Rate -->
-          <div class="clay-card" style="margin-bottom: 0;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Heart Rate</div>
-            <div style="text-align: center; margin: 14px 0;">
-              <img src="assets/images/heart_ecg_strip_3d.png" style="height: 85px; object-fit: contain;" alt="Heart Rate">
+              <!-- Bed 03 Full Card (Critical) -->
+              <div class="clay-card critical" style="background: #FFF5F5; cursor: pointer;" onclick="switchSection(2)">
+                <div style="display: flex; gap: 16px; align-items: center;">
+                  <img src="assets/images/vital_monitor_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Monitor">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
+                      <span style="font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
+                    </div>
+                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">David Chen (62M)</div>
+                    <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600;">Pneumonia & Sepsis • Desaturation</div>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--alert-critical);">HEART RATE</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">118 BPM</div>
+                  </div>
+                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--alert-critical);">SPO2</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">87%</div>
+                  </div>
+                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                    <div style="font-size: 10px; color: var(--alert-critical);">TEMP</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">38.6°C</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-hr">76 BPM</div>
-          </div>
+          </section>
 
-          <!-- Card 2: Blood Oxygen -->
-          <div class="clay-card" style="margin-bottom: 0;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Blood Oxygen (SpO2)</div>
-            <div style="text-align: center; margin: 14px 0;">
-              <img src="assets/images/spo2_droplet_3d.png" style="height: 85px; object-fit: contain;" alt="SpO2 Droplet">
+          <!-- ==========================================
+               SECTION 2: PATIENT DIAGNOSTICS & WAVEFORMS
+               ========================================== -->
+          <section class="section-view" id="section-2">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h2 class="section-heading" style="margin-bottom: 4px;">Bed 01 • Elena Rostova (34F)</h2>
+                <p style="font-size: 13px; color: var(--text-secondary);">ID: P-8821 • Post-Op Laparoscopic • Room 304</p>
+              </div>
+              <button class="clay-btn" style="height: 42px; font-size: 13px;" onclick="alert('Full telemetry dossier exported to Hospital EHR.')">Export Medical EMR ➔</button>
             </div>
-            <div style="font-size: 24px; font-weight: 800; color: var(--primary-teal);"><span id="grid-spo2">98%</span> <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">SpO2</span></div>
-          </div>
 
-          <!-- Card 3: Body Temperature -->
-          <div class="clay-card" style="margin-bottom: 0;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Body Temperature</div>
-            <div style="text-align: center; margin: 14px 0;">
-              <img src="assets/images/thermometer_3d.png" style="height: 85px; object-fit: contain;" alt="Thermometer">
+            <!-- Live ECG Rhythm Strip -->
+            <div class="ecg-box">
+              <canvas id="ecgCanvas" class="ecg-canvas"></canvas>
             </div>
-            <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-temp">36.8°C</div>
-          </div>
 
-          <!-- Card 4: Battery Level -->
-          <div class="clay-card" style="margin-bottom: 0;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Battery Level</div>
-            <div style="text-align: center; margin: 14px 0;">
-              <img src="assets/images/battery_3d.png" style="height: 85px; object-fit: contain;" alt="Battery">
+            <!-- 2x2 Telemetry Cards Grid -->
+            <div class="vitals-2x2-grid">
+              <!-- Card 1: Heart Rate -->
+              <div class="clay-card" style="margin-bottom: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Heart Rate</div>
+                <div style="text-align: center; margin: 14px 0;">
+                  <img src="assets/images/heart_ecg_strip_3d.png" style="height: 80px; object-fit: contain;" alt="Heart Rate">
+                </div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-hr">76 BPM</div>
+              </div>
+
+              <!-- Card 2: Blood Oxygen -->
+              <div class="clay-card" style="margin-bottom: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Blood Oxygen (SpO2)</div>
+                <div style="text-align: center; margin: 14px 0;">
+                  <img src="assets/images/spo2_droplet_3d.png" style="height: 80px; object-fit: contain;" alt="SpO2 Droplet">
+                </div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--primary-teal);"><span id="grid-spo2">98%</span> <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">SpO2</span></div>
+              </div>
+
+              <!-- Card 3: Body Temperature -->
+              <div class="clay-card" style="margin-bottom: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Body Temperature</div>
+                <div style="text-align: center; margin: 14px 0;">
+                  <img src="assets/images/thermometer_3d.png" style="height: 80px; object-fit: contain;" alt="Thermometer">
+                </div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-temp">36.8°C</div>
+              </div>
+
+              <!-- Card 4: Battery Level -->
+              <div class="clay-card" style="margin-bottom: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Battery Level</div>
+                <div style="text-align: center; margin: 14px 0;">
+                  <img src="assets/images/battery_3d.png" style="height: 80px; object-fit: contain;" alt="Battery">
+                </div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--alert-stable); margin-top: 4px;">92% charged</div>
+              </div>
             </div>
-            <div style="font-size: 18px; font-weight: 800; color: var(--alert-stable); margin-top: 4px;">92% charged</div>
-          </div>
+
+            <!-- 3D "CALL NURSE" Pill Button -->
+            <div style="text-align: center; margin-top: 24px;">
+              <div onclick="playCriticalTriplet(); alert('🚨 Bedside Emergency Nurse Call Dispatched!');" style="display: inline-flex; align-items: center; background: rgba(128, 203, 196, 0.35); border: 2px solid rgba(77, 182, 172, 0.6); border-radius: 36px; padding: 8px 20px; box-shadow: var(--clay-shadow); cursor: pointer; gap: 12px;">
+                <div style="width: 44px; height: 44px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--primary-mint);">👩‍⚕️</div>
+                <div style="background: linear-gradient(135deg, #FF7043, #FF5252); color: #fff; font-size: 14px; font-weight: 800; padding: 9px 22px; border-radius: 24px; letter-spacing: 0.6px; box-shadow: 0 6px 14px rgba(255, 82, 82, 0.35);">CALL NURSE</div>
+                <div style="font-size: 20px;">🔔</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 3: ROUNDS SCHEDULE
+               ========================================== -->
+          <section class="section-view" id="section-3">
+            <h2 class="section-heading">Shift Handover & Rounds Schedule</h2>
+            <div class="clay-card">
+              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; margin-bottom: 16px;">
+                <span>❮ Previous</span>
+                <span>September 2026</span>
+                <span>Next ❯</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 10px; font-size: 14px;">
+                <span style="color: var(--text-muted); font-weight: 700;">Mon</span><span style="color: var(--text-muted); font-weight: 700;">Tue</span><span style="color: var(--text-muted); font-weight: 700;">Wed</span><span style="color: var(--text-muted); font-weight: 700;">Thu</span><span style="color: var(--text-muted); font-weight: 700;">Fri</span><span style="color: var(--text-muted); font-weight: 700;">Sat</span><span style="color: var(--text-muted); font-weight: 700;">Sun</span>
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+                <span>8</span><span style="background: var(--primary-mint); color: #fff; border-radius: 50%; font-weight: 800; padding: 6px;">9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+                <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 4: ACTIVE ALARMS & CONSOLE
+               ========================================== -->
+          <section class="section-view" id="section-4">
+            <h2 class="section-heading" id="activeAlarmsTitle">Active Telemetry Alarms</h2>
+
+            <!-- Active Alarm Card -->
+            <div class="clay-card critical" id="alarmCard-ALT-1001" style="background: #FFF5F5;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
+                <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
+              <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
+              <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
+
+              <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                <button class="clay-btn" id="btnAckAlarm" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert('ALT-1001')">🔕 Silence & Acknowledge</button>
+                <button class="clay-btn" id="btnClearAlarm" style="height: 42px; font-size: 13px; background: #E2E8F0; color: #334155; box-shadow: none;" onclick="clearAlert('ALT-1001')">Clear Alarm</button>
+              </div>
+            </div>
+
+            <!-- Stable / No Alarms State Card -->
+            <div id="noAlarmsState" class="clay-card" style="text-align: center; padding: 36px 20px; display: none;">
+              <div style="font-size: 44px; margin-bottom: 12px;">✅</div>
+              <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">Ward 3B Telemetry Stable</h3>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;">All patient nodes transmitting nominal vitals. Auditory sirens extinguished.</p>
+              <div style="margin-top: 18px;">
+                <button class="clay-btn" style="height: 38px; font-size: 12px; padding: 0 20px;" onclick="simulateTestAlarm()">Simulate Test Alarm</button>
+              </div>
+            </div>
+
+            <!-- RESTORED: Staff Praise Card in Alarms Feed -->
+            <div class="nurse-praise-card" id="activeAlarmsPraiseCard">
+              <div class="praise-top-row">
+                <div class="praise-gold-badge">
+                  <span>🏆</span>
+                  <span>NURSE APPRECIATION</span>
+                </div>
+                <div class="praise-teal-badge">
+                  <span>⚡</span>
+                  <span>Shift Hero Metric</span>
+                </div>
+              </div>
+
+              <div class="praise-main-row">
+                <div class="praise-shield-box">
+                  <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
+                </div>
+
+                <div class="praise-metrics-grid">
+                  <div class="praise-metric-item">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                      <span class="praise-metric-number praise-resolved-val">1</span>
+                      <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
+                    </div>
+                    <div class="praise-metric-label">Alarms Handled Successfully</div>
+                  </div>
+
+                  <div class="praise-metric-item">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                      <span class="praise-metric-number" style="color: #80CBC4;">3 / 3</span>
+                      <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
+                    </div>
+                    <div class="praise-metric-label">Patients Attended Today</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="praise-affirmation-row">
+                <div class="praise-quote">
+                  <span>🌟</span>
+                  <span>“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
+                </div>
+                <button class="praise-action-btn" onclick="openPraiseModal()">
+                  <span>👏</span>
+                  <span>Praise Staff</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
         </div>
+      </main>
 
-        <!-- 3D "CALL NURSE" Pill Button matching Reference Image -->
-        <div style="text-align: center; margin-top: 24px;">
-          <div onclick="playCriticalTriplet(); alert('🚨 Bedside Emergency Nurse Call Dispatched!');" style="display: inline-flex; align-items: center; background: rgba(128, 203, 196, 0.35); border: 2px solid rgba(77, 182, 172, 0.6); border-radius: 36px; padding: 8px 20px; box-shadow: var(--clay-shadow); cursor: pointer; gap: 12px;">
-            <div style="width: 46px; height: 46px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid var(--primary-mint);">👩‍⚕️</div>
-            <div style="background: linear-gradient(135deg, #FF7043, #FF5252); color: #fff; font-size: 15px; font-weight: 800; padding: 10px 24px; border-radius: 24px; letter-spacing: 0.6px; box-shadow: 0 6px 14px rgba(255, 82, 82, 0.35);">CALL NURSE</div>
-            <div style="font-size: 20px;">🔔</div>
-          </div>
+      <!-- Bottom Navigation (Phone View & Mobile screens) -->
+      <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <div class="mobile-nav-item active" onclick="switchSection(0)" title="Shift Overview">🏠</div>
+        <div class="mobile-nav-item" onclick="switchSection(1)" title="Ward Grid">📊</div>
+        <div class="mobile-nav-item" onclick="switchSection(2)" title="Diagnostics">🩺</div>
+        <div class="mobile-nav-item" onclick="switchSection(3)" title="Rounds">📅</div>
+        <div class="mobile-nav-item" onclick="switchSection(4)" title="Active Alarms">
+          🚨
+          <span class="mobile-badge" id="mobileSidebarBadge">1</span>
         </div>
-      </section>
+      </nav>
+      <div class="phone-home-indicator"></div>
+    </div>
+  </div>
 
-      <!-- SECTION 3: ROUNDS SCHEDULE -->
-      <section class="section-view" id="section-3">
-        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 18px;">Shift Handover & Rounds Schedule</h2>
-        <div class="clay-card">
-          <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; margin-bottom: 16px;">
-            <span>❮ Previous</span>
-            <span>September 2026</span>
-            <span>Next ❯</span>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 10px; font-size: 14px;">
-            <span style="color: var(--text-muted); font-weight: 700;">Mon</span><span style="color: var(--text-muted); font-weight: 700;">Tue</span><span style="color: var(--text-muted); font-weight: 700;">Wed</span><span style="color: var(--text-muted); font-weight: 700;">Thu</span><span style="color: var(--text-muted); font-weight: 700;">Fri</span><span style="color: var(--text-muted); font-weight: 700;">Sat</span><span style="color: var(--text-muted); font-weight: 700;">Sun</span>
-            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
-            <span>8</span><span style="background: var(--primary-mint); color: #fff; border-radius: 50%; font-weight: 800; padding: 6px;">9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
-            <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
-          </div>
+  <!-- Nurse Appreciation Modal Dialog -->
+  <div id="nurseAppreciationModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px;">🎖️</span>
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--text-primary);">Nurse Clinical Appreciation</h3>
         </div>
-      </section>
+        <button class="modal-close-btn" onclick="closePraiseModal()">✕</button>
+      </div>
 
-      <!-- SECTION 4: ACTIVE ALARMS & CONSOLE -->
-      <section class="section-view" id="section-4">
-        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 18px;">Active Telemetry Alarms</h2>
-
-        <!-- Active Alarm Card -->
-        <div class="clay-card critical" id="alarmCard-ALT-1001" style="background: #FFF5F5;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
-            <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
-          </div>
-          <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
-          <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
-          <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
-
-          <div style="display: flex; gap: 12px; margin-top: 16px;">
-            <button class="clay-btn" id="btnAckAlarm" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert('ALT-1001')">🔕 Silence & Acknowledge</button>
-            <button class="clay-btn" id="btnClearAlarm" style="height: 42px; font-size: 13px; background: #E2E8F0; color: #334155; box-shadow: none;" onclick="clearAlert('ALT-1001')">Clear Alarm</button>
-          </div>
+      <div style="display: flex; align-items: center; gap: 14px; background: var(--mint-light); padding: 14px; border-radius: 18px; margin-bottom: 16px;">
+        <div class="nurse-avatar" style="width: 48px; height: 48px; font-size: 17px;">SJ</div>
+        <div>
+          <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);">Sister Sarah Jenkins</div>
+          <div style="font-size: 12px; color: var(--primary-teal); font-weight: 600;">Lead Triage Nurse • RN #88192 • Ward 3B Acute Care</div>
         </div>
+      </div>
 
-        <!-- Stable / No Alarms State Card -->
-        <div id="noAlarmsState" class="clay-card" style="text-align: center; padding: 36px 20px; display: none;">
-          <div style="font-size: 44px; margin-bottom: 12px;">✅</div>
-          <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">Ward 3B Telemetry Stable</h3>
-          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;">All patient nodes transmitting nominal vitals. Auditory sirens extinguished.</p>
-          <div style="margin-top: 18px;">
-            <button class="clay-btn" style="height: 38px; font-size: 12px; padding: 0 20px;" onclick="simulateTestAlarm()">Simulate Test Alarm</button>
-          </div>
-        </div>
-      </section>
+      <p style="font-size: 14px; line-height: 1.6; color: var(--text-primary); margin-bottom: 14px;">
+        Sister Sarah, you have answered and resolved <strong class="modal-resolved-count" style="color: var(--primary-teal); font-size: 16px;">1</strong> patient telemetry alarm(s) and provided dedicated monitoring for <strong>3 of 3 acute patients</strong> during your shift today.
+      </p>
+      <p style="font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); margin-bottom: 20px;">
+        Your prompt bedside attention, clinical vigilance, and compassionate care keep our acute ward safe and our patients comfortable. The entire clinical care team and medical directory are thankful for your service! 👏❤️
+      </p>
 
-    </main>
-
-    <!-- Mobile Bottom Navigation (Visible on narrow screen) -->
-    <nav class="mobile-bottom-nav">
-      <div class="mobile-nav-item active" onclick="switchSection(0)">🏠</div>
-      <div class="mobile-nav-item" onclick="switchSection(1)">📊</div>
-      <div class="mobile-nav-item" onclick="switchSection(2)">🩺</div>
-      <div class="mobile-nav-item" onclick="switchSection(3)">📅</div>
-      <div class="mobile-nav-item" onclick="switchSection(4)">🚨</div>
-    </nav>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="clay-btn" style="height: 44px; font-size: 14px;" onclick="closePraiseModal(true)">Happy to Help ❤️</button>
+      </div>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
@@ -749,7 +1273,9 @@
     let isMuted = false;
     let audioCtx = null;
     let countdown = 58;
+    let resolvedAlarmsCount = 1;
 
+    // Reset scroll to top upon switching tabs to completely prevent title clipping
     function switchSection(index) {
       currentSection = index;
       document.querySelectorAll('.section-view').forEach((el, i) => {
@@ -761,6 +1287,11 @@
       document.querySelectorAll('.mobile-nav-item').forEach((item, i) => {
         item.classList.toggle('active', i === index);
       });
+
+      const vp = document.getElementById('mainViewport');
+      if (vp) {
+        vp.scrollTop = 0;
+      }
     }
 
     function setViewMode(mode) {
@@ -783,7 +1314,38 @@
           c.width = c.offsetWidth;
           c.height = c.offsetHeight;
         }
-      }, 100);
+      }, 120);
+    }
+
+    // Nurse Appreciation Modal Controllers
+    function openPraiseModal() {
+      const modal = document.getElementById('nurseAppreciationModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closePraiseModal(showToastMessage = false) {
+      const modal = document.getElementById('nurseAppreciationModal');
+      if (modal) modal.style.display = 'none';
+      if (showToastMessage) {
+        showToast('👏', 'Staff Praise Recorded! Sister Sarah thanked for exceptional care ❤️');
+      }
+    }
+
+    function updateResolvedAlarmsDisplay(count) {
+      if (typeof count === 'number' && count >= 0) {
+        resolvedAlarmsCount = count;
+      }
+      document.querySelectorAll('.praise-resolved-val').forEach(el => {
+        el.innerText = resolvedAlarmsCount;
+      });
+      document.querySelectorAll('.modal-resolved-count').forEach(el => {
+        el.innerText = resolvedAlarmsCount;
+      });
+      document.querySelectorAll('.nurse-praise-card').forEach(card => {
+        card.classList.remove('pulse-celebrate');
+        void card.offsetWidth; // Trigger reflow for animation
+        card.classList.add('pulse-celebrate');
+      });
     }
 
     // Clinical Audio Alarm Synthesizer (IEC 60601-1-8 Standard)
@@ -810,11 +1372,8 @@
 
     function stopAudioAlarm() {
       isAlarmSilenced = true;
-      // Clear all scheduled tones
       audioTimeouts.forEach(t => clearTimeout(t));
       audioTimeouts = [];
-
-      // Immediately terminate any sounding oscillator
       activeOscillators.forEach(osc => {
         try {
           osc.stop();
@@ -890,7 +1449,6 @@
     function acknowledgeAlert(alarmId = 'ALT-1001') {
       stopAudioAlarm();
 
-      // Update UI Card
       const el = document.getElementById('countdown-timer');
       if (el) {
         el.innerText = '🔕 Silenced & Acknowledged';
@@ -898,6 +1456,8 @@
       }
       const badge = document.getElementById('sidebarBadge');
       if (badge) badge.style.display = 'none';
+      const mBadge = document.getElementById('mobileSidebarBadge');
+      if (mBadge) mBadge.style.display = 'none';
 
       const btnAck = document.getElementById('btnAckAlarm');
       if (btnAck) {
@@ -909,7 +1469,9 @@
       const notice = document.getElementById('escalationNotice');
       if (notice) notice.innerText = 'Auto-escalation halted. Auditory sirens extinguished.';
 
-      // Notify backend via WebSocket and REST API
+      resolvedAlarmsCount++;
+      updateResolvedAlarmsDisplay(resolvedAlarmsCount);
+
       if (socket) {
         socket.emit('acknowledge_alarm', { alarm_id: alarmId, nurse: 'Nurse Sarah' });
       }
@@ -925,7 +1487,6 @@
     function clearAlert(alarmId = 'ALT-1001') {
       stopAudioAlarm();
 
-      // Hide active alarm card, show all-clear stable state
       const card = document.getElementById('alarmCard-ALT-1001');
       if (card) card.style.display = 'none';
       const noAlarms = document.getElementById('noAlarmsState');
@@ -933,8 +1494,9 @@
 
       const badge = document.getElementById('sidebarBadge');
       if (badge) badge.style.display = 'none';
+      const mBadge = document.getElementById('mobileSidebarBadge');
+      if (mBadge) mBadge.style.display = 'none';
 
-      // Stabilize Bed 3 in summary cards
       const elHr3 = document.getElementById('live-hr-3');
       const elSpo23 = document.getElementById('live-spo2-3');
       const elTemp3 = document.getElementById('live-temp-3');
@@ -942,7 +1504,9 @@
       if (elSpo23) { elSpo23.innerText = '97%'; elSpo23.style.color = 'var(--primary-teal)'; }
       if (elTemp3) { elTemp3.innerText = '36.9°C'; elTemp3.style.color = 'var(--text-primary)'; }
 
-      // Notify backend via WebSocket and REST API
+      resolvedAlarmsCount++;
+      updateResolvedAlarmsDisplay(resolvedAlarmsCount);
+
       if (socket) {
         socket.emit('clear_alarm', { alarm_id: alarmId });
       }
@@ -952,7 +1516,7 @@
         body: JSON.stringify({ alarmId })
       }).catch(() => {});
 
-      showToast('✅', 'Alarm ALT-1001 Cleared from Ward Buffer. Bed 03 Stabilized.');
+      showToast('✅', 'Alarm ALT-1001 Cleared. Task Complete: Bed 03 Stabilized.');
     }
 
     function simulateTestAlarm() {
@@ -964,6 +1528,8 @@
       if (noAlarms) noAlarms.style.display = 'none';
       const badge = document.getElementById('sidebarBadge');
       if (badge) { badge.style.display = 'inline-block'; badge.innerText = '1'; }
+      const mBadge = document.getElementById('mobileSidebarBadge');
+      if (mBadge) { mBadge.style.display = 'inline-block'; mBadge.innerText = '1'; }
 
       const el = document.getElementById('countdown-timer');
       if (el) {
@@ -994,7 +1560,7 @@
       }
     }, 1000);
 
-    // Real-time telemetry fluctuations
+    // Physiological telemetry fluctuations
     setInterval(() => {
       const hr1 = 70 + Math.floor(Math.random() * 5);
       const spo21 = 98 + Math.floor(Math.random() * 2);
@@ -1041,7 +1607,7 @@
         ctx.fillStyle = '#0F172A';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Grid
+        // Grid lines
         ctx.strokeStyle = '#1E293B';
         ctx.lineWidth = 1;
         for (let x = 0; x < canvas.width; x += 24) {
@@ -1080,7 +1646,17 @@
       drawEcg();
     }
 
-    // Real-Time Socket.IO Telemetry Sync with Backend Gateway
+    // Fetch initial backend alarm stats
+    fetch('/api/alarms/stats')
+      .then(r => r.json())
+      .then(stats => {
+        if (stats && typeof stats.resolvedAlarmsCount === 'number') {
+          updateResolvedAlarmsDisplay(Math.max(stats.resolvedAlarmsCount, 1));
+        }
+      })
+      .catch(() => {});
+
+    // Real-Time Socket.IO Telemetry Sync
     try {
       if (typeof io !== 'undefined') {
         socket = io();
@@ -1118,7 +1694,6 @@
           }
         });
 
-        // Broadcasted when new critical incident occurs
         socket.on('critical_alarm', (alarms) => {
           if (isAlarmSilenced) return;
           const unack = Array.isArray(alarms) ? alarms.filter(a => !a.isAcknowledged) : [];
@@ -1133,21 +1708,13 @@
           }
         });
 
-        // Broadcasted on countdown tick without sounding buzzer
-        socket.on('alarm_tick', (alarms) => {
-          if (isAlarmSilenced) return;
-          const unack = Array.isArray(alarms) ? alarms.filter(a => !a.isAcknowledged) : [];
-          if (unack.length > 0) {
-            const el = document.getElementById('countdown-timer');
-            const bar = document.getElementById('countdown-bar');
-            if (el && !el.innerText.includes('Silenced')) {
-              el.innerText = unack[0].secondsRemaining + 's remaining';
-              if (bar) bar.innerText = unack[0].secondsRemaining + 's';
-            }
+        socket.on('alarm_stats', (stats) => {
+          if (stats && stats.resolvedAlarmsCount !== undefined) {
+            updateResolvedAlarmsDisplay(stats.resolvedAlarmsCount);
           }
         });
 
-        socket.on('alarm_cleared', () => {
+        socket.on('alarm_cleared', (data) => {
           stopAudioAlarm();
           const card = document.getElementById('alarmCard-ALT-1001');
           if (card) card.style.display = 'none';
@@ -1155,9 +1722,14 @@
           if (noAlarms) noAlarms.style.display = 'block';
           const badge = document.getElementById('sidebarBadge');
           if (badge) badge.style.display = 'none';
+          const mBadge = document.getElementById('mobileSidebarBadge');
+          if (mBadge) mBadge.style.display = 'none';
+          if (data && data.resolvedAlarmsCount !== undefined) {
+            updateResolvedAlarmsDisplay(data.resolvedAlarmsCount);
+          }
         });
 
-        socket.on('alarm_acknowledged', () => {
+        socket.on('alarm_acknowledged', (data) => {
           stopAudioAlarm();
           const el = document.getElementById('countdown-timer');
           if (el) {
@@ -1166,6 +1738,11 @@
           }
           const badge = document.getElementById('sidebarBadge');
           if (badge) badge.style.display = 'none';
+          const mBadge = document.getElementById('mobileSidebarBadge');
+          if (mBadge) mBadge.style.display = 'none';
+          if (data && data.resolvedAlarmsCount !== undefined) {
+            updateResolvedAlarmsDisplay(data.resolvedAlarmsCount);
+          }
         });
       }
     } catch (e) {

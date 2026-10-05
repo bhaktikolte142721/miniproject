@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../models/alert_incident.dart';
 import '../../providers/alerts_provider.dart';
-import '../../providers/nurse_provider.dart';
 import '../../providers/telemetry_provider.dart';
-import '../settings/ward_settings_sheet.dart';
 
 /// Screen 6: Alert & Escalation Feed & Nurse Station Settings (Reference: Bottom-Right).
 class AlertsFeedScreen extends ConsumerWidget {
@@ -20,7 +19,6 @@ class AlertsFeedScreen extends ConsumerWidget {
     final audioService = ref.watch(audioAlertServiceProvider);
     final isMutedAsync = ref.watch(isAudioMutedStreamProvider);
     final isMuted = isMutedAsync.maybeWhen(data: (v) => v, orElse: () => audioService.isMuted);
-    final activeNurse = ref.watch(activeNurseProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -48,10 +46,13 @@ class AlertsFeedScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isMuted ? AppColors.coralLight : AppColors.mintLight,
-                        borderRadius: BorderRadius.circular(20),
+                        color: isMuted
+                            ? AppColors.alertCritical.withOpacity(0.12)
+                            : AppColors.primaryMint.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isMuted ? AppColors.alertCritical : AppColors.primaryMint,
+                          width: 1.2,
                         ),
                       ),
                       child: Row(
@@ -64,11 +65,11 @@ class AlertsFeedScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            isMuted ? 'MUTED' : 'LIVE AUDIO',
+                            isMuted ? 'Muted' : 'Alarm Active',
                             style: TextStyle(
-                              color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w700,
+                              color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
                             ),
                           ),
                         ],
@@ -85,32 +86,20 @@ class AlertsFeedScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    InkWell(
-                      onTap: () => WardSettingsSheet.show(context, initialTab: 0),
-                      borderRadius: BorderRadius.circular(26),
-                      child: Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: AppColors.mintLight,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.primaryMint,
-                            width: 2.5,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x1F00B4D8),
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        alignment: Alignment.center,
+                    // Profile Avatar
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.mintLight,
+                        border: Border.all(color: AppColors.primaryMint, width: 2),
+                      ),
+                      child: const Center(
                         child: Text(
-                          activeNurse.initials,
-                          style: const TextStyle(
-                            fontSize: 22,
+                          'SJ',
+                          style: TextStyle(
+                            fontSize: 18,
                             fontWeight: FontWeight.w800,
                             color: AppColors.primaryTeal,
                           ),
@@ -119,78 +108,44 @@ class AlertsFeedScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 14),
                     Expanded(
-                      child: InkWell(
-                        onTap: () => WardSettingsSheet.show(context, initialTab: 0),
-                        borderRadius: BorderRadius.circular(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    activeNurse.name,
-                                    style: AppTextStyles.titleMedium.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFE8F5E9),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Text(
-                                    'ON-DUTY',
-                                    style: TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF2E7D32),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nurse Sarah Jenkins, RN',
+                            style: AppTextStyles.titleMedium.copyWith(
+                              fontWeight: FontWeight.w700,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${activeNurse.designation} • ${activeNurse.registrationNumber}',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Lead Triage • Shift 3B-Day',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${activeNurse.ward} • ${activeNurse.shift}',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textMuted,
-                                fontSize: 14,
-                              ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'sarah.jenkins@hospital.org',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                              fontSize: 11,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => WardSettingsSheet.show(context, initialTab: 1),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.chipInactive,
                         borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: AppColors.chipInactive,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.cardBorder),
-                          ),
-                          child: const Icon(
-                            Icons.settings_rounded,
-                            color: AppColors.primaryTeal,
-                            size: 22,
-                          ),
-                        ),
+                      ),
+                      child: const Icon(
+                        Icons.settings_rounded,
+                        color: AppColors.textPrimary,
+                        size: 20,
                       ),
                     ),
                   ],
@@ -306,7 +261,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                           isCritical ? 'CRITICAL' : 'WARNING',
                                           style: AppTextStyles.badgeText.copyWith(
                                             color: Colors.white,
-                                            fontSize: 13,
+                                            fontSize: 10,
                                           ),
                                         ),
                                       ),
@@ -335,7 +290,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                           Text(
                                             '${alert.secondsRemaining}s',
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.alertCritical,
                                             ),
@@ -352,7 +307,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                               Text(
                                 alert.triggerReason,
                                 style: AppTextStyles.titleSmall.copyWith(
-                                  fontSize: 17,
+                                  fontSize: 14,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
@@ -367,14 +322,14 @@ class AlertsFeedScreen extends ConsumerWidget {
                                     Text(
                                       'Escalation Target: ${alert.escalationStageLabel}',
                                       style: AppTextStyles.bodySmall.copyWith(
-                                        fontSize: 14,
+                                        fontSize: 11,
                                         color: isCritical ? AppColors.alertCritical : AppColors.textSecondary,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     Text(
                                       'Auto-escalates in ${alert.secondsRemaining}s',
-                                      style: AppTextStyles.bodySmall.copyWith(fontSize: 13),
+                                      style: AppTextStyles.bodySmall.copyWith(fontSize: 10),
                                     ),
                                   ],
                                 ),
@@ -400,7 +355,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                   if (!alert.isAcknowledged)
                                     GestureDetector(
                                       onTap: () {
-                                        mockService.acknowledgeAlert(alert.id, activeNurse.name);
+                                        mockService.acknowledgeAlert(alert.id, 'Nurse Sarah');
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -411,7 +366,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                         child: Text(
                                           'Acknowledge',
                                           style: AppTextStyles.buttonText.copyWith(
-                                            fontSize: 15,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),
@@ -466,50 +421,35 @@ class AlertsFeedScreen extends ConsumerWidget {
                       icon: Icons.router_rounded,
                       title: 'ESP32 Gateway Configuration',
                       subtitle: '192.168.1.142 • Port 3000 • WebSocket',
-                      onTap: () => WardSettingsSheet.show(context, initialTab: 1),
+                      onTap: () {},
                     ),
                     const Divider(height: 1, indent: 54),
                     _buildSettingsTile(
                       icon: Icons.wifi_tethering_rounded,
                       title: 'nRF24 Node Diagnostics',
-                      subtitle: '6 Active Bed Pipes • 2.4GHz ISM Band',
-                      onTap: () => WardSettingsSheet.show(context, initialTab: 1),
+                      subtitle: '3 Active Nodes • 2.4GHz ISM Band',
+                      onTap: () {},
                     ),
                     const Divider(height: 1, indent: 54),
                     _buildSettingsTile(
                       icon: Icons.tune_rounded,
                       title: 'Alarm Threshold Matrix',
                       subtitle: 'Clinical SpO2 / HR / Temp Triggers',
-                      onTap: () => WardSettingsSheet.show(context, initialTab: 1),
+                      onTap: () {},
                     ),
                     const Divider(height: 1, indent: 54),
                     _buildSettingsTile(
-                      icon: Icons.badge_rounded,
-                      title: 'Nurse Roster & Shift Handover',
-                      subtitle: '${activeNurse.name} (${activeNurse.registrationNumber}) on duty',
-                      onTap: () => WardSettingsSheet.show(context, initialTab: 0),
+                      icon: Icons.history_edu_rounded,
+                      title: 'Shift Handover Audit Records',
+                      subtitle: '28 May 2024 to Present',
+                      onTap: () {},
                     ),
                     const Divider(height: 1, indent: 54),
                     _buildSettingsTile(
                       icon: Icons.sync_rounded,
                       title: 'Hospital EMR Sync (FHIR / HL7)',
-                      subtitle: 'Connected to Epic / Cerner EHR (Live)',
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Row(
-                              children: [
-                                Icon(Icons.cloud_done_rounded, color: Colors.white),
-                                SizedBox(width: 10),
-                                Text('FHIR v4.0.1 EMR Server synchronized with Ward 3B!'),
-                              ],
-                            ),
-                            backgroundColor: AppColors.primaryTeal,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                        );
-                      },
+                      subtitle: 'Connected to Epic / Cerner EHR',
+                      onTap: () {},
                     ),
                   ],
                 ),

@@ -7,12 +7,7 @@ import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_icon_box.dart';
 import '../../providers/telemetry_provider.dart';
 import '../../providers/alerts_provider.dart';
-import '../../providers/nurse_provider.dart';
-import '../../models/patient.dart';
 import '../patient_detail/patient_monitoring_screen.dart';
-import '../settings/ward_settings_sheet.dart';
-import '../ward_grid/node_health_sheet.dart';
-import '../reports/clinical_report_dialog.dart';
 
 /// Screen 2: Shift Handover & Ward Home Overview (Reference: Top-Center).
 class ShiftHandoverScreen extends ConsumerWidget {
@@ -23,15 +18,15 @@ class ShiftHandoverScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final telemetryAsync = ref.watch(telemetryStreamProvider);
-    ref.watch(gatewayStatusStreamProvider);
+    final gatewayAsync = ref.watch(gatewayStatusStreamProvider);
     final criticalCount = ref.watch(activeCriticalAlarmsCountProvider);
     final totalAlarmsCount = ref.watch(totalActiveAlarmsCountProvider);
     final patients = ref.watch(patientsListProvider);
-    final activeNurse = ref.watch(activeNurseProvider);
     final resolvedAlarms = ref.watch(resolvedAlarmsCountProvider).maybeWhen(
           data: (val) => val,
           orElse: () => ref.read(mockTelemetryServiceProvider).resolvedAlarmsCount,
         );
+
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -41,80 +36,41 @@ class ShiftHandoverScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Floating Top Bar: Nurse Greeting, Settings & Avatar
+              // 1. Floating Top Bar: Nurse Greeting & Avatar
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'On-Duty Nursing Station,',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Good Morning,',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
                         ),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                activeNurse.name,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.headlineSmall.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Nurse Sarah',
+                            style: AppTextStyles.headlineSmall.copyWith(
+                              fontWeight: FontWeight.w700,
                             ),
-                            const SizedBox(width: 6),
-                            const Text('👋', style: TextStyle(fontSize: 22)),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Text('👋', style: TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                    ],
                   ),
                   Row(
                     children: [
-                      // Settings Icon Button
-                      GestureDetector(
-                        onTap: () => WardSettingsSheet.show(context, initialTab: 1),
-                        child: Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: AppColors.cardSurface,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.cardBorder, width: 1.2),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x0A000000),
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                              ),
-                              BoxShadow(
-                                color: Color(0xD9FFFFFF),
-                                blurRadius: 8,
-                                offset: Offset(-2, -2),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.settings_rounded,
-                            color: AppColors.primaryTeal,
-                            size: 21,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-
                       // Notification Bell with critical alert badge
                       GestureDetector(
                         onTap: () => onNavigateTab?.call(3), // Navigate to Alerts tab
                         child: Container(
-                          width: 42,
-                          height: 42,
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
                             color: AppColors.cardSurface,
                             borderRadius: BorderRadius.circular(16),
@@ -142,7 +98,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                                 color: criticalCount > 0
                                     ? AppColors.alertCritical
                                     : AppColors.textPrimary,
-                                size: 21,
+                                size: 22,
                               ),
                               if (totalAlarmsCount > 0)
                                 Positioned(
@@ -161,34 +117,30 @@ class ShiftHandoverScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-
-                      // Nurse Profile Avatar (Click to switch or register nurse)
-                      GestureDetector(
-                        onTap: () => WardSettingsSheet.show(context, initialTab: 0),
-                        child: Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.mintLight,
-                            border: Border.all(color: AppColors.primaryMint, width: 2),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x1A00BFA5),
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              activeNurse.initials,
-                              style: const TextStyle(
-                                color: AppColors.primaryTeal,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                              ),
+                      const SizedBox(width: 12),
+                      // Nurse Profile Avatar
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.mintLight,
+                          border: Border.all(color: AppColors.primaryMint, width: 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x1A00BFA5),
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'SJ',
+                            style: TextStyle(
+                              color: AppColors.primaryTeal,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
                             ),
                           ),
                         ),
@@ -277,7 +229,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                                   'ESP32 Gateway: Online',
                                   style: AppTextStyles.badgeText.copyWith(
                                     color: Colors.white,
-                                    fontSize: 15,
+                                    fontSize: 10,
                                   ),
                                 ),
                               ],
@@ -288,8 +240,8 @@ class ShiftHandoverScreen extends ConsumerWidget {
                             'Ward 3B Telemetry',
                             style: AppTextStyles.headlineSmall.copyWith(
                               color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -303,7 +255,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                           GestureDetector(
                             onTap: () => onNavigateTab?.call(1), // Go to Ward Grid
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(18),
@@ -319,8 +271,8 @@ class ShiftHandoverScreen extends ConsumerWidget {
                                 'View Live Grid',
                                 style: AppTextStyles.buttonText.copyWith(
                                   color: AppColors.primaryTeal,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
@@ -329,34 +281,14 @@ class ShiftHandoverScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    // 3D Vital Monitor Image Asset with Curved Corners & Layered Shadows
+                    // 3D Vital Monitor Image Asset
                     Expanded(
                       flex: 4,
                       child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
-                                blurRadius: 18,
-                                offset: const Offset(0, 8),
-                              ),
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.35),
-                                blurRadius: 10,
-                                offset: const Offset(-2, -2),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: Image.asset(
-                              'assets/images/vital_monitor_3d.png',
-                              height: 112,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        child: Image.asset(
+                          'assets/images/vital_monitor_3d.png',
+                          height: 110,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -393,7 +325,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     icon: Icons.medical_services_rounded,
                     label: 'Node Health',
                     iconColor: const Color(0xFF0288D1),
-                    onTap: () => NodeHealthSheet.show(context),
+                    onTap: () => onNavigateTab?.call(1),
                   ),
                 ],
               ),
@@ -401,51 +333,9 @@ class ShiftHandoverScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // 5. Vital Health Score Card matching Reference UI (Dental Health Score -> Telemetry Score)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Ward Telemetry Status',
-                    style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  GestureDetector(
-                    onTap: () => ClinicalReportDialog.show(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryTeal,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryTeal.withOpacity(0.35),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                          const BoxShadow(
-                            color: Color(0x33FFFFFF),
-                            blurRadius: 4,
-                            offset: Offset(-1, -1),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.print_rounded, size: 18, color: Colors.white),
-                          SizedBox(width: 6),
-                          Text(
-                            'Print Shift Report',
-                            style: TextStyle(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+              Text(
+                'Ward Telemetry Status',
+                style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
 
@@ -500,7 +390,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                           Text(
                             criticalCount > 0
                                 ? '$criticalCount critical telemetry alert requires nurse bedside check.'
-                                : 'All ${patients.length} patient wireless nodes transmitting nominal vitals to gateway.',
+                                : 'All 3 patient wireless nodes transmitting nominal vitals to gateway.',
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -510,12 +400,10 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-              ),
-
               const SizedBox(height: 20),
 
-              // 5.5 Nurse Clinical Pride & Hero Recognition Card (Alarms Handled Successfully)
-              _buildNursePrideCard(context, activeNurse.name, resolvedAlarms),
+              // 5.5 Nurse Clinical Pride & Hero Recognition Card (Alarms Handled & Patients Attended)
+              _buildNursePrideCard(context, 'Nurse Sarah', resolvedAlarms, patients.length),
 
               const SizedBox(height: 22),
 
@@ -524,7 +412,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Active Patients (${patients.length})',
+                    'Active Patients (3)',
                     style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.w700),
                   ),
                   GestureDetector(
@@ -549,59 +437,25 @@ class ShiftHandoverScreen extends ConsumerWidget {
                       final data = telemetryMap[patient.bedId];
                       final isCrit = data?.status == PatientStatus.critical;
 
-                      return TweenAnimationBuilder<double>(
-                        key: ValueKey(patient.id),
-                        tween: Tween<double>(begin: 0.0, end: 1.0),
-                        duration: const Duration(milliseconds: 350),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: Transform.translate(
-                              offset: Offset(0, 16 * (1 - value)),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: ClayCard(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            borderColor: isCrit ? AppColors.alertCritical : null,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => PatientMonitoringScreen(patient: patient),
-                                ),
-                              );
-                            },
-                            child: Row(
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ClayCard(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          borderColor: isCrit ? AppColors.alertCritical : null,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => PatientMonitoringScreen(patient: patient),
+                              ),
+                            );
+                          },
+                          child: Row(
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.10),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                    const BoxShadow(
-                                      color: Colors.white,
-                                      blurRadius: 4,
-                                      offset: Offset(-1, -1),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.asset(
-                                    patient.avatarUrl,
-                                    width: 44,
-                                    height: 44,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                              Image.asset(
+                                patient.avatarUrl,
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.contain,
                               ),
                               const SizedBox(width: 14),
                               Expanded(
@@ -654,8 +508,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                      ),
-                    );
+                      );
                     }).toList(),
                   );
                 },
@@ -671,29 +524,29 @@ class ShiftHandoverScreen extends ConsumerWidget {
     );
   }
 
-  /// Celebratory Nurse Clinical Excellence & Alarms Handled Recognition Card
-  Widget _buildNursePrideCard(BuildContext context, String nurseName, int resolvedAlarms) {
+  /// Celebratory Nurse Clinical Excellence & Attended Patients Recognition Card
+  Widget _buildNursePrideCard(BuildContext context, String nurseName, int resolvedAlarms, int patientsCount) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            Color(0xFF0D3D36),
-            Color(0xFF13534B),
-            Color(0xFF1B6A5F),
+            Color(0xFF093832),
+            Color(0xFF0F4C43),
+            Color(0xFF18655A),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: const Color(0xFF4DB6AC).withOpacity(0.45),
-          width: 1.5,
+          color: const Color(0xFF4DB6AC).withOpacity(0.55),
+          width: 1.6,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0D3D36).withOpacity(0.4),
+            color: const Color(0xFF093832).withOpacity(0.4),
             blurRadius: 22,
             offset: const Offset(0, 10),
           ),
@@ -721,15 +574,15 @@ class ShiftHandoverScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Text('🏆', style: TextStyle(fontSize: 15)),
+                    Text('🏆', style: TextStyle(fontSize: 14)),
                     SizedBox(width: 5),
                     Text(
                       'NURSE APPRECIATION',
                       style: TextStyle(
                         color: Color(0xFFFFE082),
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
+                        letterSpacing: 0.6,
                       ),
                     ),
                   ],
@@ -748,7 +601,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     SizedBox(width: 4),
                     Text(
                       'Quick Response',
-                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -758,19 +611,18 @@ class ShiftHandoverScreen extends ConsumerWidget {
 
           const SizedBox(height: 16),
 
-          // Main Center Row: 3D Shield Badge with Curved Corners + Big Proud Metric
+          // Main Center Row: 3D Shield Badge + Dual Metrics (Alarms Handled & Patients Attended)
           Row(
             children: [
-              // 3D Sentinel Shield Badge with Curved Frame & Radiant Aura Shadow
               Container(
-                width: 78,
-                height: 78,
+                width: 72,
+                height: 72,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFFD54F).withOpacity(0.4),
-                      blurRadius: 18,
+                      color: const Color(0xFFFFD54F).withOpacity(0.35),
+                      blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
                     BoxShadow(
@@ -796,24 +648,21 @@ class ShiftHandoverScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
                           '$resolvedAlarms',
                           style: const TextStyle(
-                            fontSize: 42,
+                            fontSize: 34,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: -1,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        const Flexible(
+                        const SizedBox(width: 6),
+                        const Expanded(
                           child: Text(
-                            'Alarms Handled Successfully',
+                            'Alarms Handled',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFFE0F2F1),
                             ),
@@ -823,9 +672,18 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
+                      '$patientsCount / $patientsCount Patients Attended • 100% Ward Coverage',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF80CBC4),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
                       'All patient alerts were checked and safely attended to by $nurseName today.',
                       style: TextStyle(
-                        fontSize: 14.5,
+                        fontSize: 12.5,
                         height: 1.3,
                         color: Colors.white.withOpacity(0.88),
                         fontWeight: FontWeight.w500,
@@ -843,20 +701,20 @@ class ShiftHandoverScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.18),
+              color: Colors.black.withOpacity(0.2),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withOpacity(0.12)),
             ),
             child: Row(
               children: [
-                const Text('🌟', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 10),
+                const Text('🌟', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '“Thank you for taking good care of all patients in Ward 3B today, Sister $nurseName!”',
                     style: const TextStyle(
                       fontStyle: FontStyle.italic,
-                      fontSize: 15,
+                      fontSize: 13.5,
                       color: Color(0xFFE0F2F1),
                       fontWeight: FontWeight.w600,
                     ),
@@ -872,9 +730,9 @@ class ShiftHandoverScreen extends ConsumerWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         title: Row(
                           children: const [
-                            Text('🎖️', style: TextStyle(fontSize: 26)),
+                            Text('🎖️', style: TextStyle(fontSize: 24)),
                             SizedBox(width: 10),
-                            Text('Nurse Appreciation', style: TextStyle(fontWeight: FontWeight.w800)),
+                            Text('Nurse Appreciation', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
                           ],
                         ),
                         content: Column(
@@ -884,14 +742,14 @@ class ShiftHandoverScreen extends ConsumerWidget {
                             Text(
                               'Sister $nurseName,',
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.primaryTeal,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'You have answered and resolved $resolvedAlarms patient alarms during your shift today.\n\nYour quick help keeps our patients safe and comfortable. We truly appreciate your hard work and care. The whole team is thankful for you! 👏❤️',
+                              'You have answered and resolved $resolvedAlarms patient alarms and provided attentive care to $patientsCount acute patients during your shift today.\n\nYour quick response keeps our patients safe and comfortable. We truly appreciate your hard work and care. The whole team is thankful for you! 👏❤️',
                               style: AppTextStyles.bodyMedium,
                             ),
                           ],
@@ -927,13 +785,13 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
-                        Text('👏', style: TextStyle(fontSize: 14)),
+                        Text('👏', style: TextStyle(fontSize: 13)),
                         SizedBox(width: 4),
                         Text(
-                          'Say Thanks',
+                          'Praise Staff',
                           style: TextStyle(
                             color: Color(0xFF3E2723),
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.w800,
                           ),
                         ),

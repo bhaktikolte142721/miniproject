@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
+import '../models/patient.dart';
 import '../models/telemetry_data.dart';
 import '../models/node_status.dart';
 import '../models/alert_incident.dart';
 import '../core/utils/audio_alert_service.dart';
-import 'socket_service.dart';
 
 /// Autonomous physiological simulation service.
 /// Generates realistic human vitals for Beds 1, 2, and 3, complete with
@@ -30,7 +30,7 @@ class MockTelemetryService {
   Stream<Map<String, NodeStatus>> get nodesStream => _nodesController.stream;
   Stream<List<AlertIncident>> get alertsStream => _alertsController.stream;
   Stream<GatewayStatus> get gatewayStream => _gatewayController.stream;
-  
+
   /// Live stream of alarms resolved - immediately yields the current live count
   Stream<int> get resolvedAlarmsStream async* {
     yield _resolvedAlarmsCount;
@@ -41,26 +41,12 @@ class MockTelemetryService {
   final Map<String, TelemetryData> _currentTelemetry = {};
   final Map<String, NodeStatus> _currentNodes = {};
   final List<AlertIncident> _activeAlerts = [];
-  int _resolvedAlarmsCount = 0;
+  int _resolvedAlarmsCount = 1;
   int get resolvedAlarmsCount => _resolvedAlarmsCount;
   bool _chaosMode = true; // Auto-trigger Bed 3 critical alarm on start
   bool get chaosMode => _chaosMode;
 
   final AudioAlertService _audioAlertService = AudioAlertService();
-  SocketService? _socketService;
-  StreamSubscription<int>? _socketSubscription;
-
-  /// Optional connection to backend SocketService for multi-client synchronization
-  void attachSocketService(SocketService socket) {
-    _socketService = socket;
-    _socketSubscription?.cancel();
-    _socketSubscription = _socketService?.onResolvedAlarmsCount.listen((backendCount) {
-      if (backendCount != _resolvedAlarmsCount) {
-        _resolvedAlarmsCount = backendCount;
-        _resolvedAlarmsController.add(_resolvedAlarmsCount);
-      }
-    });
-  }
 
   MockTelemetryService() {
     _initInitialState();
@@ -69,7 +55,7 @@ class MockTelemetryService {
   void _initInitialState() {
     final now = DateTime.now();
 
-    // Bed 01 - Priya Sharma (Optimal Post-Op)
+    // Bed 01 - Elena Rostova (Optimal Post-Op)
     _currentTelemetry['bed_01'] = TelemetryData(
       bedId: 'bed_01',
       heartRate: 72,
@@ -91,7 +77,7 @@ class MockTelemetryService {
       lastSeen: now,
     );
 
-    // Bed 02 - Rajesh Kulkarni (Checking / Mild Respiratory)
+    // Bed 02 - Marcus Vance (Checking / Mild Respiratory)
     _currentTelemetry['bed_02'] = TelemetryData(
       bedId: 'bed_02',
       heartRate: 88,
@@ -113,7 +99,7 @@ class MockTelemetryService {
       lastSeen: now,
     );
 
-    // Bed 03 - Sunita Patel (Critical Observation)
+    // Bed 03 - David Chen (Critical Observation)
     _currentTelemetry['bed_03'] = TelemetryData(
       bedId: 'bed_03',
       heartRate: 118,
@@ -140,7 +126,7 @@ class MockTelemetryService {
       AlertIncident(
         id: 'ALT-${now.millisecondsSinceEpoch}',
         bedId: 'bed_03',
-        patientName: 'Sunita Patel',
+        patientName: 'David Chen',
         severity: AlertSeverity.critical,
         triggerReason: 'Sustained SpO2 < 88% for 15s (Hypoxemia)',
         timestamp: now,
@@ -209,10 +195,6 @@ class MockTelemetryService {
   void acknowledgeAlert(String alertId, String nurseName) {
     final index = _activeAlerts.indexWhere((a) => a.id == alertId);
     if (index != -1) {
-      if (!_activeAlerts[index].isAcknowledged) {
-        _resolvedAlarmsCount++;
-        _resolvedAlarmsController.add(_resolvedAlarmsCount);
-      }
       _activeAlerts[index] = _activeAlerts[index].copyWith(
         isAcknowledged: true,
         acknowledgedBy: nurseName,
@@ -220,20 +202,11 @@ class MockTelemetryService {
       // Silence critical siren upon acknowledgment
       _audioAlertService.stopCriticalAlarm();
       _alertsController.add(List.from(_activeAlerts));
-      _socketService?.acknowledgeAlarm(alertId, nurseName);
     }
   }
 
   void clearAlert(String alertId) {
-    final index = _activeAlerts.indexWhere((a) => a.id == alertId);
-    if (index != -1) {
-      if (!_activeAlerts[index].isAcknowledged) {
-        _resolvedAlarmsCount++;
-        _resolvedAlarmsController.add(_resolvedAlarmsCount);
-      }
-      _activeAlerts.removeAt(index);
-      _socketService?.clearAlarm(alertId);
-    }
+    _activeAlerts.removeWhere((a) => a.id == alertId);
     if (_activeAlerts.where((a) => a.severity == AlertSeverity.critical && !a.isAcknowledged).isEmpty) {
       _audioAlertService.stopCriticalAlarm();
     }
@@ -364,9 +337,39 @@ class MockTelemetryService {
     _gatewayController.add(GatewayStatus(lastHeartbeat: DateTime.now()));
   }
 
+  void acknowledgeAlert(String alertId, String nurseName) {
+    final index = _activeAlerts.indexWhere((a) => a.id == alertId);
+    if (index != -1) {
+      if (!_activeAlerts[index].isAcknowledged) {
+        _resolvedAlarmsCount++;
+        _resolvedAlarmsController.add(_resolvedAlarmsCount);
+      }
+      _activeAlerts[index] = _activeAlerts[index].copyWith(
+        isAcknowledged: true,
+        acknowledgedBy: nurseName,
+      );
+      _audioAlertService.stopCriticalAlarm();
+      _alertsController.add(List.from(_activeAlerts));
+    }
+  }
+
+  void clearAlert(String alertId) {
+    final index = _activeAlerts.indexWhere((a) => a.id == alertId);
+    if (index != -1) {
+      if (!_activeAlerts[index].isAcknowledged) {
+        _resolvedAlarmsCount++;
+        _resolvedAlarmsController.add(_resolvedAlarmsCount);
+      }
+      _activeAlerts.removeAt(index);
+    }
+    if (_activeAlerts.where((a) => a.severity == AlertSeverity.critical && !a.isAcknowledged).isEmpty) {
+      _audioAlertService.stopCriticalAlarm();
+    }
+    _alertsController.add(List.from(_activeAlerts));
+  }
+
   void dispose() {
     stop();
-    _socketSubscription?.cancel();
     _telemetryController.close();
     _nodesController.close();
     _alertsController.close();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_button.dart';
 
@@ -155,7 +156,7 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
                               child: Text(
                                 '$dayNum',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 13,
                                   fontWeight: isSelected
                                       ? FontWeight.w800
                                       : FontWeight.w500,
@@ -220,7 +221,7 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
                       child: Text(
                         time,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 13,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                           color: isSelected ? Colors.white : AppColors.textPrimary,
                         ),
@@ -266,7 +267,7 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dr. Vikram Deshmukh, MD',
+                            'Dr. Sarah Johnson',
                             style: AppTextStyles.titleSmall.copyWith(
                               fontWeight: FontWeight.w700,
                             ),

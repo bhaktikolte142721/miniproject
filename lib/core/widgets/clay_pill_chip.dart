@@ -80,7 +80,7 @@ class ClayPillChip extends StatelessWidget {
                 child: Text(
                   '$count',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: isSelected ? Colors.white : AppColors.textSecondary,
                   ),

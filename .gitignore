@@ -23,5 +23,12 @@ build/
 .DS_Store
 Thumbs.db
 
+# SQLite Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
 # Environment
 .env
