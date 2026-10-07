@@ -481,6 +481,21 @@ app.get('/api/db/alarms', (req, res) => {
   }
 });
 
+// 10d. Get recent patient vitals telemetry records in table format
+app.get('/api/db/vitals', (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 100;
+    const vitals = db.getRecentVitals(limit);
+    res.json({
+      success: true,
+      count: vitals.length,
+      vitals
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 10c. Reset SQL Database to pristine seed state
 app.post('/api/db/reset', (req, res) => {
   try {
@@ -733,6 +748,8 @@ io.on('connection', (socket) => {
 
 // --- Simulation Ticker (Simulates ESP32 Gateway Telemetry Broadcasts) ---
 
+let dbVitalsLogCounter = 0;
+
 setInterval(() => {
   // Fluctuate Bed 1 (Elena - Stable)
   telemetryState.bed_01.heartRate = 70 + Math.floor(Math.random() * 5);
@@ -745,6 +762,37 @@ setInterval(() => {
   // Fluctuate Bed 3 (David - Critical)
   telemetryState.bed_03.heartRate = 115 + Math.floor(Math.random() * 8);
   telemetryState.bed_03.spo2 = 86 + Math.floor(Math.random() * 4);
+
+  // Periodically log telemetry snapshot to SQLite database
+  dbVitalsLogCounter++;
+  if (dbVitalsLogCounter % 3 === 0) {
+    ['bed_01', 'bed_02', 'bed_03'].forEach(bedId => {
+      const b = telemetryState[bedId];
+      if (b) {
+        try {
+          db.logVitals({
+            bedId,
+            patientName: b.patientName,
+            heartRate: b.heartRate,
+            spo2: b.spo2,
+            temperature: b.temperature,
+            respiratoryRate: b.respiratoryRate || 16,
+            bloodPressureSys: b.bloodPressureSys || 120,
+            bloodPressureDia: b.bloodPressureDia || 80,
+            status: b.status
+          });
+          db.updatePatientVitals(bedId, {
+            heartRate: b.heartRate,
+            spo2: b.spo2,
+            temperature: b.temperature,
+            status: b.status
+          });
+        } catch (dbErr) {
+          // ignore duplicate ticks
+        }
+      }
+    });
+  }
 
   // Broadcast to all connected Flutter apps
   io.emit('vitals_update', telemetryState);

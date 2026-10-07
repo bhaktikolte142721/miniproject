@@ -7,6 +7,7 @@ import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_icon_box.dart';
 import '../../providers/telemetry_provider.dart';
 import '../../providers/alerts_provider.dart';
+import '../../models/patient.dart';
 import '../patient_detail/patient_monitoring_screen.dart';
 
 /// Screen 2: Shift Handover & Ward Home Overview (Reference: Top-Center).
@@ -400,6 +401,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+              ),
               const SizedBox(height: 20),
 
               // 5.5 Nurse Clinical Pride & Hero Recognition Card (Alarms Handled & Patients Attended)

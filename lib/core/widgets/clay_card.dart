@@ -48,7 +48,7 @@ class _ClayCardState extends State<ClayCard> {
       child: GestureDetector(
         onTapDown: widget.onTap != null ? (_) => setState(() => _isDown = true) : null,
         onTapUp: widget.onTap != null ? (_) => setState(() => _isDown = false) : null,
-        onTapCancel: widget.onTap != null ? (_) => setState(() => _isDown = false) : null,
+        onTapCancel: widget.onTap != null ? () => setState(() => _isDown = false) : null,
         onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
         child: ClayContainer(

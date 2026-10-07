@@ -475,6 +475,30 @@ function getAllAlarms(limit = 100) {
 }
 
 /**
+ * Get recent vitals log records in table format
+ */
+function getRecentVitals(limit = 100) {
+  const stmt = db.prepare(`
+    SELECT 
+      id,
+      bed_id,
+      patient_name,
+      heart_rate,
+      spo2,
+      temperature,
+      respiratory_rate,
+      blood_pressure_sys,
+      blood_pressure_dia,
+      clinical_status,
+      logged_at
+    FROM patient_vitals_log
+    ORDER BY id DESC
+    LIMIT ?
+  `);
+  return stmt.all(limit);
+}
+
+/**
  * Execute raw custom SQL query (read-only safe helper)
  */
 function queryRaw(sql, params = []) {
@@ -501,5 +525,6 @@ module.exports = {
   getAllPatients,
   getPatientByBedId,
   getAllAlarms,
+  getRecentVitals,
   queryRaw
 };

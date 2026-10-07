@@ -4,6 +4,9 @@
   "description": "SENTINEL-Ward: Multi-Patient Acute Care Vitals Telemetry & Monitoring System",
   "private": true,
   "scripts": {
+    "start": "run_all.bat",
+    "backend": "cd backend && npm start",
+    "flutter": "flutter run -d chrome",
     "build": "bash build.sh"
   }
 }

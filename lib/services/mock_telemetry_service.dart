@@ -192,27 +192,6 @@ class MockTelemetryService {
     _alertsController.add(List.from(_activeAlerts));
   }
 
-  void acknowledgeAlert(String alertId, String nurseName) {
-    final index = _activeAlerts.indexWhere((a) => a.id == alertId);
-    if (index != -1) {
-      _activeAlerts[index] = _activeAlerts[index].copyWith(
-        isAcknowledged: true,
-        acknowledgedBy: nurseName,
-      );
-      // Silence critical siren upon acknowledgment
-      _audioAlertService.stopCriticalAlarm();
-      _alertsController.add(List.from(_activeAlerts));
-    }
-  }
-
-  void clearAlert(String alertId) {
-    _activeAlerts.removeWhere((a) => a.id == alertId);
-    if (_activeAlerts.where((a) => a.severity == AlertSeverity.critical && !a.isAcknowledged).isEmpty) {
-      _audioAlertService.stopCriticalAlarm();
-    }
-    _alertsController.add(List.from(_activeAlerts));
-  }
-
   void _tickTelemetry() {
     final now = DateTime.now();
 

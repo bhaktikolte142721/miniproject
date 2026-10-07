@@ -38,7 +38,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Fixed Workstation Viewport Frame Constraints */
+    /* Universal Responsive Workstation Constraints */
     html, body {
       height: 100%;
       width: 100%;
@@ -52,10 +52,10 @@
     .top-workstation-bar {
       height: 64px;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(14px);
       border-bottom: 1.5px solid var(--card-border);
-      padding: 0 28px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -67,12 +67,13 @@
     .brand-logo-area {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      cursor: pointer;
     }
 
     .brand-logo-area img {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       object-fit: contain;
     }
 
@@ -98,40 +99,68 @@
     .top-controls {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .view-mode-toggle {
-      background: var(--card-surface);
-      border: 1.2px solid var(--card-border);
-      border-radius: 20px;
+    /* Staff Duty Switcher Dropdown */
+    .staff-selector-wrap {
       display: flex;
-      padding: 3px;
+      align-items: center;
+      gap: 6px;
+      background: #FFFFFF;
+      border: 1.2px solid var(--card-border);
+      padding: 4px 10px;
+      border-radius: 20px;
       box-shadow: var(--clay-shadow);
     }
 
-    .view-mode-btn {
+    .staff-selector-wrap label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .staff-dropdown {
       border: none;
+      outline: none;
       background: transparent;
-      padding: 6px 14px;
-      border-radius: 16px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      cursor: pointer;
+    }
+
+    /* Top Action Buttons */
+    .btn-top-db {
+      background: linear-gradient(135deg, #00838F, #004D40);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0, 131, 143, 0.25);
       transition: all 0.2s ease;
     }
 
-    .view-mode-btn.active {
-      background: var(--primary-mint);
-      color: #fff;
+    .btn-top-db:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 131, 143, 0.35);
     }
 
     .alarm-pill-btn {
       background: #fff;
       border: 1.5px solid var(--primary-mint);
       color: var(--primary-teal);
-      padding: 7px 16px;
+      padding: 7px 14px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
@@ -143,32 +172,57 @@
       transition: all 0.2s;
     }
 
+    .alarm-pill-btn:hover {
+      background: var(--mint-light);
+    }
+
     .alarm-pill-btn.muted {
       border-color: var(--alert-critical);
       color: var(--alert-critical);
+      background: #FFF5F5;
     }
 
-    /* Main App Layout Container (Fills exact remaining viewport) */
+    .test-siren-btn {
+      background: #FFF0F0;
+      border: 1.5px solid var(--alert-critical);
+      color: var(--alert-critical);
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .test-siren-btn:hover {
+      background: #FFE5E5;
+      transform: scale(1.02);
+    }
+
+    /* Main App Layout (Clean Desktop & Responsive Mobile) */
     .app-layout {
       display: flex;
+      width: 100%;
       height: calc(100vh - 64px);
       max-height: calc(100vh - 64px);
       overflow: hidden;
       position: relative;
-      transition: all 0.3s ease;
     }
 
-    /* Sidebar Navigation (Desktop) */
+    /* Sidebar Navigation */
     .app-sidebar {
-      width: 270px;
+      width: 260px;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(16px);
       border-right: 1.5px solid var(--card-border);
-      padding: 22px 18px;
+      padding: 18px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
@@ -180,23 +234,24 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin: 12px 12px 6px 12px;
+      margin: 10px 10px 4px 10px;
     }
 
     .nav-button {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 18px;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 16px;
       border: 1.2px solid transparent;
       background: transparent;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
       text-align: left;
       transition: all 0.18s ease;
+      font-family: inherit;
     }
 
     .nav-button:hover {
@@ -228,17 +283,18 @@
       margin-top: auto;
       background: #FFFFFF;
       border: 1.2px solid var(--card-border);
-      border-radius: 20px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 12px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       box-shadow: var(--clay-shadow);
+      cursor: pointer;
     }
 
     .nurse-avatar {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       background: var(--mint-light);
       border: 2px solid var(--primary-mint);
       border-radius: 50%;
@@ -247,36 +303,24 @@
       justify-content: center;
       font-weight: 800;
       color: var(--primary-teal);
-      font-size: 15px;
+      font-size: 14px;
       flex-shrink: 0;
-    }
-
-    /* Phone Device Frame Container */
-    .phone-device-frame {
-      display: contents; /* In default laptop mode, acts as invisible pass-through */
-    }
-
-    .phone-notch-bar {
-      display: none;
-    }
-
-    .phone-home-indicator {
-      display: none;
     }
 
     /* Main Viewport Content */
     .main-viewport {
       flex: 1;
+      width: 100%;
       height: 100%;
-      padding: 24px 32px 64px 32px;
+      padding: 22px 28px 70px 28px;
       overflow-y: auto;
       overflow-x: hidden;
       scroll-behavior: smooth;
     }
 
-    /* Responsive Workstation Container Constraint */
+    /* Responsive Workstation Container Constraint (Fits all screens cleanly) */
     .workstation-container {
-      max-width: 1320px;
+      max-width: 1400px;
       width: 100%;
       margin: 0 auto;
     }
@@ -284,7 +328,7 @@
     /* Section Views */
     .section-view {
       display: none;
-      animation: fadeIn 0.25s ease-out;
+      animation: fadeIn 0.2s ease-out;
     }
 
     .section-view.active {
@@ -296,23 +340,22 @@
       font-weight: 800;
       margin-bottom: 18px;
       margin-top: 0;
-      padding-top: 2px;
       line-height: 1.25;
       color: var(--text-primary);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* Claymorphic Card */
     .clay-card {
       background: var(--card-surface);
-      border-radius: 24px;
+      border-radius: 22px;
       border: 1.4px solid var(--card-border);
       box-shadow: var(--clay-card-shadow);
-      padding: 22px;
+      padding: 20px;
       margin-bottom: 20px;
       position: relative;
     }
@@ -321,31 +364,118 @@
       border-color: var(--alert-critical);
     }
 
-    /* Grid Layouts */
+    /* Grid Layouts with Modern Constraints */
     .beds-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
     }
 
     .vitals-2x2-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 16px;
       margin-bottom: 20px;
     }
 
-    /* Live ECG Canvas */
+    /* Patient Pill Selector Bar for Dynamic Bed Diagnostics */
+    .patient-pill-selector {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+      scrollbar-width: thin;
+    }
+
+    .patient-pill-btn {
+      border: 1.2px solid var(--card-border);
+      background: #FFFFFF;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--clay-shadow);
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .patient-pill-btn:hover {
+      border-color: var(--primary-mint);
+      color: var(--primary-teal);
+    }
+
+    .patient-pill-btn.active {
+      background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal));
+      color: #FFFFFF;
+      border-color: transparent;
+      box-shadow: var(--button-shadow);
+    }
+
+    .patient-pill-btn.critical-indicator {
+      border-color: var(--alert-critical);
+      color: var(--alert-critical);
+    }
+
+    .patient-pill-btn.critical-indicator.active {
+      background: linear-gradient(135deg, #FF5252, #D32F2F);
+      color: #FFFFFF;
+    }
+
+    /* Live ECG Rhythm Strip Box (Medical Oscilloscope Style) */
     .ecg-box {
       width: 100%;
-      height: 180px;
-      background: #0F172A;
-      border-radius: 22px;
+      height: 200px;
+      background: #06101E;
+      border-radius: 20px;
       overflow: hidden;
       position: relative;
       margin-bottom: 20px;
       box-shadow: 0 10px 28px rgba(0, 191, 165, 0.2);
-      border: 1.5px solid rgba(0, 191, 165, 0.4);
+      border: 1.5px solid rgba(0, 191, 165, 0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ecg-monitor-header {
+      height: 36px;
+      background: rgba(10, 25, 45, 0.85);
+      border-bottom: 1px solid rgba(0, 191, 165, 0.3);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #94A3B8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .ecg-lead-badge {
+      background: rgba(0, 229, 255, 0.18);
+      color: #00E5FF;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .ecg-rhythm-badge {
+      color: #00E5FF;
+      font-weight: 800;
+    }
+
+    .ecg-canvas-container {
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 36px);
+      position: relative;
     }
 
     canvas.ecg-canvas {
@@ -356,167 +486,140 @@
 
     /* Pill Button */
     .clay-btn {
-      height: 48px;
-      border-radius: 30px;
+      height: 44px;
+      border-radius: 28px;
       background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal));
       border: none;
       color: #FFFFFF;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       box-shadow: var(--button-shadow);
-      padding: 0 24px;
+      padding: 0 22px;
       transition: transform 0.1s ease;
-      gap: 10px;
+      gap: 8px;
+      font-family: inherit;
     }
 
     .clay-btn:active {
       transform: scale(0.98);
     }
 
-    /* ========================================================
-       STAFF PRAISE & ATTENDED PATIENTS RECOGNITION HERO CARD
-       ======================================================== */
+    /* Staff Praise & Appreciation Card */
     .nurse-praise-card {
       background: linear-gradient(135deg, #093832 0%, #0F4C43 45%, #18655A 100%);
-      border-radius: 26px;
+      border-radius: 24px;
       border: 1.8px solid rgba(77, 182, 172, 0.55);
-      padding: 22px 24px;
+      padding: 20px 24px;
       color: #FFFFFF;
       box-shadow: 0 16px 36px rgba(9, 56, 50, 0.32), 0 0 0 1px rgba(255,255,255,0.12) inset;
       margin-bottom: 22px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .nurse-praise-card::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      right: -40px;
-      width: 160px;
-      height: 160px;
-      background: radial-gradient(circle, rgba(0, 191, 165, 0.25) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .nurse-praise-card.pulse-celebrate {
-      animation: praisePulse 0.6s ease;
-    }
-
-    @keyframes praisePulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.02); filter: brightness(1.15); }
-      100% { transform: scale(1); }
     }
 
     .praise-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .praise-gold-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 213, 79, 0.2);
-      border: 1.5px solid rgba(255, 213, 79, 0.8);
-      color: #FFE082;
-      padding: 5px 12px;
-      border-radius: 12px;
-      font-size: 12px;
+      background: rgba(255, 215, 0, 0.18);
+      border: 1.2px solid rgba(255, 215, 0, 0.5);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 11px;
       font-weight: 800;
+      color: #FFE082;
       letter-spacing: 0.6px;
-      box-shadow: 0 2px 8px rgba(255, 213, 79, 0.2);
     }
 
     .praise-teal-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #E0F2F1;
-      padding: 5px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
+      background: rgba(0, 191, 165, 0.22);
+      border: 1px solid rgba(0, 191, 165, 0.5);
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #80CBC4;
     }
 
     .praise-main-row {
       display: flex;
       align-items: center;
       gap: 18px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .praise-shield-box {
-      width: 74px;
-      height: 74px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.08);
-      border: 1.5px solid rgba(255, 213, 79, 0.45);
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.25), 0 0 16px rgba(255, 213, 79, 0.35);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
     }
 
     .praise-shield-box img {
-      width: 54px;
-      height: 54px;
+      width: 38px;
+      height: 38px;
       object-fit: contain;
     }
 
     .praise-metrics-grid {
-      display: flex;
-      gap: 28px;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      flex: 1;
     }
 
     .praise-metric-item {
-      display: flex;
-      flex-direction: column;
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .praise-metric-number {
-      font-size: 36px;
+      font-size: 24px;
       font-weight: 900;
+      color: #FFFFFF;
       line-height: 1;
-      letter-spacing: -0.5px;
     }
 
     .praise-metric-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #E0F2F1;
-      margin-top: 4px;
+      font-size: 11px;
+      color: #B2DFDB;
+      font-weight: 600;
+      margin-top: 3px;
     }
 
     .praise-affirmation-row {
-      background: rgba(0, 0, 0, 0.22);
-      border-radius: 16px;
-      padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 12px;
       flex-wrap: wrap;
+      gap: 10px;
     }
 
     .praise-quote {
-      font-style: italic;
-      font-size: 13.5px;
+      font-size: 13px;
       color: #E0F2F1;
       font-weight: 600;
       display: flex;
@@ -525,174 +628,232 @@
     }
 
     .praise-action-btn {
-      background: linear-gradient(135deg, #FFD54F, #FFB300);
+      background: linear-gradient(135deg, #FFE082, #FFB300);
       color: #3E2723;
-      font-weight: 800;
-      font-size: 13px;
-      border-radius: 12px;
-      padding: 8px 16px;
       border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.35);
+      box-shadow: 0 4px 14px rgba(255, 179, 0, 0.35);
       transition: transform 0.15s ease;
+      font-family: inherit;
     }
 
     .praise-action-btn:hover {
       transform: translateY(-1px);
     }
 
-    /* Modal Overlay & Appreciation Dialog */
+    /* ========================================================
+       DATABASE TABLE VIEW SECTION STYLES
+       ======================================================== */
+    .db-table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .db-tabs-group {
+      display: flex;
+      background: #FFFFFF;
+      border: 1.2px solid var(--card-border);
+      border-radius: 22px;
+      padding: 3px;
+      box-shadow: var(--clay-shadow);
+      gap: 4px;
+    }
+
+    .db-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .db-tab-btn.active {
+      background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal));
+      color: #FFFFFF;
+      box-shadow: var(--button-shadow);
+    }
+
+    .db-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .db-search-input {
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1.2px solid var(--card-border);
+      font-size: 12.5px;
+      outline: none;
+      font-family: inherit;
+      width: 200px;
+      box-shadow: var(--clay-shadow);
+    }
+
+    .db-search-input:focus {
+      border-color: var(--primary-mint);
+    }
+
+    .db-table-container {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1.4px solid var(--card-border);
+      box-shadow: var(--clay-card-shadow);
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+
+    .sentinel-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .sentinel-data-table th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      padding: 12px 16px;
+      border-bottom: 1.5px solid var(--card-border);
+      white-space: nowrap;
+    }
+
+    .sentinel-data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #EDF2F6;
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .sentinel-data-table tr:hover {
+      background: #F8FAFC;
+    }
+
+    .table-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .table-badge.optimal {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .table-badge.checking {
+      background: #FFF8E1;
+      color: #F57F17;
+    }
+
+    .table-badge.critical {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .table-badge.active {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .table-badge.acknowledged {
+      background: #E0F2FE;
+      color: #0284C7;
+    }
+
+    .table-badge.cleared {
+      background: #F1F5F9;
+      color: #64748B;
+    }
+
+    /* Modal Dialogs */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(15, 23, 42, 0.45);
       backdrop-filter: blur(8px);
-      z-index: 10000;
+      z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      animation: modalFadeIn 0.2s ease-out;
     }
 
     .modal-card {
       background: #FFFFFF;
       border-radius: 28px;
-      max-width: 520px;
+      border: 1.5px solid var(--card-border);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
       width: 100%;
       padding: 28px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
-      border: 1.5px solid var(--card-border);
-      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: modalSlide 0.25s ease-out;
     }
 
     .modal-close-btn {
+      background: #F1F5F9;
+      border: none;
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      border: none;
-      background: #F1F5F9;
-      color: #64748B;
-      font-weight: 700;
-      font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s;
+      font-weight: 800;
+      color: var(--text-secondary);
     }
 
-    .modal-close-btn:hover {
-      background: #E2E8F0;
-      color: #0F172A;
+    @keyframes modalSlide {
+      from { transform: translateY(16px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes modalSlideUp {
-      from { transform: translateY(16px) scale(0.97); }
-      to { transform: translateY(0) scale(1); }
-    }
-
-    /* Mobile Bottom Navigation */
+    /* Mobile Bottom Navigation (Visible on screen widths <= 860px) */
     .mobile-bottom-nav {
       display: none;
-    }
-
-    /* ========================================================
-       FRAME CONSTRAINTS: WHEN PHONE VIEW MODE IS TOGGLED
-       ======================================================== */
-    .app-layout.phone-mode {
-      justify-content: center;
-      align-items: center;
-      padding: 12px 0;
-      background: rgba(15, 23, 42, 0.06);
-    }
-
-    .app-layout.phone-mode .app-sidebar {
-      display: none;
-    }
-
-    .app-layout.phone-mode .phone-device-frame {
-      display: flex;
-      flex-direction: column;
-      max-width: 412px;
-      width: 100%;
-      height: calc(100vh - 88px);
-      max-height: 820px;
-      background: #FFFFFF;
-      border-radius: 46px;
-      border: 12px solid #1E293B;
-      box-shadow: 0 25px 60px rgba(0, 77, 64, 0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
-      position: relative;
-      overflow: hidden;
-      margin: auto;
-    }
-
-    .app-layout.phone-mode .phone-notch-bar {
-      display: flex;
-      justify-content: center;
-      padding-top: 8px;
-      padding-bottom: 4px;
-      background: #FFFFFF;
-      z-index: 20;
-    }
-
-    .phone-notch-pill {
-      width: 90px;
-      height: 16px;
-      background: #1E293B;
-      border-radius: 10px;
-    }
-
-    .app-layout.phone-mode .phone-home-indicator {
-      display: block;
-      position: absolute;
-      bottom: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 4px;
-      background: #94A3B8;
-      border-radius: 3px;
-      z-index: 101;
-    }
-
-    .app-layout.phone-mode .main-viewport {
-      padding: 12px 14px 84px 14px;
-      background: #F8FAFC;
-    }
-
-    .app-layout.phone-mode .mobile-bottom-nav {
-      display: flex;
-      position: absolute;
+      position: fixed;
       bottom: 12px;
       left: 14px;
       right: 14px;
       height: 56px;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
       border-radius: 28px;
       border: 1.2px solid var(--card-border);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
       align-items: center;
       justify-content: space-around;
-      z-index: 100;
+      z-index: 200;
     }
 
     .mobile-nav-item {
-      font-size: 20px;
+      font-size: 18px;
       cursor: pointer;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 16px;
       color: var(--text-muted);
       position: relative;
@@ -715,40 +876,37 @@
       border-radius: 8px;
     }
 
-    /* ========================================================
-       FRAME CONSTRAINTS: RESPONSIVE MEDIA QUERIES (TABLET / MOBILE)
-       ======================================================== */
-    @media (max-width: 900px) {
-      .top-workstation-bar {
-        padding: 0 16px;
+    /* Responsive Constraints for Devices (Laptops, Tablets, Phones) */
+    @media (max-width: 1024px) {
+      .app-sidebar {
+        width: 220px;
       }
-      .brand-titles h1 {
-        font-size: 16px;
+      .main-viewport {
+        padding: 18px 20px 70px 20px;
       }
-      .brand-titles span.tag {
-        display: none;
-      }
+    }
+
+    @media (max-width: 860px) {
       .app-sidebar {
         display: none;
+      }
+      .mobile-bottom-nav {
+        display: flex;
       }
       .main-viewport {
         padding: 16px 14px 84px 14px;
       }
-      .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 12px;
-        left: 14px;
-        right: 14px;
-        height: 58px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        border-radius: 30px;
-        border: 1.2px solid var(--card-border);
-        box-shadow: 0 12px 28px rgba(0,0,0,0.1);
-        align-items: center;
-        justify-content: space-around;
-        z-index: 90;
+      .top-workstation-bar {
+        padding: 0 14px;
+      }
+      .brand-titles h1 {
+        font-size: 15px;
+      }
+      .brand-titles span.tag {
+        display: none;
+      }
+      .staff-selector-wrap {
+        display: none;
       }
       .beds-grid {
         grid-template-columns: 1fr;
@@ -756,9 +914,17 @@
       .vitals-2x2-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .praise-main-row {
-        flex-direction: column;
-        align-items: flex-start;
+    }
+
+    @media (max-width: 520px) {
+      .vitals-2x2-grid {
+        grid-template-columns: 1fr;
+      }
+      .top-controls {
+        gap: 6px;
+      }
+      .btn-top-db span:not(:first-child) {
+        display: none;
       }
     }
   </style>
@@ -767,7 +933,7 @@
 
   <!-- Top Universal Workstation Header -->
   <header class="top-workstation-bar">
-    <div class="brand-logo-area">
+    <div class="brand-logo-area" onclick="switchSection(0)">
       <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
       <div class="brand-titles">
         <h1>SENTINEL-Ward <span class="tag">Ward 3B Telemetry</span></h1>
@@ -775,11 +941,26 @@
     </div>
 
     <div class="top-controls">
-      <!-- Device Viewport Mode Toggle -->
-      <div class="view-mode-toggle">
-        <button class="view-mode-btn active" id="btnLaptopMode" onclick="setViewMode('laptop')">💻 Laptop View</button>
-        <button class="view-mode-btn" id="btnPhoneMode" onclick="setViewMode('phone')">📱 Phone View</button>
+      <!-- Dynamic Clinician Profile Switcher -->
+      <div class="staff-selector-wrap" title="Current On-Duty Clinician Profile">
+        <label for="staffSelect">STAFF:</label>
+        <select id="staffSelect" class="staff-dropdown" onchange="switchClinicianProfile(this.value)">
+          <option value="Sister Sarah Jenkins">Sister Sarah Jenkins (Lead RN #88192)</option>
+          <option value="Nurse Michael Chen">Nurse Michael Chen (Staff RN #88193)</option>
+          <option value="Sister Sunita Rao">Sister Sunita Rao (ICU RN #88194)</option>
+          <option value="Dr. Marcus Vance">Dr. Marcus Vance (Attending MD #44910)</option>
+        </select>
       </div>
+
+      <!-- Quick Database Table View Button -->
+      <button class="btn-top-db" onclick="switchSection(5)" title="Open SQLite Database Tables">
+        <span>📊</span> <span>Database Tables</span>
+      </button>
+
+      <!-- Direct Audio Alarm Test Button -->
+      <button class="test-siren-btn" onclick="testAlarmSound()" title="Test IEC 60601-1-8 Audible Alarm Chime">
+        <span>🔔</span> <span>Test Siren</span>
+      </button>
 
       <!-- Medical Audio Siren Toggle -->
       <button class="alarm-pill-btn" id="audioToggleBtn" onclick="toggleAudioAlarm()">
@@ -808,9 +989,12 @@
         <span style="font-size: 18px;">🚨</span> Active Alarms
         <span class="badge" id="sidebarBadge">1</span>
       </button>
+      <button class="nav-button" onclick="switchSection(5)">
+        <span style="font-size: 18px;">📋</span> Database Table View
+      </button>
 
       <div class="sidebar-heading">ESP32 Hardware</div>
-      <div style="padding: 10px 14px; background: #fff; border-radius: 16px; border: 1.2px solid var(--card-border); font-size: 12px;">
+      <div style="padding: 10px 14px; background: #fff; border-radius: 16px; border: 1.2px solid var(--card-border); font-size: 12px; box-shadow: var(--clay-shadow);">
         <div style="font-weight: 700; color: var(--primary-teal); display: flex; align-items: center; gap: 6px;">
           <span style="width: 8px; height: 8px; background: var(--alert-stable); border-radius: 50%; display: inline-block;"></span>
           ESP32-WARD-3B-GW
@@ -818,421 +1002,493 @@
         <div style="color: var(--text-muted); margin-top: 4px;">Port 3000 • 3 Nodes Active</div>
       </div>
 
-      <div class="nurse-profile-card">
-        <div class="nurse-avatar">SJ</div>
-        <div>
-          <div style="font-size: 13px; font-weight: 800;">Nurse Sarah Jenkins</div>
-          <div style="font-size: 11px; color: var(--text-secondary);">Lead Triage • RN #88192</div>
+      <!-- Nurse Profile Card -->
+      <div class="nurse-profile-card" onclick="openPraiseModal()" title="View Clinician Details & Appreciation">
+        <div class="nurse-avatar" id="sidebarAvatar">SJ</div>
+        <div style="overflow: hidden;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebarNurseName">Sister Sarah Jenkins</div>
+          <div style="font-size: 11px; color: var(--text-muted);" id="sidebarNurseRole">Lead Triage • RN #88192</div>
         </div>
       </div>
     </aside>
 
-    <!-- Phone Device Shell (Active in Phone Mode, transparent wrapper in Laptop Mode) -->
-    <div class="phone-device-frame" id="phoneDeviceFrame">
-      <div class="phone-notch-bar">
-        <div class="phone-notch-pill"></div>
-      </div>
+    <!-- Main Viewport Content -->
+    <main class="main-viewport" id="mainViewport">
+      <div class="workstation-container">
 
-      <!-- Main Viewport Content -->
-      <main class="main-viewport" id="mainViewport">
-        <div class="workstation-container">
-
-          <!-- ==========================================
-               SECTION 0: SHIFT OVERVIEW
-               ========================================== -->
-          <section class="section-view active" id="section-0">
-            <!-- Wide Teal Hero Banner -->
-            <div style="background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal)); border-radius: 28px; padding: 26px 32px; color: #fff; box-shadow: 0 16px 36px rgba(0, 191, 165, 0.3); margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-              <div style="flex: 1; min-width: 260px;">
-                <span style="background: rgba(255,255,255,0.22); font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 12px;">● ESP32 Gateway: Synchronized</span>
-                <h2 style="font-size: 24px; font-weight: 800; margin-top: 10px;">Acute Ward 3B Central Telemetry</h2>
-                <p style="font-size: 13px; opacity: 0.95; margin-top: 4px;">Continuous physiological monitoring across Bed 01, Bed 02, and Bed 03 via nRF24 wireless nodes.</p>
-                <div style="display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-                  <button class="clay-btn" style="background: #fff; color: var(--primary-teal); box-shadow: 0 6px 16px rgba(0,0,0,0.1);" onclick="switchSection(1)">View Live Patient Grid ➔</button>
-                  <button class="clay-btn" style="background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.4);" onclick="switchSection(4)">Inspect Alarms Feed</button>
-                </div>
+        <!-- ==========================================
+             SECTION 0: SHIFT OVERVIEW
+             ========================================== -->
+        <section class="section-view active" id="section-0">
+          <!-- Wide Teal Hero Banner -->
+          <div style="background: linear-gradient(135deg, var(--primary-mint), var(--primary-teal)); border-radius: 26px; padding: 24px 30px; color: #fff; box-shadow: 0 16px 36px rgba(0, 191, 165, 0.3); margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div style="flex: 1; min-width: 260px;">
+              <span style="background: rgba(255,255,255,0.22); font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 12px;">● ESP32 Gateway: Synchronized</span>
+              <h2 style="font-size: 24px; font-weight: 800; margin-top: 10px;">Acute Ward 3B Central Telemetry</h2>
+              <p style="font-size: 13px; opacity: 0.95; margin-top: 4px;">Continuous physiological monitoring across Bed 01, Bed 02, and Bed 03 via nRF24 wireless nodes.</p>
+              <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                <button class="clay-btn" style="background: #fff; color: var(--primary-teal); box-shadow: 0 6px 16px rgba(0,0,0,0.1);" onclick="switchSection(1)">View Live Patient Grid ➔</button>
+                <button class="clay-btn" style="background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.4);" onclick="switchSection(5)">Open Database Records</button>
               </div>
-              <img src="assets/images/vital_monitor_3d.png" style="width: 120px; height: 120px; object-fit: contain;" alt="Monitor">
             </div>
+            <img src="assets/images/vital_monitor_3d.png" style="width: 110px; height: 110px; object-fit: contain;" alt="Monitor">
+          </div>
 
-            <!-- 3-Bed Status Metric Row -->
-            <div class="beds-grid" style="margin-bottom: 22px;">
-              <div class="clay-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
-                  <span style="font-size: 12px; font-weight: 700; color: var(--primary-teal);">Optimal (98%)</span>
-                </div>
-                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Elena Rostova (34F)</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Post-Op Laparoscopic • RSSI -58 dBm</div>
-                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
-                  <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-1">72 BPM</strong></div>
-                  <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--primary-teal);" id="live-spo2-1">99%</strong></div>
-                  <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-1">36.8°C</strong></div>
-                </div>
+          <!-- 3-Bed Status Metric Row -->
+          <div class="beds-grid" style="margin-bottom: 22px;">
+            <div class="clay-card" style="cursor: pointer;" onclick="openPatientDiagnostics('bed_01')">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--primary-teal);">Optimal (98%)</span>
               </div>
-
-              <div class="clay-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
-                  <span style="font-size: 12px; font-weight: 700; color: var(--alert-warning);">Checking...</span>
-                </div>
-                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Marcus Vance (58M)</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">COPD Observation • RSSI -64 dBm</div>
-                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
-                  <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-2">88 BPM</strong></div>
-                  <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--alert-warning);" id="live-spo2-2">94%</strong></div>
-                  <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-2">37.6°C</strong></div>
-                </div>
-              </div>
-
-              <div class="clay-card critical" style="background: #FFF5F5;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
-                  <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
-                </div>
-                <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">David Chen (62M)</div>
-                <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600; margin-top: 2px;">Hypoxemia: Sustained SpO2 &lt; 88%</div>
-                <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2;">
-                  <div><span style="font-size: 10px; color: var(--alert-critical);">HR:</span> <strong style="color: var(--alert-critical);" id="live-hr-3">118 BPM</strong></div>
-                  <div><span style="font-size: 10px; color: var(--alert-critical);">SpO2:</span> <strong style="color: var(--alert-critical);" id="live-spo2-3">87%</strong></div>
-                  <div><span style="font-size: 10px; color: var(--alert-critical);">Temp:</span> <strong style="color: var(--alert-critical);" id="live-temp-3">38.6°C</strong></div>
-                </div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Elena Rostova (34F)</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Post-Op Laparoscopic • RSSI -58 dBm</div>
+              <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
+                <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-1">72 BPM</strong></div>
+                <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--primary-teal);" id="live-spo2-1">99%</strong></div>
+                <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-1">36.8°C</strong></div>
               </div>
             </div>
 
-            <!-- RESTORED: Staff Praise & Attended Patients Recognition Hero Card -->
-            <div class="nurse-praise-card" id="shiftOverviewPraiseCard">
-              <div class="praise-top-row">
-                <div class="praise-gold-badge">
-                  <span>🏆</span>
-                  <span>NURSE APPRECIATION</span>
-                </div>
-                <div class="praise-teal-badge">
-                  <span>⚡</span>
-                  <span>Quick Clinical Response</span>
-                </div>
+            <div class="clay-card" style="cursor: pointer;" onclick="openPatientDiagnostics('bed_02')">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--alert-warning);">Checking...</span>
               </div>
-
-              <div class="praise-main-row">
-                <div class="praise-shield-box">
-                  <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
-                </div>
-
-                <div class="praise-metrics-grid">
-                  <div class="praise-metric-item">
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                      <span class="praise-metric-number praise-resolved-val" id="praiseResolvedCount">1</span>
-                      <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
-                    </div>
-                    <div class="praise-metric-label">Alarms Handled Successfully</div>
-                  </div>
-
-                  <div class="praise-metric-item">
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                      <span class="praise-metric-number" style="color: #80CBC4;" id="praisePatientsCount">3 / 3</span>
-                      <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
-                    </div>
-                    <div class="praise-metric-label">Patients Attended Today (100% Ward Coverage)</div>
-                  </div>
-                </div>
-              </div>
-
-              <div style="font-size: 13.5px; color: rgba(255,255,255,0.92); line-height: 1.45; margin-bottom: 14px;">
-                All acute patient alerts were checked and safely attended to by Sister Sarah Jenkins. Continuous wireless physiological monitoring active across Ward 3B.
-              </div>
-
-              <div class="praise-affirmation-row">
-                <div class="praise-quote">
-                  <span>🌟</span>
-                  <span>“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
-                </div>
-                <button class="praise-action-btn" onclick="openPraiseModal()">
-                  <span>👏</span>
-                  <span>Praise Staff</span>
-                </button>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Marcus Vance (58M)</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">COPD Observation • RSSI -64 dBm</div>
+              <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
+                <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-2">88 BPM</strong></div>
+                <div><span style="font-size: 10px; color: var(--text-muted);">SpO2:</span> <strong style="color: var(--alert-warning);" id="live-spo2-2">94%</strong></div>
+                <div><span style="font-size: 10px; color: var(--text-muted);">Temp:</span> <strong id="live-temp-2">37.6°C</strong></div>
               </div>
             </div>
-          </section>
 
-          <!-- ==========================================
-               SECTION 1: LIVE WARD GRID
-               ========================================== -->
-          <section class="section-view" id="section-1">
-            <h2 class="section-heading">Live Multi-Patient Grid Dashboard</h2>
-            <div class="beds-grid">
-              <!-- Bed 01 Full Card -->
-              <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
-                <div style="display: flex; gap: 16px; align-items: center;">
-                  <img src="assets/images/vital_heart_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Heart">
-                  <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between;">
-                      <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
-                      <span style="font-weight: 700; color: var(--primary-teal);">Optimal</span>
-                    </div>
-                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Elena Rostova (34F)</div>
-                    <div style="font-size: 12px; color: var(--text-muted);">Post-Op Laparoscopic • Nurse Sarah Jenkins</div>
-                  </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
-                    <div style="font-size: 18px; font-weight: 800;">72 BPM</div>
-                  </div>
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
-                    <div style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">99%</div>
-                  </div>
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
-                    <div style="font-size: 18px; font-weight: 800;">36.8°C</div>
-                  </div>
-                </div>
+            <div class="clay-card critical" style="background: #FFF5F5; cursor: pointer;" onclick="openPatientDiagnostics('bed_03')">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
+                <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
+              </div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">David Chen (62M)</div>
+              <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600; margin-top: 2px;">Hypoxemia: Sustained SpO2 &lt; 88%</div>
+              <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2;">
+                <div><span style="font-size: 10px; color: var(--alert-critical);">HR:</span> <strong style="color: var(--alert-critical);" id="live-hr-3">118 BPM</strong></div>
+                <div><span style="font-size: 10px; color: var(--alert-critical);">SpO2:</span> <strong style="color: var(--alert-critical);" id="live-spo2-3">87%</strong></div>
+                <div><span style="font-size: 10px; color: var(--alert-critical);">Temp:</span> <strong style="color: var(--alert-critical);" id="live-temp-3">38.6°C</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Staff Praise & Attended Patients Recognition Hero Card -->
+          <div class="nurse-praise-card" id="shiftOverviewPraiseCard">
+            <div class="praise-top-row">
+              <div class="praise-gold-badge">
+                <span>🏆</span>
+                <span>NURSE APPRECIATION</span>
+              </div>
+              <div class="praise-teal-badge">
+                <span>⚡</span>
+                <span>Quick Clinical Response</span>
+              </div>
+            </div>
+
+            <div class="praise-main-row">
+              <div class="praise-shield-box">
+                <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
               </div>
 
-              <!-- Bed 02 Full Card -->
-              <div class="clay-card" style="cursor: pointer;" onclick="switchSection(2)">
-                <div style="display: flex; gap: 16px; align-items: center;">
-                  <img src="assets/images/pulse_oximeter_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Oximeter">
-                  <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between;">
-                      <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
-                      <span style="font-weight: 700; color: var(--alert-warning);">Checking...</span>
-                    </div>
-                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Marcus Vance (58M)</div>
-                    <div style="font-size: 12px; color: var(--text-muted);">Acute COPD • Nurse Michael Chen</div>
+              <div class="praise-metrics-grid">
+                <div class="praise-metric-item">
+                  <div style="display: flex; align-items: baseline; gap: 6px;">
+                    <span class="praise-metric-number praise-resolved-val" id="praiseResolvedCount">1</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
                   </div>
+                  <div class="praise-metric-label">Alarms Handled Successfully</div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
-                    <div style="font-size: 18px; font-weight: 800;">88 BPM</div>
-                  </div>
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
-                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-warning);">94%</div>
-                  </div>
-                  <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
-                    <div style="font-size: 18px; font-weight: 800;">37.6°C</div>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Bed 03 Full Card (Critical) -->
-              <div class="clay-card critical" style="background: #FFF5F5; cursor: pointer;" onclick="switchSection(2)">
-                <div style="display: flex; gap: 16px; align-items: center;">
-                  <img src="assets/images/vital_monitor_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Monitor">
-                  <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between;">
-                      <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
-                      <span style="font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
-                    </div>
-                    <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">David Chen (62M)</div>
-                    <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600;">Pneumonia & Sepsis • Desaturation</div>
+                <div class="praise-metric-item">
+                  <div style="display: flex; align-items: baseline; gap: 6px;">
+                    <span class="praise-metric-number" style="color: #80CBC4;">3 / 3</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
                   </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
-                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--alert-critical);">HEART RATE</div>
-                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">118 BPM</div>
-                  </div>
-                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--alert-critical);">SPO2</div>
-                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">87%</div>
-                  </div>
-                  <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
-                    <div style="font-size: 10px; color: var(--alert-critical);">TEMP</div>
-                    <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);">38.6°C</div>
-                  </div>
+                  <div class="praise-metric-label">Patients Attended Today</div>
                 </div>
               </div>
             </div>
-          </section>
 
-          <!-- ==========================================
-               SECTION 2: PATIENT DIAGNOSTICS & WAVEFORMS
-               ========================================== -->
-          <section class="section-view" id="section-2">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-              <div>
-                <h2 class="section-heading" style="margin-bottom: 4px;">Bed 01 • Elena Rostova (34F)</h2>
-                <p style="font-size: 13px; color: var(--text-secondary);">ID: P-8821 • Post-Op Laparoscopic • Room 304</p>
+            <div class="praise-affirmation-row">
+              <div class="praise-quote">
+                <span>🌟</span>
+                <span id="praiseAffirmationText">“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
               </div>
-              <button class="clay-btn" style="height: 42px; font-size: 13px;" onclick="alert('Full telemetry dossier exported to Hospital EHR.')">Export Medical EMR ➔</button>
+              <button class="praise-action-btn" onclick="openPraiseModal()">
+                <span>👏</span>
+                <span>Praise Staff</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 1: LIVE WARD GRID
+             ========================================== -->
+        <section class="section-view" id="section-1">
+          <h2 class="section-heading">Live Multi-Patient Grid Dashboard</h2>
+          <div class="beds-grid">
+            <!-- Bed 01 Full Card -->
+            <div class="clay-card" style="cursor: pointer;" onclick="openPatientDiagnostics('bed_01')">
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <img src="assets/images/vital_heart_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Heart">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
+                    <span style="font-weight: 700; color: var(--primary-teal);">Optimal</span>
+                  </div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Elena Rostova (34F)</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Post-Op Laparoscopic • Room 304</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
+                  <div style="font-size: 18px; font-weight: 800;" id="grid1-hr">72 BPM</div>
+                </div>
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
+                  <div style="font-size: 18px; font-weight: 800; color: var(--primary-teal);" id="grid1-spo2">99%</div>
+                </div>
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
+                  <div style="font-size: 18px; font-weight: 800;" id="grid1-temp">36.8°C</div>
+                </div>
+              </div>
             </div>
 
-            <!-- Live ECG Rhythm Strip -->
-            <div class="ecg-box">
+            <!-- Bed 02 Full Card -->
+            <div class="clay-card" style="cursor: pointer;" onclick="openPatientDiagnostics('bed_02')">
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <img src="assets/images/pulse_oximeter_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Oximeter">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
+                    <span style="font-weight: 700; color: var(--alert-warning);">Checking...</span>
+                  </div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Marcus Vance (58M)</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Acute COPD • Room 305</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">HEART RATE</div>
+                  <div style="font-size: 18px; font-weight: 800;" id="grid2-hr">88 BPM</div>
+                </div>
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">SPO2</div>
+                  <div style="font-size: 18px; font-weight: 800; color: var(--alert-warning);" id="grid2-spo2">94%</div>
+                </div>
+                <div style="background: var(--bg-start); padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">TEMP</div>
+                  <div style="font-size: 18px; font-weight: 800;" id="grid2-temp">37.6°C</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bed 03 Full Card (Critical) -->
+            <div class="clay-card critical" style="background: #FFF5F5; cursor: pointer;" onclick="openPatientDiagnostics('bed_03')">
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <img src="assets/images/vital_monitor_3d.png" style="width: 70px; height: 70px; object-fit: contain;" alt="Monitor">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
+                    <span style="font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
+                  </div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">David Chen (62M)</div>
+                  <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600;">Pneumonia & Sepsis • Desaturation</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; text-align: center;">
+                <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--alert-critical);">HEART RATE</div>
+                  <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="grid3-hr">118 BPM</div>
+                </div>
+                <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--alert-critical);">SPO2</div>
+                  <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="grid3-spo2">87%</div>
+                </div>
+                <div style="background: #FFEBEE; padding: 10px; border-radius: 14px;">
+                  <div style="font-size: 10px; color: var(--alert-critical);">TEMP</div>
+                  <div style="font-size: 18px; font-weight: 800; color: var(--alert-critical);" id="grid3-temp">38.6°C</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 2: PATIENT DIAGNOSTICS & DYNAMIC ECG
+             ========================================== -->
+        <section class="section-view" id="section-2">
+          <!-- Dynamic Patient Selection Bar -->
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.6px;">SELECT PATIENT / BED VIEW:</div>
+            <div class="patient-pill-selector" id="patientSelectorBar">
+              <button class="patient-pill-btn active" id="btnBed-bed_01" onclick="selectDiagnosticPatient('bed_01')">🛏️ Bed 01 • Elena Rostova</button>
+              <button class="patient-pill-btn" id="btnBed-bed_02" onclick="selectDiagnosticPatient('bed_02')">🛏️ Bed 02 • Marcus Vance</button>
+              <button class="patient-pill-btn critical-indicator" id="btnBed-bed_03" onclick="selectDiagnosticPatient('bed_03')">🚨 Bed 03 • David Chen (Critical)</button>
+              <button class="patient-pill-btn" id="btnBed-bed_04" onclick="selectDiagnosticPatient('bed_04')">🛏️ Bed 04 • Sarah Connor</button>
+              <button class="patient-pill-btn" id="btnBed-bed_05" onclick="selectDiagnosticPatient('bed_05')">🛏️ Bed 05 • James Wilson</button>
+              <button class="patient-pill-btn" id="btnBed-bed_06" onclick="selectDiagnosticPatient('bed_06')">🛏️ Bed 06 • Robert Taylor</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Patient Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 class="section-heading" id="diagPatientName" style="margin-bottom: 4px;">Bed 01 • Elena Rostova (34F)</h2>
+              <p style="font-size: 13px; color: var(--text-secondary);" id="diagPatientMeta">ID: P-8821 • Post-Op Laparoscopic • Room 304</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="clay-btn" style="height: 40px; font-size: 12.5px;" onclick="switchSection(5)">View Database Log ➔</button>
+              <button class="clay-btn" style="height: 40px; font-size: 12.5px; background: #FFFFFF; color: var(--primary-teal); border: 1.5px solid var(--primary-mint); box-shadow: var(--clay-shadow);" onclick="exportPatientSummary()">Export EMR ➔</button>
+            </div>
+          </div>
+
+          <!-- Live High-Fidelity ECG Rhythm Strip Monitor -->
+          <div class="ecg-box" id="ecgBoxContainer">
+            <div class="ecg-monitor-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="ecg-lead-badge">LEAD II</span>
+                <span id="ecgPatientHeader" style="color: #E2E8F0;">Elena Rostova</span>
+                <span style="opacity: 0.6;">• 25 mm/s • 10 mm/mV • 50Hz</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #00E5FF; font-size: 10px;">● LIVE SWEEP</span>
+                <span class="ecg-rhythm-badge" id="ecgRhythmBadge">NORMAL SINUS RHYTHM</span>
+                <span style="font-size: 13px; font-weight: 800; color: #FFFFFF;" id="ecgHrDisplay">74 BPM</span>
+              </div>
+            </div>
+            <div class="ecg-canvas-container" id="ecgCanvasWrap">
               <canvas id="ecgCanvas" class="ecg-canvas"></canvas>
             </div>
+          </div>
 
-            <!-- 2x2 Telemetry Cards Grid -->
-            <div class="vitals-2x2-grid">
-              <!-- Card 1: Heart Rate -->
-              <div class="clay-card" style="margin-bottom: 0;">
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Heart Rate</div>
-                <div style="text-align: center; margin: 14px 0;">
-                  <img src="assets/images/heart_ecg_strip_3d.png" style="height: 80px; object-fit: contain;" alt="Heart Rate">
-                </div>
-                <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-hr">76 BPM</div>
+          <!-- 2x2 Telemetry Cards Grid -->
+          <div class="vitals-2x2-grid">
+            <!-- Card 1: Heart Rate -->
+            <div class="clay-card" style="margin-bottom: 0;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Heart Rate</div>
+              <div style="text-align: center; margin: 12px 0;">
+                <img src="assets/images/heart_ecg_strip_3d.png" style="height: 75px; object-fit: contain;" alt="Heart Rate">
               </div>
+              <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-hr">74 BPM</div>
+            </div>
 
-              <!-- Card 2: Blood Oxygen -->
-              <div class="clay-card" style="margin-bottom: 0;">
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Blood Oxygen (SpO2)</div>
-                <div style="text-align: center; margin: 14px 0;">
-                  <img src="assets/images/spo2_droplet_3d.png" style="height: 80px; object-fit: contain;" alt="SpO2 Droplet">
-                </div>
-                <div style="font-size: 24px; font-weight: 800; color: var(--primary-teal);"><span id="grid-spo2">98%</span> <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">SpO2</span></div>
+            <!-- Card 2: Blood Oxygen -->
+            <div class="clay-card" style="margin-bottom: 0;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Blood Oxygen (SpO2)</div>
+              <div style="text-align: center; margin: 12px 0;">
+                <img src="assets/images/spo2_droplet_3d.png" style="height: 75px; object-fit: contain;" alt="SpO2 Droplet">
               </div>
+              <div style="font-size: 24px; font-weight: 800; color: var(--primary-teal);"><span id="grid-spo2">98%</span> <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">SpO2</span></div>
+            </div>
 
-              <!-- Card 3: Body Temperature -->
-              <div class="clay-card" style="margin-bottom: 0;">
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Body Temperature</div>
-                <div style="text-align: center; margin: 14px 0;">
-                  <img src="assets/images/thermometer_3d.png" style="height: 80px; object-fit: contain;" alt="Thermometer">
-                </div>
-                <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-temp">36.8°C</div>
+            <!-- Card 3: Body Temperature -->
+            <div class="clay-card" style="margin-bottom: 0;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Body Temperature</div>
+              <div style="text-align: center; margin: 12px 0;">
+                <img src="assets/images/thermometer_3d.png" style="height: 75px; object-fit: contain;" alt="Thermometer">
               </div>
+              <div style="font-size: 24px; font-weight: 800; color: var(--text-primary);" id="grid-temp">36.8°C</div>
+            </div>
 
-              <!-- Card 4: Battery Level -->
-              <div class="clay-card" style="margin-bottom: 0;">
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Battery Level</div>
-                <div style="text-align: center; margin: 14px 0;">
-                  <img src="assets/images/battery_3d.png" style="height: 80px; object-fit: contain;" alt="Battery">
-                </div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--alert-stable); margin-top: 4px;">92% charged</div>
+            <!-- Card 4: Battery Level -->
+            <div class="clay-card" style="margin-bottom: 0;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Battery Level</div>
+              <div style="text-align: center; margin: 12px 0;">
+                <img src="assets/images/battery_3d.png" style="height: 75px; object-fit: contain;" alt="Battery">
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--alert-stable); margin-top: 4px;" id="grid-battery">92% charged</div>
+            </div>
+          </div>
+
+          <!-- 3D "CALL NURSE" Pill Button -->
+          <div style="text-align: center; margin-top: 20px;">
+            <div onclick="callNurseDispatched()" style="display: inline-flex; align-items: center; background: rgba(128, 203, 196, 0.35); border: 2px solid rgba(77, 182, 172, 0.6); border-radius: 36px; padding: 7px 18px; box-shadow: var(--clay-shadow); cursor: pointer; gap: 12px;">
+              <div style="width: 42px; height: 42px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--primary-mint);">👩‍⚕️</div>
+              <div style="background: linear-gradient(135deg, #FF7043, #FF5252); color: #fff; font-size: 13.5px; font-weight: 800; padding: 8px 20px; border-radius: 24px; letter-spacing: 0.6px; box-shadow: 0 6px 14px rgba(255, 82, 82, 0.35);">CALL NURSE</div>
+              <div style="font-size: 20px;">🔔</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 3: ROUNDS SCHEDULE
+             ========================================== -->
+        <section class="section-view" id="section-3">
+          <h2 class="section-heading">Shift Handover & Rounds Schedule</h2>
+          <div class="clay-card">
+            <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-bottom: 16px;">
+              <span style="cursor: pointer;">❮ Previous</span>
+              <span>October 2026 • Ward 3B Acute</span>
+              <span style="cursor: pointer;">Next ❯</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 10px; font-size: 13.5px;">
+              <span style="color: var(--text-muted); font-weight: 700;">Mon</span><span style="color: var(--text-muted); font-weight: 700;">Tue</span><span style="color: var(--text-muted); font-weight: 700;">Wed</span><span style="color: var(--text-muted); font-weight: 700;">Thu</span><span style="color: var(--text-muted); font-weight: 700;">Fri</span><span style="color: var(--text-muted); font-weight: 700;">Sat</span><span style="color: var(--text-muted); font-weight: 700;">Sun</span>
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+              <span style="background: var(--primary-mint); color: #fff; border-radius: 50%; font-weight: 800; padding: 6px;">7</span>
+              <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+              <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 4: ACTIVE ALARMS & CONSOLE
+             ========================================== -->
+        <section class="section-view" id="section-4">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+            <h2 class="section-heading" id="activeAlarmsTitle" style="margin-bottom: 0;">Active Telemetry Alarms</h2>
+            <button class="test-siren-btn" onclick="simulateTestAlarm()">🚨 Trigger Test Critical Alarm</button>
+          </div>
+
+          <!-- Active Alarm Card -->
+          <div class="clay-card critical" id="alarmCard-ALT-1001" style="background: #FFF5F5;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
+              <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
+            </div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
+            <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
+            <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
+
+            <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+              <button class="clay-btn" id="btnAckAlarm" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert('ALT-1001')">🔕 Silence & Acknowledge</button>
+              <button class="clay-btn" id="btnClearAlarm" style="height: 42px; font-size: 13px; background: #E2E8F0; color: #334155; box-shadow: none;" onclick="clearAlert('ALT-1001')">Clear Alarm</button>
+            </div>
+          </div>
+
+          <!-- Stable / No Alarms State Card -->
+          <div id="noAlarmsState" class="clay-card" style="text-align: center; padding: 36px 20px; display: none;">
+            <div style="font-size: 44px; margin-bottom: 12px;">✅</div>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">Ward 3B Telemetry Stable</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;">All patient nodes transmitting nominal vitals. Auditory sirens extinguished.</p>
+            <div style="margin-top: 18px;">
+              <button class="clay-btn" style="height: 38px; font-size: 12px; padding: 0 20px;" onclick="simulateTestAlarm()">Simulate Test Alarm</button>
+            </div>
+          </div>
+
+          <!-- Staff Praise Card in Alarms Feed -->
+          <div class="nurse-praise-card" id="activeAlarmsPraiseCard">
+            <div class="praise-top-row">
+              <div class="praise-gold-badge">
+                <span>🏆</span>
+                <span>NURSE APPRECIATION</span>
+              </div>
+              <div class="praise-teal-badge">
+                <span>⚡</span>
+                <span>Shift Hero Metric</span>
               </div>
             </div>
 
-            <!-- 3D "CALL NURSE" Pill Button -->
-            <div style="text-align: center; margin-top: 24px;">
-              <div onclick="playCriticalTriplet(); alert('🚨 Bedside Emergency Nurse Call Dispatched!');" style="display: inline-flex; align-items: center; background: rgba(128, 203, 196, 0.35); border: 2px solid rgba(77, 182, 172, 0.6); border-radius: 36px; padding: 8px 20px; box-shadow: var(--clay-shadow); cursor: pointer; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--primary-mint);">👩‍⚕️</div>
-                <div style="background: linear-gradient(135deg, #FF7043, #FF5252); color: #fff; font-size: 14px; font-weight: 800; padding: 9px 22px; border-radius: 24px; letter-spacing: 0.6px; box-shadow: 0 6px 14px rgba(255, 82, 82, 0.35);">CALL NURSE</div>
-                <div style="font-size: 20px;">🔔</div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 3: ROUNDS SCHEDULE
-               ========================================== -->
-          <section class="section-view" id="section-3">
-            <h2 class="section-heading">Shift Handover & Rounds Schedule</h2>
-            <div class="clay-card">
-              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; margin-bottom: 16px;">
-                <span>❮ Previous</span>
-                <span>September 2026</span>
-                <span>Next ❯</span>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 10px; font-size: 14px;">
-                <span style="color: var(--text-muted); font-weight: 700;">Mon</span><span style="color: var(--text-muted); font-weight: 700;">Tue</span><span style="color: var(--text-muted); font-weight: 700;">Wed</span><span style="color: var(--text-muted); font-weight: 700;">Thu</span><span style="color: var(--text-muted); font-weight: 700;">Fri</span><span style="color: var(--text-muted); font-weight: 700;">Sat</span><span style="color: var(--text-muted); font-weight: 700;">Sun</span>
-                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
-                <span>8</span><span style="background: var(--primary-mint); color: #fff; border-radius: 50%; font-weight: 800; padding: 6px;">9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
-                <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 4: ACTIVE ALARMS & CONSOLE
-               ========================================== -->
-          <section class="section-view" id="section-4">
-            <h2 class="section-heading" id="activeAlarmsTitle">Active Telemetry Alarms</h2>
-
-            <!-- Active Alarm Card -->
-            <div class="clay-card critical" id="alarmCard-ALT-1001" style="background: #FFF5F5;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
-                <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
-              </div>
-              <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
-              <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
-              <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
-
-              <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
-                <button class="clay-btn" id="btnAckAlarm" style="height: 42px; font-size: 13px;" onclick="acknowledgeAlert('ALT-1001')">🔕 Silence & Acknowledge</button>
-                <button class="clay-btn" id="btnClearAlarm" style="height: 42px; font-size: 13px; background: #E2E8F0; color: #334155; box-shadow: none;" onclick="clearAlert('ALT-1001')">Clear Alarm</button>
-              </div>
-            </div>
-
-            <!-- Stable / No Alarms State Card -->
-            <div id="noAlarmsState" class="clay-card" style="text-align: center; padding: 36px 20px; display: none;">
-              <div style="font-size: 44px; margin-bottom: 12px;">✅</div>
-              <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-teal);">Ward 3B Telemetry Stable</h3>
-              <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;">All patient nodes transmitting nominal vitals. Auditory sirens extinguished.</p>
-              <div style="margin-top: 18px;">
-                <button class="clay-btn" style="height: 38px; font-size: 12px; padding: 0 20px;" onclick="simulateTestAlarm()">Simulate Test Alarm</button>
-              </div>
-            </div>
-
-            <!-- RESTORED: Staff Praise Card in Alarms Feed -->
-            <div class="nurse-praise-card" id="activeAlarmsPraiseCard">
-              <div class="praise-top-row">
-                <div class="praise-gold-badge">
-                  <span>🏆</span>
-                  <span>NURSE APPRECIATION</span>
-                </div>
-                <div class="praise-teal-badge">
-                  <span>⚡</span>
-                  <span>Shift Hero Metric</span>
-                </div>
+            <div class="praise-main-row">
+              <div class="praise-shield-box">
+                <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
               </div>
 
-              <div class="praise-main-row">
-                <div class="praise-shield-box">
-                  <img src="assets/images/sentinel_shield_badge_3d.png" alt="Shield Badge">
-                </div>
-
-                <div class="praise-metrics-grid">
-                  <div class="praise-metric-item">
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                      <span class="praise-metric-number praise-resolved-val">1</span>
-                      <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
-                    </div>
-                    <div class="praise-metric-label">Alarms Handled Successfully</div>
+              <div class="praise-metrics-grid">
+                <div class="praise-metric-item">
+                  <div style="display: flex; align-items: baseline; gap: 6px;">
+                    <span class="praise-metric-number praise-resolved-val">1</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #FFE082;">Resolved</span>
                   </div>
+                  <div class="praise-metric-label">Alarms Handled Successfully</div>
+                </div>
 
-                  <div class="praise-metric-item">
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                      <span class="praise-metric-number" style="color: #80CBC4;">3 / 3</span>
-                      <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
-                    </div>
-                    <div class="praise-metric-label">Patients Attended Today</div>
+                <div class="praise-metric-item">
+                  <div style="display: flex; align-items: baseline; gap: 6px;">
+                    <span class="praise-metric-number" style="color: #80CBC4;">3 / 3</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #80CBC4;">Active Beds</span>
                   </div>
+                  <div class="praise-metric-label">Patients Attended Today</div>
                 </div>
-              </div>
-
-              <div class="praise-affirmation-row">
-                <div class="praise-quote">
-                  <span>🌟</span>
-                  <span>“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
-                </div>
-                <button class="praise-action-btn" onclick="openPraiseModal()">
-                  <span>👏</span>
-                  <span>Praise Staff</span>
-                </button>
               </div>
             </div>
-          </section>
 
-        </div>
-      </main>
+            <div class="praise-affirmation-row">
+              <div class="praise-quote">
+                <span>🌟</span>
+                <span id="praiseAffirmationText2">“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
+              </div>
+              <button class="praise-action-btn" onclick="openPraiseModal()">
+                <span>👏</span>
+                <span>Praise Staff</span>
+              </button>
+            </div>
+          </div>
+        </section>
 
-      <!-- Bottom Navigation (Phone View & Mobile screens) -->
-      <nav class="mobile-bottom-nav" id="mobileBottomNav">
-        <div class="mobile-nav-item active" onclick="switchSection(0)" title="Shift Overview">🏠</div>
-        <div class="mobile-nav-item" onclick="switchSection(1)" title="Ward Grid">📊</div>
-        <div class="mobile-nav-item" onclick="switchSection(2)" title="Diagnostics">🩺</div>
-        <div class="mobile-nav-item" onclick="switchSection(3)" title="Rounds">📅</div>
-        <div class="mobile-nav-item" onclick="switchSection(4)" title="Active Alarms">
-          🚨
-          <span class="mobile-badge" id="mobileSidebarBadge">1</span>
-        </div>
-      </nav>
-      <div class="phone-home-indicator"></div>
-    </div>
+        <!-- ==========================================
+             SECTION 5: SQL DATABASE TABLE VIEW
+             ========================================== -->
+        <section class="section-view" id="section-5">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 class="section-heading" style="margin-bottom: 4px;">🏥 Persistent Database Table Records</h2>
+              <p style="font-size: 13px; color: var(--text-secondary);">
+                Active SQLite Engine: <code>backend/sentinel_ward.db</code> • Auto-logged Telemetry & Incident Audit
+              </p>
+            </div>
+            <div class="db-actions-group">
+              <a href="/api/db/export/csv" class="clay-btn" style="height: 38px; font-size: 12.5px; text-decoration: none;" download>📥 Export CSV</a>
+              <button class="clay-btn" style="height: 38px; font-size: 12.5px; background: #475569;" onclick="refreshDatabaseTable()">🔄 Refresh Data</button>
+              <button class="clay-btn" style="height: 38px; font-size: 12.5px; background: #D32F2F;" onclick="confirmResetDatabase()">⚡ Reset DB</button>
+            </div>
+          </div>
+
+          <!-- Table Filter & Tab Controls -->
+          <div class="db-table-toolbar">
+            <div class="db-tabs-group">
+              <button class="db-tab-btn active" id="dbTabSummary" onclick="switchDbTableTab('summary')">🏥 Patient Roster Summary</button>
+              <button class="db-tab-btn" id="dbTabAlarms" onclick="switchDbTableTab('alarms')">🚨 Alarms & Incidents Log</button>
+              <button class="db-tab-btn" id="dbTabVitals" onclick="switchDbTableTab('vitals')">📈 Vitals Telemetry History</button>
+            </div>
+
+            <input type="text" id="dbTableSearch" class="db-search-input" placeholder="🔍 Search records..." oninput="filterCurrentDbTable(this.value)">
+          </div>
+
+          <!-- Live Record Count Banner -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; color: var(--text-muted);">
+            <div id="dbTableRecordCount">Loading records from SQLite database...</div>
+            <div>Storage Mode: <strong>SQLite (WAL Mode)</strong></div>
+          </div>
+
+          <!-- Responsive Data Table Container -->
+          <div class="db-table-container">
+            <table class="sentinel-data-table" id="dbMainTable">
+              <thead id="dbTableHeader">
+                <!-- Dynamically populated headers -->
+              </thead>
+              <tbody id="dbTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);">Fetching table records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation (Mobile screens <= 860px) -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+      <div class="mobile-nav-item active" onclick="switchSection(0)" title="Shift Overview">🏠</div>
+      <div class="mobile-nav-item" onclick="switchSection(1)" title="Ward Grid">📊</div>
+      <div class="mobile-nav-item" onclick="switchSection(2)" title="Diagnostics">🩺</div>
+      <div class="mobile-nav-item" onclick="switchSection(4)" title="Active Alarms">
+        🚨
+        <span class="mobile-badge" id="mobileSidebarBadge">1</span>
+      </div>
+      <div class="mobile-nav-item" onclick="switchSection(5)" title="Database Tables">📋</div>
+    </nav>
   </div>
 
   <!-- Nurse Appreciation Modal Dialog -->
@@ -1247,15 +1503,15 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 14px; background: var(--mint-light); padding: 14px; border-radius: 18px; margin-bottom: 16px;">
-        <div class="nurse-avatar" style="width: 48px; height: 48px; font-size: 17px;">SJ</div>
+        <div class="nurse-avatar" id="modalNurseAvatar" style="width: 48px; height: 48px; font-size: 17px;">SJ</div>
         <div>
-          <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);">Sister Sarah Jenkins</div>
-          <div style="font-size: 12px; color: var(--primary-teal); font-weight: 600;">Lead Triage Nurse • RN #88192 • Ward 3B Acute Care</div>
+          <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);" id="modalNurseName">Sister Sarah Jenkins</div>
+          <div style="font-size: 12px; color: var(--primary-teal); font-weight: 600;" id="modalNurseRole">Lead Triage Nurse • RN #88192 • Ward 3B Acute Care</div>
         </div>
       </div>
 
       <p style="font-size: 14px; line-height: 1.6; color: var(--text-primary); margin-bottom: 14px;">
-        Sister Sarah, you have answered and resolved <strong class="modal-resolved-count" style="color: var(--primary-teal); font-size: 16px;">1</strong> patient telemetry alarm(s) and provided dedicated monitoring for <strong>3 of 3 acute patients</strong> during your shift today.
+        <span id="modalNurseGreeting">Sister Sarah</span>, you have answered and resolved <strong class="modal-resolved-count" style="color: var(--primary-teal); font-size: 16px;">1</strong> patient telemetry alarm(s) and provided dedicated monitoring for <strong>3 of 3 acute patients</strong> during your shift today.
       </p>
       <p style="font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); margin-bottom: 20px;">
         Your prompt bedside attention, clinical vigilance, and compassionate care keep our acute ward safe and our patients comfortable. The entire clinical care team and medical directory are thankful for your service! 👏❤️
@@ -1269,13 +1525,116 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    // Global Application State
     let currentSection = 0;
     let isMuted = false;
+    let isAlarmSilenced = false;
     let audioCtx = null;
+    let activeOscillators = [];
+    let audioTimeouts = [];
     let countdown = 58;
     let resolvedAlarmsCount = 1;
+    let socket = null;
+    let activeNurseName = 'Sister Sarah Jenkins';
+    let currentDiagnosticBed = 'bed_01';
+    let currentDbTab = 'summary';
+    let cachedDbData = { summary: [], alarms: [], vitals: [] };
 
-    // Reset scroll to top upon switching tabs to completely prevent title clipping
+    // Patient Profiles Roster
+    const patientProfiles = {
+      bed_01: {
+        id: 'bed_01',
+        name: 'Elena Rostova',
+        age: 34,
+        gender: '34F',
+        diagnosis: 'Post-Op Laparoscopic • Room 304',
+        medicalId: 'P-8821',
+        status: 'optimal',
+        hr: 74,
+        spo2: 98,
+        temp: '36.8',
+        battery: '92% charged',
+        rhythmType: 'normal',
+        rhythmName: 'NORMAL SINUS RHYTHM'
+      },
+      bed_02: {
+        id: 'bed_02',
+        name: 'Marcus Vance',
+        age: 58,
+        gender: '58M',
+        diagnosis: 'Acute COPD Exacerbation • Room 305',
+        medicalId: 'P-8822',
+        status: 'checking',
+        hr: 88,
+        spo2: 94,
+        temp: '37.6',
+        battery: '85% charged',
+        rhythmType: 'tachycardia',
+        rhythmName: 'SINUS TACHYCARDIA'
+      },
+      bed_03: {
+        id: 'bed_03',
+        name: 'David Chen',
+        age: 62,
+        gender: '62M',
+        diagnosis: 'Pneumonia & Sepsis • Critical Desaturation • Room 306',
+        medicalId: 'P-8823',
+        status: 'critical',
+        hr: 118,
+        spo2: 87,
+        temp: '38.6',
+        battery: '74% charged',
+        rhythmType: 'critical',
+        rhythmName: 'VENTRICULAR ARRHYTHMIA / TACHYCARDIA'
+      },
+      bed_04: {
+        id: 'bed_04',
+        name: 'Sarah Connor',
+        age: 35,
+        gender: '35F',
+        diagnosis: 'Elective Observation • Room 307',
+        medicalId: 'P-8824',
+        status: 'optimal',
+        hr: 76,
+        spo2: 99,
+        temp: '36.9',
+        battery: '96% charged',
+        rhythmType: 'normal',
+        rhythmName: 'NORMAL SINUS RHYTHM'
+      },
+      bed_05: {
+        id: 'bed_05',
+        name: 'James Wilson',
+        age: 50,
+        gender: '50M',
+        diagnosis: 'Cardiac Rehab Post-Stent • Room 308',
+        medicalId: 'P-8825',
+        status: 'optimal',
+        hr: 80,
+        spo2: 97,
+        temp: '37.0',
+        battery: '89% charged',
+        rhythmType: 'normal',
+        rhythmName: 'NORMAL SINUS RHYTHM'
+      },
+      bed_06: {
+        id: 'bed_06',
+        name: 'Robert Taylor',
+        age: 67,
+        gender: '67M',
+        diagnosis: 'Orthopedic Knee Arthroplasty • Room 309',
+        medicalId: 'P-8826',
+        status: 'optimal',
+        hr: 72,
+        spo2: 98,
+        temp: '36.7',
+        battery: '94% charged',
+        rhythmType: 'normal',
+        rhythmName: 'NORMAL SINUS RHYTHM'
+      }
+    };
+
+    // Navigation Switcher
     function switchSection(index) {
       currentSection = index;
       document.querySelectorAll('.section-view').forEach((el, i) => {
@@ -1289,32 +1648,113 @@
       });
 
       const vp = document.getElementById('mainViewport');
-      if (vp) {
-        vp.scrollTop = 0;
+      if (vp) vp.scrollTop = 0;
+
+      // When switching to Diagnostics (Section 2), trigger ECG canvas redraw
+      if (index === 2) {
+        setTimeout(resizeEcgCanvas, 40);
+      }
+
+      // When switching to Database (Section 5), load current table tab
+      if (index === 5) {
+        loadDatabaseTable(currentDbTab);
       }
     }
 
-    function setViewMode(mode) {
-      const layout = document.getElementById('appLayout');
-      const btnLaptop = document.getElementById('btnLaptopMode');
-      const btnPhone = document.getElementById('btnPhoneMode');
+    function openPatientDiagnostics(bedId) {
+      switchSection(2);
+      selectDiagnosticPatient(bedId);
+    }
 
-      if (mode === 'phone') {
-        layout.classList.add('phone-mode');
-        btnPhone.classList.add('active');
-        btnLaptop.classList.remove('active');
-      } else {
-        layout.classList.remove('phone-mode');
-        btnLaptop.classList.add('active');
-        btnPhone.classList.remove('active');
+    // Dynamic Patient Selector in Diagnostics
+    function selectDiagnosticPatient(bedId) {
+      currentDiagnosticBed = bedId;
+      const p = patientProfiles[bedId];
+      if (!p) return;
+
+      // Update button active state
+      document.querySelectorAll('.patient-pill-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btnBed-' + bedId);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Update Header
+      const nameEl = document.getElementById('diagPatientName');
+      const metaEl = document.getElementById('diagPatientMeta');
+      if (nameEl) nameEl.innerText = `${bedId.toUpperCase().replace('_', ' ')} • ${p.name} (${p.gender})`;
+      if (metaEl) metaEl.innerText = `ID: ${p.medicalId} • ${p.diagnosis}`;
+
+      // Update Vitals Cards
+      const hrEl = document.getElementById('grid-hr');
+      const spo2El = document.getElementById('grid-spo2');
+      const tempEl = document.getElementById('grid-temp');
+      const battEl = document.getElementById('grid-battery');
+      if (hrEl) hrEl.innerText = `${p.hr} BPM`;
+      if (spo2El) spo2El.innerText = `${p.spo2}%`;
+      if (tempEl) tempEl.innerText = `${p.temp}°C`;
+      if (battEl) battEl.innerText = p.battery;
+
+      // Update ECG Header
+      const ecgPat = document.getElementById('ecgPatientHeader');
+      const ecgRhythm = document.getElementById('ecgRhythmBadge');
+      const ecgHr = document.getElementById('ecgHrDisplay');
+      if (ecgPat) ecgPat.innerText = p.name;
+      if (ecgRhythm) {
+        ecgRhythm.innerText = p.rhythmName;
+        ecgRhythm.style.color = p.status === 'critical' ? '#FF5252' : (p.status === 'checking' ? '#FFB300' : '#00E5FF');
       }
-      setTimeout(() => {
-        const c = document.getElementById('ecgCanvas');
-        if (c) {
-          c.width = c.offsetWidth;
-          c.height = c.offsetHeight;
-        }
-      }, 120);
+      if (ecgHr) ecgHr.innerText = `${p.hr} BPM`;
+
+      resizeEcgCanvas();
+    }
+
+    function exportPatientSummary() {
+      const p = patientProfiles[currentDiagnosticBed] || patientProfiles.bed_01;
+      alert(`📋 Hospital EHR Dossier for ${p.name} (${currentDiagnosticBed.toUpperCase()}):\n\nVitals: HR ${p.hr} BPM | SpO2 ${p.spo2}% | Temp ${p.temp}°C\nDiagnosis: ${p.diagnosis}\nTransmitted to Central Clinical Directory.`);
+    }
+
+    // Dynamic Clinician Profile Switcher
+    function switchClinicianProfile(name) {
+      activeNurseName = name;
+      let initials = 'SJ';
+      let role = 'Lead Triage • RN #88192';
+
+      if (name.includes('Michael')) {
+        initials = 'MC';
+        role = 'Acute Care Staff • RN #88193';
+      } else if (name.includes('Sunita')) {
+        initials = 'SR';
+        role = 'ICU Specialist • RN #88194';
+      } else if (name.includes('Marcus')) {
+        initials = 'MV';
+        role = 'Attending Physician • MD #44910';
+      }
+
+      // Update Sidebar Card
+      const sbAvatar = document.getElementById('sidebarAvatar');
+      const sbName = document.getElementById('sidebarNurseName');
+      const sbRole = document.getElementById('sidebarNurseRole');
+      if (sbAvatar) sbAvatar.innerText = initials;
+      if (sbName) sbName.innerText = name;
+      if (sbRole) sbRole.innerText = role;
+
+      // Update Modal
+      const mAvatar = document.getElementById('modalNurseAvatar');
+      const mName = document.getElementById('modalNurseName');
+      const mRole = document.getElementById('modalNurseRole');
+      const mGreet = document.getElementById('modalNurseGreeting');
+      if (mAvatar) mAvatar.innerText = initials;
+      if (mName) mName.innerText = name;
+      if (mRole) mRole.innerText = role + ' • Ward 3B Acute Care';
+      if (mGreet) mGreet.innerText = name.split(' ')[0] + ' ' + (name.split(' ')[1] || '');
+
+      // Update Praise Card Texts
+      const pText1 = document.getElementById('praiseAffirmationText');
+      const pText2 = document.getElementById('praiseAffirmationText2');
+      const quote = `“Thank you for taking good care of all patients in Ward 3B today, ${name}!”`;
+      if (pText1) pText1.innerText = quote;
+      if (pText2) pText2.innerText = quote;
+
+      showToast('👩‍⚕️', `Active Clinician: ${name}`);
     }
 
     // Nurse Appreciation Modal Controllers
@@ -1327,7 +1767,7 @@
       const modal = document.getElementById('nurseAppreciationModal');
       if (modal) modal.style.display = 'none';
       if (showToastMessage) {
-        showToast('👏', 'Staff Praise Recorded! Sister Sarah thanked for exceptional care ❤️');
+        showToast('👏', `Staff Praise Recorded! ${activeNurseName} thanked ❤️`);
       }
     }
 
@@ -1341,19 +1781,7 @@
       document.querySelectorAll('.modal-resolved-count').forEach(el => {
         el.innerText = resolvedAlarmsCount;
       });
-      document.querySelectorAll('.nurse-praise-card').forEach(card => {
-        card.classList.remove('pulse-celebrate');
-        void card.offsetWidth; // Trigger reflow for animation
-        card.classList.add('pulse-celebrate');
-      });
     }
-
-    // Clinical Audio Alarm Synthesizer (IEC 60601-1-8 Standard)
-    let isAlarmSilenced = false;
-    let audioTimeouts = [];
-    let activeOscillators = [];
-    let lastAlarmSoundTime = 0;
-    let socket = null;
 
     function showToast(icon, message) {
       const toast = document.getElementById('toastNotification');
@@ -1367,7 +1795,83 @@
       setTimeout(() => {
         toast.style.transform = 'translateY(-20px)';
         toast.style.opacity = '0';
-      }, 4000);
+      }, 3500);
+    }
+
+    // ========================================================
+    // CLINICAL AUDIO ALARM SYNTHESIZER (IEC 60601-1-8 STANDARD)
+    // ========================================================
+    function unlockAudio() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioClass) {
+          audioCtx = new AudioClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    }
+
+    // Unlock on any user interaction
+    ['click', 'pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, unlockAudio, { passive: true, once: false });
+    });
+
+    function playTone(freq, durationMs, type = 'sine', volume = 0.35) {
+      if (isMuted) return;
+      unlockAudio();
+      if (!audioCtx) return;
+
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(volume, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + (durationMs / 1000));
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + (durationMs / 1000));
+
+        activeOscillators.push(osc);
+        setTimeout(() => {
+          const idx = activeOscillators.indexOf(osc);
+          if (idx !== -1) activeOscillators.splice(idx, 1);
+        }, durationMs + 40);
+      } catch (err) {
+        console.warn('Audio synthesis note:', err);
+      }
+    }
+
+    // High Priority Alarm Melody (IEC 60601-1-8 standard: C5, E5, G5, C6, E6 chime)
+    function playMedicalAlarmPattern() {
+      if (isMuted || isAlarmSilenced) return;
+      unlockAudio();
+
+      const chimeNotes = [
+        { freq: 523.25, dur: 110, delay: 0 },    // C5
+        { freq: 659.25, dur: 110, delay: 130 },  // E5
+        { freq: 783.99, dur: 110, delay: 260 },  // G5
+        { freq: 1046.50, dur: 140, delay: 400 }, // C6
+        { freq: 1318.51, dur: 200, delay: 560 }  // E6
+      ];
+
+      chimeNotes.forEach(n => {
+        const t = setTimeout(() => {
+          if (!isMuted && !isAlarmSilenced) {
+            playTone(n.freq, n.dur, 'sine', 0.4);
+          }
+        }, n.delay);
+        audioTimeouts.push(t);
+      });
     }
 
     function stopAudioAlarm() {
@@ -1383,52 +1887,21 @@
       activeOscillators = [];
     }
 
-    function playMedicalTone(freq, durationMs, type = 'sine') {
-      if (isMuted || isAlarmSilenced) return;
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (durationMs / 1000));
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        activeOscillators.push(osc);
-        const tEnd = setTimeout(() => {
-          const idx = activeOscillators.indexOf(osc);
-          if (idx !== -1) activeOscillators.splice(idx, 1);
-        }, durationMs);
-        audioTimeouts.push(tEnd);
-        osc.stop(audioCtx.currentTime + (durationMs / 1000));
-      } catch (e) {
-        console.log('Audio requires user gesture');
-      }
-    }
+    function testAlarmSound() {
+      unlockAudio();
+      isMuted = false;
+      isAlarmSilenced = false;
+      const btn = document.getElementById('audioToggleBtn');
+      const text = document.getElementById('audioStatusText');
+      if (btn) btn.classList.remove('muted');
+      if (text) text.innerText = 'ONLINE';
 
-    function playCriticalTriplet() {
-      if (isMuted || isAlarmSilenced) return;
-      playMedicalTone(987.77, 100);
-      const t1 = setTimeout(() => {
-        if (!isMuted && !isAlarmSilenced) playMedicalTone(987.77, 100);
-      }, 140);
-      const t2 = setTimeout(() => {
-        if (!isMuted && !isAlarmSilenced) playMedicalTone(1318.51, 180);
-      }, 280);
-      audioTimeouts.push(t1, t2);
+      playMedicalAlarmPattern();
+      showToast('🔊', 'Audible Medical Siren Sounding (IEC 60601-1-8 High Priority)');
     }
 
     function toggleAudioAlarm() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
+      unlockAudio();
       isMuted = !isMuted;
       const btn = document.getElementById('audioToggleBtn');
       const text = document.getElementById('audioStatusText');
@@ -1441,9 +1914,15 @@
         isAlarmSilenced = false;
         btn.classList.remove('muted');
         text.innerText = 'ONLINE';
-        playCriticalTriplet();
+        playMedicalAlarmPattern();
         showToast('🔊', 'Master Audio Alarm Online');
       }
+    }
+
+    function callNurseDispatched() {
+      playTone(880, 200, 'triangle', 0.4);
+      setTimeout(() => playTone(1174.66, 260, 'sine', 0.4), 160);
+      alert(`🚨 Bedside Emergency Nurse Call Dispatched for ${currentDiagnosticBed.toUpperCase()}! Primary Clinician: ${activeNurseName}`);
     }
 
     function acknowledgeAlert(alarmId = 'ALT-1001') {
@@ -1451,7 +1930,7 @@
 
       const el = document.getElementById('countdown-timer');
       if (el) {
-        el.innerText = '🔕 Silenced & Acknowledged';
+        el.innerText = `🔕 Silenced (${activeNurseName})`;
         el.style.color = 'var(--primary-teal)';
       }
       const badge = document.getElementById('sidebarBadge');
@@ -1461,7 +1940,7 @@
 
       const btnAck = document.getElementById('btnAckAlarm');
       if (btnAck) {
-        btnAck.innerText = '✅ Acknowledged (Nurse Sarah)';
+        btnAck.innerText = `✅ Acknowledged (${activeNurseName})`;
         btnAck.style.background = 'var(--mint-light)';
         btnAck.style.color = 'var(--primary-teal)';
         btnAck.disabled = true;
@@ -1473,15 +1952,15 @@
       updateResolvedAlarmsDisplay(resolvedAlarmsCount);
 
       if (socket) {
-        socket.emit('acknowledge_alarm', { alarm_id: alarmId, nurse: 'Nurse Sarah' });
+        socket.emit('acknowledge_alarm', { alarm_id: alarmId, nurse: activeNurseName });
       }
       fetch('/api/alarms/acknowledge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ alarmId, nurseName: 'Nurse Sarah' })
+        body: JSON.stringify({ alarmId, nurseName: activeNurseName })
       }).catch(() => {});
 
-      showToast('🔕', 'Alarm ALT-1001 Silenced & Acknowledged by Nurse Sarah');
+      showToast('🔕', `Alarm ${alarmId} Silenced & Handled by ${activeNurseName}`);
     }
 
     function clearAlert(alarmId = 'ALT-1001') {
@@ -1504,6 +1983,10 @@
       if (elSpo23) { elSpo23.innerText = '97%'; elSpo23.style.color = 'var(--primary-teal)'; }
       if (elTemp3) { elTemp3.innerText = '36.9°C'; elTemp3.style.color = 'var(--text-primary)'; }
 
+      patientProfiles.bed_03.status = 'optimal';
+      patientProfiles.bed_03.hr = 78;
+      patientProfiles.bed_03.spo2 = 97;
+
       resolvedAlarmsCount++;
       updateResolvedAlarmsDisplay(resolvedAlarmsCount);
 
@@ -1516,7 +1999,7 @@
         body: JSON.stringify({ alarmId })
       }).catch(() => {});
 
-      showToast('✅', 'Alarm ALT-1001 Cleared. Task Complete: Bed 03 Stabilized.');
+      showToast('✅', `Alarm ${alarmId} Cleared. Bed 03 Patient Stabilized.`);
     }
 
     function simulateTestAlarm() {
@@ -1526,6 +2009,7 @@
       if (card) card.style.display = 'block';
       const noAlarms = document.getElementById('noAlarmsState');
       if (noAlarms) noAlarms.style.display = 'none';
+
       const badge = document.getElementById('sidebarBadge');
       if (badge) { badge.style.display = 'inline-block'; badge.innerText = '1'; }
       const mBadge = document.getElementById('mobileSidebarBadge');
@@ -1543,11 +2027,12 @@
         btnAck.style.color = '';
         btnAck.disabled = false;
       }
-      playCriticalTriplet();
-      showToast('🚨', 'Test Alarm Triggered: Bed 03 Hypoxemia');
+
+      playMedicalAlarmPattern();
+      showToast('🚨', 'Test Alarm Triggered: Bed 03 Clinical Hypoxemia');
     }
 
-    // Auto countdown timer
+    // Auto Countdown Ticker
     setInterval(() => {
       if (!isAlarmSilenced && countdown > 0) {
         countdown--;
@@ -1560,93 +2045,464 @@
       }
     }, 1000);
 
-    // Physiological telemetry fluctuations
-    setInterval(() => {
-      const hr1 = 70 + Math.floor(Math.random() * 5);
-      const spo21 = 98 + Math.floor(Math.random() * 2);
-      const temp1 = (36.7 + Math.random() * 0.2).toFixed(1);
+    // ========================================================
+    // REAL-TIME CLINICAL ECG OSCILLOSCOPE MONITOR
+    // ========================================================
+    const ecgCanvas = document.getElementById('ecgCanvas');
+    const ecgWrap = document.getElementById('ecgCanvasWrap');
+    let ecgCtx = null;
+    let ecgTime = 0;
 
-      const elHr1 = document.getElementById('live-hr-1');
-      const elSpo21 = document.getElementById('live-spo2-1');
-      const elTemp1 = document.getElementById('live-temp-1');
-      if (elHr1) elHr1.innerText = hr1 + ' BPM';
-      if (elSpo21) elSpo21.innerText = spo21 + '%';
-      if (elTemp1) elTemp1.innerText = temp1 + '°C';
+    function resizeEcgCanvas() {
+      if (!ecgCanvas || !ecgWrap) return;
+      const rect = ecgWrap.getBoundingClientRect();
+      const w = Math.floor(rect.width || ecgWrap.offsetWidth || 600);
+      const h = Math.floor(rect.height || ecgWrap.offsetHeight || 160);
 
-      const gHr = document.getElementById('grid-hr');
-      const gSpo2 = document.getElementById('grid-spo2');
-      const gTemp = document.getElementById('grid-temp');
-      if (gHr) gHr.innerText = hr1 + ' BPM';
-      if (gSpo2) gSpo2.innerText = spo21 + '%';
-      if (gTemp) gTemp.innerText = temp1 + '°C';
-
-      if (!isAlarmSilenced) {
-        const hr3 = 115 + Math.floor(Math.random() * 7);
-        const spo23 = 86 + Math.floor(Math.random() * 3);
-        const elHr3 = document.getElementById('live-hr-3');
-        const elSpo23 = document.getElementById('live-spo2-3');
-        if (elHr3) elHr3.innerText = hr3 + ' BPM';
-        if (elSpo23) elSpo23.innerText = spo23 + '%';
+      if (w > 0 && h > 0) {
+        ecgCanvas.width = w;
+        ecgCanvas.height = h;
       }
-    }, 1500);
-
-    // Real-Time ECG Sweep Waveform Animation
-    const canvas = document.getElementById('ecgCanvas');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      let t = 0;
-
-      function resize() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      function drawEcg() {
-        ctx.fillStyle = '#0F172A';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Grid lines
-        ctx.strokeStyle = '#1E293B';
-        ctx.lineWidth = 1;
-        for (let x = 0; x < canvas.width; x += 24) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-        }
-        for (let y = 0; y < canvas.height; y += 24) {
-          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-        }
-
-        // Waveform
-        ctx.strokeStyle = '#00BFA5';
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = '#00BFA5';
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-
-        const mid = canvas.height / 2;
-        for (let x = 0; x < canvas.width; x++) {
-          const sampleT = (x / 80 + t) % (Math.PI * 2);
-          let y = 0;
-          if (sampleT > 2.0 && sampleT < 2.2) y = -16;
-          else if (sampleT > 2.6 && sampleT < 2.8) y = 12;
-          else if (sampleT >= 2.8 && sampleT <= 3.1) y = -60;
-          else if (sampleT > 3.1 && sampleT < 3.3) y = 18;
-          else if (sampleT > 3.7 && sampleT < 4.2) y = -24;
-
-          if (x === 0) ctx.moveTo(x, mid + y);
-          else ctx.lineTo(x, mid + y);
-        }
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        t += 0.045;
-        requestAnimationFrame(drawEcg);
-      }
-      drawEcg();
     }
 
-    // Fetch initial backend alarm stats
+    // ResizeObserver watches the ECG container to never render empty 0x0 canvas
+    if (window.ResizeObserver && ecgWrap) {
+      const ro = new ResizeObserver(() => {
+        resizeEcgCanvas();
+      });
+      ro.observe(ecgWrap);
+    }
+    window.addEventListener('resize', resizeEcgCanvas);
+
+    if (ecgCanvas) {
+      ecgCtx = ecgCanvas.getContext('2d');
+
+      function drawEcgFrame() {
+        if (!ecgCtx) return;
+        const width = ecgCanvas.width || 600;
+        const height = ecgCanvas.height || 160;
+
+        // 1. Dark Clinical Background
+        ecgCtx.fillStyle = '#06101E';
+        ecgCtx.fillRect(0, 0, width, height);
+
+        // 2. High-Contrast Medical Grid (Minor & Major Oscilloscope Divisions)
+        // Minor grid (12px)
+        ecgCtx.strokeStyle = 'rgba(16, 42, 77, 0.4)';
+        ecgCtx.lineWidth = 0.8;
+        for (let x = 0; x < width; x += 14) {
+          ecgCtx.beginPath(); ecgCtx.moveTo(x, 0); ecgCtx.lineTo(x, height); ecgCtx.stroke();
+        }
+        for (let y = 0; y < height; y += 14) {
+          ecgCtx.beginPath(); ecgCtx.moveTo(0, y); ecgCtx.lineTo(width, y); ecgCtx.stroke();
+        }
+
+        // Major grid (70px)
+        ecgCtx.strokeStyle = 'rgba(0, 191, 165, 0.16)';
+        ecgCtx.lineWidth = 1.2;
+        for (let x = 0; x < width; x += 70) {
+          ecgCtx.beginPath(); ecgCtx.moveTo(x, 0); ecgCtx.lineTo(x, height); ecgCtx.stroke();
+        }
+        for (let y = 0; y < height; y += 70) {
+          ecgCtx.beginPath(); ecgCtx.moveTo(0, y); ecgCtx.lineTo(width, y); ecgCtx.stroke();
+        }
+
+        // 3. Dynamic Patient Cardiac Waveform
+        const currentPatient = patientProfiles[currentDiagnosticBed] || patientProfiles.bed_01;
+        const isCrit = currentPatient.status === 'critical';
+        const isWarn = currentPatient.status === 'checking';
+
+        const strokeColor = isCrit ? '#FF5252' : (isWarn ? '#FFB300' : '#00E5FF');
+        ecgCtx.strokeStyle = strokeColor;
+        ecgCtx.lineWidth = isCrit ? 2.8 : 2.4;
+        ecgCtx.shadowColor = strokeColor;
+        ecgCtx.shadowBlur = isCrit ? 12 : 8;
+
+        const mid = height / 2;
+        const cycleSpeed = isCrit ? 1.6 : (isWarn ? 1.2 : 0.95);
+        const wavelength = isCrit ? 55 : (isWarn ? 70 : 85);
+
+        ecgCtx.beginPath();
+        for (let x = 0; x < width; x++) {
+          const sampleT = ((x / wavelength) + (ecgTime * cycleSpeed)) % (Math.PI * 2);
+          let y = 0;
+
+          // Realistic Medical P-Q-R-S-T Complex
+          if (sampleT > 1.8 && sampleT < 2.1) {
+            // P Wave (Atrial Depolarization)
+            y = -14 * Math.sin((sampleT - 1.8) / 0.3 * Math.PI);
+          } else if (sampleT >= 2.5 && sampleT < 2.65) {
+            // Q Wave (Septal Fascicle)
+            y = 12 * Math.sin((sampleT - 2.5) / 0.15 * Math.PI);
+          } else if (sampleT >= 2.65 && sampleT < 2.95) {
+            // R Wave (Ventricular Depolarization Spike)
+            const amp = isCrit ? -68 : -54;
+            y = amp * Math.sin((sampleT - 2.65) / 0.3 * Math.PI);
+          } else if (sampleT >= 2.95 && sampleT < 3.15) {
+            // S Wave (Late Ventricular Depolarization)
+            const sAmp = isCrit ? 22 : 16;
+            y = sAmp * Math.sin((sampleT - 2.95) / 0.2 * Math.PI);
+          } else if (sampleT >= 3.6 && sampleT < 4.15) {
+            // T Wave (Ventricular Repolarization)
+            const tAmp = isCrit ? -26 : -18;
+            y = tAmp * Math.sin((sampleT - 3.6) / 0.55 * Math.PI);
+          }
+
+          // Small physiological baseline drift
+          y += Math.sin(x * 0.02 + ecgTime * 0.5) * 2;
+
+          if (x === 0) ecgCtx.moveTo(x, mid + y);
+          else ecgCtx.lineTo(x, mid + y);
+        }
+        ecgCtx.stroke();
+        ecgCtx.shadowBlur = 0;
+
+        ecgTime += 0.04;
+        requestAnimationFrame(drawEcgFrame);
+      }
+
+      resizeEcgCanvas();
+      drawEcgFrame();
+    }
+
+    // ========================================================
+    // DATABASE TABLE VIEW LOGIC (SECTION 5)
+    // ========================================================
+    function switchDbTableTab(tab) {
+      currentDbTab = tab;
+      document.querySelectorAll('.db-tab-btn').forEach(b => b.classList.remove('active'));
+      if (tab === 'summary') document.getElementById('dbTabSummary').classList.add('active');
+      if (tab === 'alarms') document.getElementById('dbTabAlarms').classList.add('active');
+      if (tab === 'vitals') document.getElementById('dbTabVitals').classList.add('active');
+
+      const searchInput = document.getElementById('dbTableSearch');
+      if (searchInput) searchInput.value = '';
+
+      loadDatabaseTable(tab);
+    }
+
+    function refreshDatabaseTable() {
+      loadDatabaseTable(currentDbTab);
+      showToast('🔄', 'Database table refreshed from SQLite.');
+    }
+
+    function loadDatabaseTable(tab) {
+      const countEl = document.getElementById('dbTableRecordCount');
+      const thead = document.getElementById('dbTableHeader');
+      const tbody = document.getElementById('dbTableBody');
+
+      if (countEl) countEl.innerText = 'Querying SQLite tables...';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Loading live SQL records...</td></tr>';
+
+      if (tab === 'summary') {
+        fetch('/api/db/summary')
+          .then(r => r.json())
+          .then(data => {
+            cachedDbData.summary = data.table || [];
+            renderDbSummaryTable(cachedDbData.summary);
+          })
+          .catch(err => {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="color: #D32F2F; padding: 18px;">Error querying SQLite summary: ${err.message}</td></tr>`;
+          });
+      } else if (tab === 'alarms') {
+        fetch('/api/db/alarms?limit=100')
+          .then(r => r.json())
+          .then(data => {
+            cachedDbData.alarms = data.alarms || [];
+            renderDbAlarmsTable(cachedDbData.alarms);
+          })
+          .catch(err => {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="color: #D32F2F; padding: 18px;">Error querying SQLite alarms: ${err.message}</td></tr>`;
+          });
+      } else if (tab === 'vitals') {
+        fetch('/api/db/vitals?limit=100')
+          .then(r => r.json())
+          .then(data => {
+            cachedDbData.vitals = data.vitals || [];
+            renderDbVitalsTable(cachedDbData.vitals);
+          })
+          .catch(err => {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="color: #D32F2F; padding: 18px;">Error querying SQLite vitals: ${err.message}</td></tr>`;
+          });
+      }
+    }
+
+    function renderDbSummaryTable(rows) {
+      const countEl = document.getElementById('dbTableRecordCount');
+      const thead = document.getElementById('dbTableHeader');
+      const tbody = document.getElementById('dbTableBody');
+
+      if (countEl) countEl.innerText = `Showing ${rows.length} patient records from SQLite view (v_patient_alarm_summary)`;
+
+      thead.innerHTML = `
+        <tr>
+          <th>Bed</th>
+          <th>Patient Name</th>
+          <th>Total Alarms</th>
+          <th>Active Alarms</th>
+          <th>Clinical Status</th>
+          <th>Critical Condition</th>
+          <th>Last Alarm Timestamp</th>
+        </tr>
+      `;
+
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">No patient records found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td><strong style="color: var(--primary-teal);">${r.Bed.toUpperCase()}</strong></td>
+          <td><strong>${r['Patient Name']}</strong></td>
+          <td style="font-weight: 800; color: ${r['Total Alarms'] > 0 ? '#C62828' : '#2E7D32'};">${r['Total Alarms']}</td>
+          <td><span style="font-weight: 700;">${r['Active Alarms']}</span></td>
+          <td><span class="table-badge ${r['Clinical Status']}">${r['Clinical Status']}</span></td>
+          <td>${r['Critical Condition'] || 'None'}</td>
+          <td style="font-family: monospace; font-size: 11.5px; color: var(--text-secondary);">${r['Last Alarm Timestamp'] ? r['Last Alarm Timestamp'].replace('T', ' ').substring(0, 19) : '--'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderDbAlarmsTable(rows) {
+      const countEl = document.getElementById('dbTableRecordCount');
+      const thead = document.getElementById('dbTableHeader');
+      const tbody = document.getElementById('dbTableBody');
+
+      if (countEl) countEl.innerText = `Showing ${rows.length} recorded alarm events from SQLite table (patient_alarms)`;
+
+      thead.innerHTML = `
+        <tr>
+          <th>Alarm ID</th>
+          <th>Bed</th>
+          <th>Patient Name</th>
+          <th>Severity</th>
+          <th>Condition Reason</th>
+          <th>Vitals Snapshot</th>
+          <th>Status</th>
+          <th>Handled By</th>
+          <th>Triggered At</th>
+        </tr>
+      `;
+
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 20px;">No alarm history recorded yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(a => `
+        <tr>
+          <td><code style="background: #F1F5F9; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${a.alarm_id}</code></td>
+          <td><strong>${a.bed_id.toUpperCase()}</strong></td>
+          <td>${a.patient_name}</td>
+          <td><span class="table-badge ${a.severity}">${a.severity}</span></td>
+          <td style="max-width: 220px; font-size: 12px;">${a.critical_condition}</td>
+          <td style="font-weight: 600;">${a.heart_rate || '--'} BPM / ${a.spo2 || '--'}%</td>
+          <td><span class="table-badge ${a.status}">${a.status}</span></td>
+          <td style="font-size: 12px; color: var(--primary-teal);">${a.acknowledged_by || '<em>Unacknowledged</em>'}</td>
+          <td style="font-family: monospace; font-size: 11px;">${a.triggered_at ? a.triggered_at.replace('T', ' ').substring(0, 19) : '--'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderDbVitalsTable(rows) {
+      const countEl = document.getElementById('dbTableRecordCount');
+      const thead = document.getElementById('dbTableHeader');
+      const tbody = document.getElementById('dbTableBody');
+
+      if (countEl) countEl.innerText = `Showing ${rows.length} periodic telemetry logs from SQLite table (patient_vitals_log)`;
+
+      thead.innerHTML = `
+        <tr>
+          <th>Log ID</th>
+          <th>Bed</th>
+          <th>Patient Name</th>
+          <th>Heart Rate</th>
+          <th>SpO2</th>
+          <th>Temp</th>
+          <th>BP (Sys/Dia)</th>
+          <th>Status</th>
+          <th>Logged At</th>
+        </tr>
+      `;
+
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 20px;">No vitals logs recorded yet. Telemetry writes automatically every 5s.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(v => `
+        <tr>
+          <td>#${v.id}</td>
+          <td><strong>${v.bed_id.toUpperCase()}</strong></td>
+          <td>${v.patient_name}</td>
+          <td><strong style="color: ${v.heart_rate > 100 ? '#C62828' : 'inherit'};">${v.heart_rate} BPM</strong></td>
+          <td><strong style="color: ${v.spo2 < 90 ? '#C62828' : '#00838F'};">${v.spo2}%</strong></td>
+          <td>${v.temperature}°C</td>
+          <td>${v.blood_pressure_sys}/${v.blood_pressure_dia} mmHg</td>
+          <td><span class="table-badge ${v.clinical_status}">${v.clinical_status}</span></td>
+          <td style="font-family: monospace; font-size: 11px;">${v.logged_at ? v.logged_at.replace('T', ' ').substring(0, 19) : '--'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterCurrentDbTable(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        if (currentDbTab === 'summary') renderDbSummaryTable(cachedDbData.summary);
+        else if (currentDbTab === 'alarms') renderDbAlarmsTable(cachedDbData.alarms);
+        else if (currentDbTab === 'vitals') renderDbVitalsTable(cachedDbData.vitals);
+        return;
+      }
+
+      if (currentDbTab === 'summary') {
+        const filtered = cachedDbData.summary.filter(r => 
+          r.Bed.toLowerCase().includes(q) ||
+          r['Patient Name'].toLowerCase().includes(q) ||
+          (r['Critical Condition'] || '').toLowerCase().includes(q) ||
+          r['Clinical Status'].toLowerCase().includes(q)
+        );
+        renderDbSummaryTable(filtered);
+      } else if (currentDbTab === 'alarms') {
+        const filtered = cachedDbData.alarms.filter(a =>
+          a.alarm_id.toLowerCase().includes(q) ||
+          a.bed_id.toLowerCase().includes(q) ||
+          a.patient_name.toLowerCase().includes(q) ||
+          a.critical_condition.toLowerCase().includes(q) ||
+          a.severity.toLowerCase().includes(q) ||
+          a.status.toLowerCase().includes(q)
+        );
+        renderDbAlarmsTable(filtered);
+      } else if (currentDbTab === 'vitals') {
+        const filtered = cachedDbData.vitals.filter(v =>
+          v.bed_id.toLowerCase().includes(q) ||
+          v.patient_name.toLowerCase().includes(q) ||
+          v.clinical_status.toLowerCase().includes(q)
+        );
+        renderDbVitalsTable(filtered);
+      }
+    }
+
+    function confirmResetDatabase() {
+      if (confirm('⚠️ Are you sure you want to reset the SQLite database to clean seed state?')) {
+        fetch('/api/db/reset', { method: 'POST' })
+          .then(r => r.json())
+          .then(res => {
+            showToast('⚡', 'Database reset to clean seed state.');
+            loadDatabaseTable(currentDbTab);
+          })
+          .catch(e => alert('Reset error: ' + e.message));
+      }
+    }
+
+    // ========================================================
+    // SOCKET.IO & LIVE TELEMETRY STREAMING
+    // ========================================================
+    try {
+      socket = io();
+
+      socket.on('connect', () => {
+        console.log('⚡ Connected to SENTINEL-Ward Telemetry Server!');
+      });
+
+      socket.on('vitals_update', (data) => {
+        if (!data) return;
+
+        // Bed 1
+        if (data.bed_01) {
+          patientProfiles.bed_01.hr = data.bed_01.heartRate;
+          patientProfiles.bed_01.spo2 = data.bed_01.spo2;
+          patientProfiles.bed_01.temp = data.bed_01.temperature;
+
+          const el1Hr = document.getElementById('live-hr-1');
+          const el1Spo2 = document.getElementById('live-spo2-1');
+          const el1Temp = document.getElementById('live-temp-1');
+          const g1Hr = document.getElementById('grid1-hr');
+          const g1Spo2 = document.getElementById('grid1-spo2');
+          const g1Temp = document.getElementById('grid1-temp');
+
+          if (el1Hr) el1Hr.innerText = data.bed_01.heartRate + ' BPM';
+          if (el1Spo2) el1Spo2.innerText = data.bed_01.spo2 + '%';
+          if (el1Temp) el1Temp.innerText = data.bed_01.temperature + '°C';
+          if (g1Hr) g1Hr.innerText = data.bed_01.heartRate + ' BPM';
+          if (g1Spo2) g1Spo2.innerText = data.bed_01.spo2 + '%';
+          if (g1Temp) g1Temp.innerText = data.bed_01.temperature + '°C';
+        }
+
+        // Bed 2
+        if (data.bed_02) {
+          patientProfiles.bed_02.hr = data.bed_02.heartRate;
+          patientProfiles.bed_02.spo2 = data.bed_02.spo2;
+          patientProfiles.bed_02.temp = data.bed_02.temperature;
+
+          const el2Hr = document.getElementById('live-hr-2');
+          const el2Spo2 = document.getElementById('live-spo2-2');
+          const el2Temp = document.getElementById('live-temp-2');
+          const g2Hr = document.getElementById('grid2-hr');
+          const g2Spo2 = document.getElementById('grid2-spo2');
+          const g2Temp = document.getElementById('grid2-temp');
+
+          if (el2Hr) el2Hr.innerText = data.bed_02.heartRate + ' BPM';
+          if (el2Spo2) el2Spo2.innerText = data.bed_02.spo2 + '%';
+          if (el2Temp) el2Temp.innerText = data.bed_02.temperature + '°C';
+          if (g2Hr) g2Hr.innerText = data.bed_02.heartRate + ' BPM';
+          if (g2Spo2) g2Spo2.innerText = data.bed_02.spo2 + '%';
+          if (g2Temp) g2Temp.innerText = data.bed_02.temperature + '°C';
+        }
+
+        // Bed 3
+        if (data.bed_03 && !isAlarmSilenced) {
+          patientProfiles.bed_03.hr = data.bed_03.heartRate;
+          patientProfiles.bed_03.spo2 = data.bed_03.spo2;
+          patientProfiles.bed_03.temp = data.bed_03.temperature;
+
+          const el3Hr = document.getElementById('live-hr-3');
+          const el3Spo2 = document.getElementById('live-spo2-3');
+          const el3Temp = document.getElementById('live-temp-3');
+          const g3Hr = document.getElementById('grid3-hr');
+          const g3Spo2 = document.getElementById('grid3-spo2');
+          const g3Temp = document.getElementById('grid3-temp');
+
+          if (el3Hr) el3Hr.innerText = data.bed_03.heartRate + ' BPM';
+          if (el3Spo2) el3Spo2.innerText = data.bed_03.spo2 + '%';
+          if (el3Temp) el3Temp.innerText = data.bed_03.temperature + '°C';
+          if (g3Hr) g3Hr.innerText = data.bed_03.heartRate + ' BPM';
+          if (g3Spo2) g3Spo2.innerText = data.bed_03.spo2 + '%';
+          if (g3Temp) g3Temp.innerText = data.bed_03.temperature + '°C';
+        }
+
+        // Update currently inspected diagnostic patient cards if matching
+        const currentP = patientProfiles[currentDiagnosticBed];
+        if (currentP) {
+          const gHr = document.getElementById('grid-hr');
+          const gSpo2 = document.getElementById('grid-spo2');
+          const gTemp = document.getElementById('grid-temp');
+          const ecgHr = document.getElementById('ecgHrDisplay');
+          if (gHr) gHr.innerText = currentP.hr + ' BPM';
+          if (gSpo2) gSpo2.innerText = currentP.spo2 + '%';
+          if (gTemp) gTemp.innerText = currentP.temp + '°C';
+          if (ecgHr) ecgHr.innerText = currentP.hr + ' BPM';
+        }
+      });
+
+      socket.on('critical_alarm', (alarms) => {
+        if (alarms && alarms.length > 0 && alarms.some(a => !a.isAcknowledged)) {
+          if (!isMuted && !isAlarmSilenced) {
+            playMedicalAlarmPattern();
+          }
+        }
+      });
+
+      socket.on('alarm_stats', (stats) => {
+        if (stats && typeof stats.resolvedAlarmsCount === 'number') {
+          updateResolvedAlarmsDisplay(stats.resolvedAlarmsCount);
+        }
+      });
+    } catch (e) {
+      console.warn('Socket.IO connection note:', e);
+    }
+
+    // Fetch initial backend alarm stats on mount
     fetch('/api/alarms/stats')
       .then(r => r.json())
       .then(stats => {
@@ -1656,98 +2512,11 @@
       })
       .catch(() => {});
 
-    // Real-Time Socket.IO Telemetry Sync
-    try {
-      if (typeof io !== 'undefined') {
-        socket = io();
-        socket.on('connect', () => {
-          console.log('Connected to SENTINEL-Ward ESP32 Telemetry Gateway');
-        });
-
-        socket.on('vitals_update', (data) => {
-          if (data.bed_01 || data.bedId === 'bed_01') {
-            const b1 = data.bed_01 || data;
-            const elHr1 = document.getElementById('live-hr-1');
-            const elSpo21 = document.getElementById('live-spo2-1');
-            const elTemp1 = document.getElementById('live-temp-1');
-            if (elHr1) elHr1.innerText = b1.heartRate + ' BPM';
-            if (elSpo21) elSpo21.innerText = b1.spo2 + '%';
-            if (elTemp1) elTemp1.innerText = b1.temperature + '°C';
-          }
-          if (data.bed_02 || data.bedId === 'bed_02') {
-            const b2 = data.bed_02 || data;
-            const elHr2 = document.getElementById('live-hr-2');
-            const elSpo22 = document.getElementById('live-spo2-2');
-            const elTemp2 = document.getElementById('live-temp-2');
-            if (elHr2) elHr2.innerText = b2.heartRate + ' BPM';
-            if (elSpo22) elSpo22.innerText = b2.spo2 + '%';
-            if (elTemp2) elTemp2.innerText = b2.temperature + '°C';
-          }
-          if ((data.bed_03 || data.bedId === 'bed_03') && !isAlarmSilenced) {
-            const b3 = data.bed_03 || data;
-            const elHr3 = document.getElementById('live-hr-3');
-            const elSpo23 = document.getElementById('live-spo2-3');
-            const elTemp3 = document.getElementById('live-temp-3');
-            if (elHr3) elHr3.innerText = b3.heartRate + ' BPM';
-            if (elSpo23) elSpo23.innerText = b3.spo2 + '%';
-            if (elTemp3) elTemp3.innerText = b3.temperature + '°C';
-          }
-        });
-
-        socket.on('critical_alarm', (alarms) => {
-          if (isAlarmSilenced) return;
-          const unack = Array.isArray(alarms) ? alarms.filter(a => !a.isAcknowledged) : [];
-          if (unack.length === 0) {
-            stopAudioAlarm();
-            return;
-          }
-          const now = Date.now();
-          if (now - lastAlarmSoundTime > 8000) {
-            lastAlarmSoundTime = now;
-            playCriticalTriplet();
-          }
-        });
-
-        socket.on('alarm_stats', (stats) => {
-          if (stats && stats.resolvedAlarmsCount !== undefined) {
-            updateResolvedAlarmsDisplay(stats.resolvedAlarmsCount);
-          }
-        });
-
-        socket.on('alarm_cleared', (data) => {
-          stopAudioAlarm();
-          const card = document.getElementById('alarmCard-ALT-1001');
-          if (card) card.style.display = 'none';
-          const noAlarms = document.getElementById('noAlarmsState');
-          if (noAlarms) noAlarms.style.display = 'block';
-          const badge = document.getElementById('sidebarBadge');
-          if (badge) badge.style.display = 'none';
-          const mBadge = document.getElementById('mobileSidebarBadge');
-          if (mBadge) mBadge.style.display = 'none';
-          if (data && data.resolvedAlarmsCount !== undefined) {
-            updateResolvedAlarmsDisplay(data.resolvedAlarmsCount);
-          }
-        });
-
-        socket.on('alarm_acknowledged', (data) => {
-          stopAudioAlarm();
-          const el = document.getElementById('countdown-timer');
-          if (el) {
-            el.innerText = '🔕 Silenced & Acknowledged';
-            el.style.color = 'var(--primary-teal)';
-          }
-          const badge = document.getElementById('sidebarBadge');
-          if (badge) badge.style.display = 'none';
-          const mBadge = document.getElementById('mobileSidebarBadge');
-          if (mBadge) mBadge.style.display = 'none';
-          if (data && data.resolvedAlarmsCount !== undefined) {
-            updateResolvedAlarmsDisplay(data.resolvedAlarmsCount);
-          }
-        });
-      }
-    } catch (e) {
-      console.log('Running in standalone simulation mode');
-    }
+    // Initial table prefetch
+    fetch('/api/db/summary')
+      .then(r => r.json())
+      .then(d => { cachedDbData.summary = d.table || []; })
+      .catch(() => {});
   </script>
 </body>
 </html>
