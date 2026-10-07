@@ -53,7 +53,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                       Row(
                         children: [
                           Text(
-                            'Nurse Sarah',
+                            'Sister Sunita',
                             style: AppTextStyles.headlineSmall.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
@@ -405,7 +405,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
               const SizedBox(height: 20),
 
               // 5.5 Nurse Clinical Pride & Hero Recognition Card (Alarms Handled & Patients Attended)
-              _buildNursePrideCard(context, 'Nurse Sarah', resolvedAlarms, patients.length),
+              _buildNursePrideCard(context, 'Sister Sunita', resolvedAlarms, patients.length),
 
               const SizedBox(height: 22),
 

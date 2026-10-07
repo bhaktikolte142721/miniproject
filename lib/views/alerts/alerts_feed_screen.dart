@@ -97,7 +97,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                       ),
                       child: const Center(
                         child: Text(
-                          'SJ',
+                          'SR',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -112,7 +112,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nurse Sarah Jenkins, RN',
+                            'Sister Sunita Rao, RN',
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
@@ -126,7 +126,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'sarah.jenkins@hospital.org',
+                            'sunita.rao@hospital.org',
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textMuted,
                               fontSize: 11,
@@ -355,7 +355,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                   if (!alert.isAcknowledged)
                                     GestureDetector(
                                       onTap: () {
-                                        mockService.acknowledgeAlert(alert.id, 'Nurse Sarah');
+                                        mockService.acknowledgeAlert(alert.id, 'Sister Sunita');
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

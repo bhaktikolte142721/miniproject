@@ -232,7 +232,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                             ),
                             alignment: Alignment.center,
                             child: const Text(
-                              'SJ',
+                              'SR',
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.primaryTeal,
@@ -245,7 +245,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Nurse Sarah Jenkins',
+                                'Sister Sunita Rao',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 12,
@@ -253,7 +253,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                 ),
                               ),
                               Text(
-                                'Lead Triage • RN #88192',
+                                'Lead Triage RN • #MH-88192',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: AppColors.textMuted,

@@ -945,10 +945,10 @@
       <div class="staff-selector-wrap" title="Current On-Duty Clinician Profile">
         <label for="staffSelect">STAFF:</label>
         <select id="staffSelect" class="staff-dropdown" onchange="switchClinicianProfile(this.value)">
-          <option value="Sister Sarah Jenkins">Sister Sarah Jenkins (Lead RN #88192)</option>
-          <option value="Nurse Michael Chen">Nurse Michael Chen (Staff RN #88193)</option>
-          <option value="Sister Sunita Rao">Sister Sunita Rao (ICU RN #88194)</option>
-          <option value="Dr. Marcus Vance">Dr. Marcus Vance (Attending MD #44910)</option>
+          <option value="Sister Sunita Rao">Sister Sunita Rao (Lead RN #MH-88192)</option>
+          <option value="Nurse Rohan Joshi">Nurse Rohan Joshi (Staff RN #MH-88193)</option>
+          <option value="Sister Kavita Sharma">Sister Kavita Sharma (ICU RN #MH-88194)</option>
+          <option value="Dr. Arvind Swaminathan">Dr. Arvind Swaminathan (Attending MD #NMC-44910)</option>
         </select>
       </div>
 
@@ -1004,10 +1004,10 @@
 
       <!-- Nurse Profile Card -->
       <div class="nurse-profile-card" onclick="openPraiseModal()" title="View Clinician Details & Appreciation">
-        <div class="nurse-avatar" id="sidebarAvatar">SJ</div>
+        <div class="nurse-avatar" id="sidebarAvatar">SR</div>
         <div style="overflow: hidden;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebarNurseName">Sister Sarah Jenkins</div>
-          <div style="font-size: 11px; color: var(--text-muted);" id="sidebarNurseRole">Lead Triage • RN #88192</div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebarNurseName">Sister Sunita Rao</div>
+          <div style="font-size: 11px; color: var(--text-muted);" id="sidebarNurseRole">Lead Triage • RN #MH-88192</div>
         </div>
       </div>
     </aside>
@@ -1041,7 +1041,7 @@
                 <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
                 <span style="font-size: 12px; font-weight: 700; color: var(--primary-teal);">Optimal (98%)</span>
               </div>
-              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Elena Rostova (34F)</div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Priya Sharma (34F)</div>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Post-Op Laparoscopic • RSSI -58 dBm</div>
               <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
                 <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-1">72 BPM</strong></div>
@@ -1055,7 +1055,7 @@
                 <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
                 <span style="font-size: 12px; font-weight: 700; color: var(--alert-warning);">Checking...</span>
               </div>
-              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Marcus Vance (58M)</div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Rajesh Kumar (58M)</div>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">COPD Observation • RSSI -64 dBm</div>
               <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--card-border);">
                 <div><span style="font-size: 10px; color: var(--text-muted);">HR:</span> <strong id="live-hr-2">88 BPM</strong></div>
@@ -1069,7 +1069,7 @@
                 <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
                 <span style="font-size: 12px; font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
               </div>
-              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">David Chen (62M)</div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 8px;">Amit Patel (62M)</div>
               <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600; margin-top: 2px;">Hypoxemia: Sustained SpO2 &lt; 88%</div>
               <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #FFCDD2;">
                 <div><span style="font-size: 10px; color: var(--alert-critical);">HR:</span> <strong style="color: var(--alert-critical);" id="live-hr-3">118 BPM</strong></div>
@@ -1119,7 +1119,7 @@
             <div class="praise-affirmation-row">
               <div class="praise-quote">
                 <span>🌟</span>
-                <span id="praiseAffirmationText">“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
+                <span id="praiseAffirmationText">“Thank you for taking good care of all patients in Ward 3B today, Sister Sunita Rao!”</span>
               </div>
               <button class="praise-action-btn" onclick="openPraiseModal()">
                 <span>👏</span>
@@ -1144,7 +1144,7 @@
                     <span style="font-size: 11px; font-weight: 700; background: var(--primary-mint); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 01</span>
                     <span style="font-weight: 700; color: var(--primary-teal);">Optimal</span>
                   </div>
-                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Elena Rostova (34F)</div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Priya Sharma (34F)</div>
                   <div style="font-size: 12px; color: var(--text-muted);">Post-Op Laparoscopic • Room 304</div>
                 </div>
               </div>
@@ -1173,7 +1173,7 @@
                     <span style="font-size: 11px; font-weight: 700; background: var(--alert-warning); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 02</span>
                     <span style="font-weight: 700; color: var(--alert-warning);">Checking...</span>
                   </div>
-                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Marcus Vance (58M)</div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Rajesh Kumar (58M)</div>
                   <div style="font-size: 12px; color: var(--text-muted);">Acute COPD • Room 305</div>
                 </div>
               </div>
@@ -1202,7 +1202,7 @@
                     <span style="font-size: 11px; font-weight: 700; background: var(--alert-critical); color:#fff; padding: 3px 8px; border-radius: 8px;">BED 03</span>
                     <span style="font-weight: 800; color: var(--alert-critical);">CRITICAL ALERT</span>
                   </div>
-                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">David Chen (62M)</div>
+                  <div style="font-size: 17px; font-weight: 800; margin-top: 4px;">Amit Patel (62M)</div>
                   <div style="font-size: 12px; color: var(--alert-critical); font-weight: 600;">Pneumonia & Sepsis • Desaturation</div>
                 </div>
               </div>
@@ -1232,19 +1232,19 @@
           <div style="margin-bottom: 12px;">
             <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.6px;">SELECT PATIENT / BED VIEW:</div>
             <div class="patient-pill-selector" id="patientSelectorBar">
-              <button class="patient-pill-btn active" id="btnBed-bed_01" onclick="selectDiagnosticPatient('bed_01')">🛏️ Bed 01 • Elena Rostova</button>
-              <button class="patient-pill-btn" id="btnBed-bed_02" onclick="selectDiagnosticPatient('bed_02')">🛏️ Bed 02 • Marcus Vance</button>
-              <button class="patient-pill-btn critical-indicator" id="btnBed-bed_03" onclick="selectDiagnosticPatient('bed_03')">🚨 Bed 03 • David Chen (Critical)</button>
-              <button class="patient-pill-btn" id="btnBed-bed_04" onclick="selectDiagnosticPatient('bed_04')">🛏️ Bed 04 • Sarah Connor</button>
-              <button class="patient-pill-btn" id="btnBed-bed_05" onclick="selectDiagnosticPatient('bed_05')">🛏️ Bed 05 • James Wilson</button>
-              <button class="patient-pill-btn" id="btnBed-bed_06" onclick="selectDiagnosticPatient('bed_06')">🛏️ Bed 06 • Robert Taylor</button>
+              <button class="patient-pill-btn active" id="btnBed-bed_01" onclick="selectDiagnosticPatient('bed_01')">🛏️ Bed 01 • Priya Sharma</button>
+              <button class="patient-pill-btn" id="btnBed-bed_02" onclick="selectDiagnosticPatient('bed_02')">🛏️ Bed 02 • Rajesh Kumar</button>
+              <button class="patient-pill-btn critical-indicator" id="btnBed-bed_03" onclick="selectDiagnosticPatient('bed_03')">🚨 Bed 03 • Amit Patel (Critical)</button>
+              <button class="patient-pill-btn" id="btnBed-bed_04" onclick="selectDiagnosticPatient('bed_04')">🛏️ Bed 04 • Sneha Kulkarni</button>
+              <button class="patient-pill-btn" id="btnBed-bed_05" onclick="selectDiagnosticPatient('bed_05')">🛏️ Bed 05 • Manoj Tiwari</button>
+              <button class="patient-pill-btn" id="btnBed-bed_06" onclick="selectDiagnosticPatient('bed_06')">🛏️ Bed 06 • Harish Chandra</button>
             </div>
           </div>
 
           <!-- Dynamic Patient Header -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
             <div>
-              <h2 class="section-heading" id="diagPatientName" style="margin-bottom: 4px;">Bed 01 • Elena Rostova (34F)</h2>
+              <h2 class="section-heading" id="diagPatientName" style="margin-bottom: 4px;">Bed 01 • Priya Sharma (34F)</h2>
               <p style="font-size: 13px; color: var(--text-secondary);" id="diagPatientMeta">ID: P-8821 • Post-Op Laparoscopic • Room 304</p>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -1258,7 +1258,7 @@
             <div class="ecg-monitor-header">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="ecg-lead-badge">LEAD II</span>
-                <span id="ecgPatientHeader" style="color: #E2E8F0;">Elena Rostova</span>
+                <span id="ecgPatientHeader" style="color: #E2E8F0;">Priya Sharma</span>
                 <span style="opacity: 0.6;">• 25 mm/s • 10 mm/mV • 50Hz</span>
               </div>
               <div style="display: flex; align-items: center; gap: 10px;">
@@ -1357,7 +1357,7 @@
               <span id="alarmSeverityBadge" style="background: var(--alert-critical); color:#fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">CRITICAL LEVEL 1</span>
               <span style="font-size: 14px; font-weight: 800; color: var(--alert-critical);" id="countdown-timer">54s remaining</span>
             </div>
-            <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • David Chen (62M)</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 10px;">BED 03 • Amit Patel (62M)</div>
             <div style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">Sustained SpO2 &lt; 88% for 15s (Clinical Desaturation Episode)</div>
             <div id="escalationNotice" style="font-size: 12px; color: var(--alert-critical); margin-top: 8px; font-weight: 700;">Target: Auto-escalates to Ward Supervisor in <span id="countdown-bar">54s</span></div>
 
@@ -1417,7 +1417,7 @@
             <div class="praise-affirmation-row">
               <div class="praise-quote">
                 <span>🌟</span>
-                <span id="praiseAffirmationText2">“Thank you for taking good care of all patients in Ward 3B today, Sister Sarah Jenkins!”</span>
+                <span id="praiseAffirmationText2">“Thank you for taking good care of all patients in Ward 3B today, Sister Sunita Rao!”</span>
               </div>
               <button class="praise-action-btn" onclick="openPraiseModal()">
                 <span>👏</span>
@@ -1503,15 +1503,15 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 14px; background: var(--mint-light); padding: 14px; border-radius: 18px; margin-bottom: 16px;">
-        <div class="nurse-avatar" id="modalNurseAvatar" style="width: 48px; height: 48px; font-size: 17px;">SJ</div>
+        <div class="nurse-avatar" id="modalNurseAvatar" style="width: 48px; height: 48px; font-size: 17px;">SR</div>
         <div>
-          <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);" id="modalNurseName">Sister Sarah Jenkins</div>
-          <div style="font-size: 12px; color: var(--primary-teal); font-weight: 600;" id="modalNurseRole">Lead Triage Nurse • RN #88192 • Ward 3B Acute Care</div>
+          <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);" id="modalNurseName">Sister Sunita Rao</div>
+          <div style="font-size: 12px; color: var(--primary-teal); font-weight: 600;" id="modalNurseRole">Lead Triage Nurse • RN #MH-88192 • Ward 3B Acute Care</div>
         </div>
       </div>
 
       <p style="font-size: 14px; line-height: 1.6; color: var(--text-primary); margin-bottom: 14px;">
-        <span id="modalNurseGreeting">Sister Sarah</span>, you have answered and resolved <strong class="modal-resolved-count" style="color: var(--primary-teal); font-size: 16px;">1</strong> patient telemetry alarm(s) and provided dedicated monitoring for <strong>3 of 3 acute patients</strong> during your shift today.
+        <span id="modalNurseGreeting">Sister Sunita</span>, you have answered and resolved <strong class="modal-resolved-count" style="color: var(--primary-teal); font-size: 16px;">1</strong> patient telemetry alarm(s) and provided dedicated monitoring for <strong>3 of 3 acute patients</strong> during your shift today.
       </p>
       <p style="font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); margin-bottom: 20px;">
         Your prompt bedside attention, clinical vigilance, and compassionate care keep our acute ward safe and our patients comfortable. The entire clinical care team and medical directory are thankful for your service! 👏❤️
@@ -1535,7 +1535,7 @@
     let countdown = 58;
     let resolvedAlarmsCount = 1;
     let socket = null;
-    let activeNurseName = 'Sister Sarah Jenkins';
+    let activeNurseName = 'Sister Sunita Rao';
     let currentDiagnosticBed = 'bed_01';
     let currentDbTab = 'summary';
     let cachedDbData = { summary: [], alarms: [], vitals: [] };
@@ -1544,7 +1544,7 @@
     const patientProfiles = {
       bed_01: {
         id: 'bed_01',
-        name: 'Elena Rostova',
+        name: 'Priya Sharma',
         age: 34,
         gender: '34F',
         diagnosis: 'Post-Op Laparoscopic • Room 304',
@@ -1559,7 +1559,7 @@
       },
       bed_02: {
         id: 'bed_02',
-        name: 'Marcus Vance',
+        name: 'Rajesh Kumar',
         age: 58,
         gender: '58M',
         diagnosis: 'Acute COPD Exacerbation • Room 305',
@@ -1574,7 +1574,7 @@
       },
       bed_03: {
         id: 'bed_03',
-        name: 'David Chen',
+        name: 'Amit Patel',
         age: 62,
         gender: '62M',
         diagnosis: 'Pneumonia & Sepsis • Critical Desaturation • Room 306',
@@ -1589,7 +1589,7 @@
       },
       bed_04: {
         id: 'bed_04',
-        name: 'Sarah Connor',
+        name: 'Sneha Kulkarni',
         age: 35,
         gender: '35F',
         diagnosis: 'Elective Observation • Room 307',
@@ -1604,7 +1604,7 @@
       },
       bed_05: {
         id: 'bed_05',
-        name: 'James Wilson',
+        name: 'Manoj Tiwari',
         age: 50,
         gender: '50M',
         diagnosis: 'Cardiac Rehab Post-Stent • Room 308',
@@ -1619,7 +1619,7 @@
       },
       bed_06: {
         id: 'bed_06',
-        name: 'Robert Taylor',
+        name: 'Harish Chandra',
         age: 67,
         gender: '67M',
         diagnosis: 'Orthopedic Knee Arthroplasty • Room 309',
@@ -1715,18 +1715,18 @@
     // Dynamic Clinician Profile Switcher
     function switchClinicianProfile(name) {
       activeNurseName = name;
-      let initials = 'SJ';
-      let role = 'Lead Triage • RN #88192';
+      let initials = 'SR';
+      let role = 'Lead Triage • RN #MH-88192';
 
-      if (name.includes('Michael')) {
-        initials = 'MC';
-        role = 'Acute Care Staff • RN #88193';
-      } else if (name.includes('Sunita')) {
-        initials = 'SR';
-        role = 'ICU Specialist • RN #88194';
-      } else if (name.includes('Marcus')) {
-        initials = 'MV';
-        role = 'Attending Physician • MD #44910';
+      if (name.includes('Rohan')) {
+        initials = 'RJ';
+        role = 'Acute Care Staff • RN #MH-88193';
+      } else if (name.includes('Kavita')) {
+        initials = 'KS';
+        role = 'ICU Specialist • RN #MH-88194';
+      } else if (name.includes('Arvind')) {
+        initials = 'AS';
+        role = 'Attending Physician • MD #NMC-44910';
       }
 
       // Update Sidebar Card

@@ -55,7 +55,7 @@ const bed3Summary = summary.find(s => s.Bed === 'bed_03');
 assert(bed3Summary, 'bed_03 not found in summary');
 assert.strictEqual(bed3Summary['Total Alarms'], 1, 'Bed 03 should have initial total alarms = 1');
 assert.strictEqual(bed3Summary['Active Alarms'], 1, 'Bed 03 should have 1 active alarm');
-assert.strictEqual(bed3Summary['Patient Name'], 'David Chen');
+assert.strictEqual(bed3Summary['Patient Name'], 'Amit Patel');
 assert.strictEqual(bed3Summary['Critical Condition'], 'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)');
 console.log(`   Bed 03: ${bed3Summary['Patient Name']} - Alarms: ${bed3Summary['Total Alarms']}, Condition: "${bed3Summary['Critical Condition']}"`);
 console.log('   ✅ Initial patient state verified!\n');
@@ -66,7 +66,7 @@ const testAlarmId = `ALT-TEST-${Date.now()}`;
 db.recordAlarm({
   alarmId: testAlarmId,
   bedId: 'bed_02',
-  patientName: 'Marcus Vance',
+  patientName: 'Rajesh Kumar',
   severity: 'critical',
   criticalCondition: 'Severe Tachycardia: HR > 130 bpm (Acute Cardiac Episode)',
   heartRate: 134,
@@ -87,19 +87,19 @@ console.log('   ✅ Alarm recording & counters verified!\n');
 
 // 5. Test Acknowledging the Alarm
 console.log('5️⃣ Testing Alarm Acknowledgment & Idempotency...');
-db.acknowledgeAlarm(testAlarmId, 'Dr. Sarah Johnson, MD');
+db.acknowledgeAlarm(testAlarmId, 'Dr. Aditi Deshmukh, MD');
 
 let updatedBed2 = db.getPatientByBedId('bed_02');
 let ackAlarm = updatedBed2.alarms.find(a => a.alarm_id === testAlarmId);
 assert(ackAlarm, 'Alarm not found');
 assert.strictEqual(ackAlarm.status, 'acknowledged', 'Alarm status should be acknowledged');
-assert.strictEqual(ackAlarm.acknowledged_by, 'Dr. Sarah Johnson, MD');
+assert.strictEqual(ackAlarm.acknowledged_by, 'Dr. Aditi Deshmukh, MD');
 assert(ackAlarm.acknowledged_at, 'Acknowledgment timestamp should be recorded');
 assert.strictEqual(updatedBed2.active_alarms, 0, 'Bed 02 active alarms should decrement to 0');
 assert.strictEqual(updatedBed2.current_status, 'optimal', 'Bed 02 status should return to optimal when no active critical alarms remain');
 
 // Test Idempotency: acknowledge again should not double-decrement active_alarms
-db.acknowledgeAlarm(testAlarmId, 'Dr. Sarah Johnson, MD');
+db.acknowledgeAlarm(testAlarmId, 'Dr. Aditi Deshmukh, MD');
 updatedBed2 = db.getPatientByBedId('bed_02');
 assert.strictEqual(updatedBed2.active_alarms, 0, 'active_alarms must remain 0 after duplicate acknowledgment');
 console.log(`   Alarm ${testAlarmId} acknowledged and verified idempotent (active_alarms = 0)`);
@@ -125,7 +125,7 @@ console.log('   ✅ Alarm clear verified!\n');
 console.log('7️⃣ Testing Telemetry Vitals Logging...');
 db.logVitals({
   bedId: 'bed_01',
-  patientName: 'Elena Rostova',
+  patientName: 'Priya Sharma',
   heartRate: 74,
   spo2: 99,
   temperature: 36.8,
@@ -136,7 +136,7 @@ db.logVitals({
 });
 const vitalsLogs = db.queryRaw('SELECT * FROM patient_vitals_log WHERE bed_id = ? ORDER BY id DESC LIMIT 1', ['bed_01']);
 assert.strictEqual(vitalsLogs.length, 1);
-assert.strictEqual(vitalsLogs[0].patient_name, 'Elena Rostova');
+assert.strictEqual(vitalsLogs[0].patient_name, 'Priya Sharma');
 assert.strictEqual(vitalsLogs[0].spo2, 99);
 assert.strictEqual(vitalsLogs[0].heart_rate, 74);
 console.log(`   Logged vitals for ${vitalsLogs[0].patient_name}: HR ${vitalsLogs[0].heart_rate} bpm, SpO2 ${vitalsLogs[0].spo2}%`);

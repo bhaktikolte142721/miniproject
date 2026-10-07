@@ -253,7 +253,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                                       ],
                                     ),
                                     content: Text(
-                                      'Emergency bedside call alert transmitted to Nurse Sarah Jenkins for ${widget.patient.bedLabel} (${widget.patient.name}).',
+                                      'Emergency bedside call alert transmitted to Sister Sunita Rao for ${widget.patient.bedLabel} (${widget.patient.name}).',
                                       style: AppTextStyles.bodyMedium,
                                     ),
                                     actions: [
@@ -371,7 +371,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                               if (isCritical) {
                                 mockService.acknowledgeAlert(
                                   'ALT-${widget.patient.bedId}',
-                                  'Nurse Sarah',
+                                  'Sister Sunita',
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

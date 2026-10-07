@@ -42,12 +42,12 @@ function initDatabase() {
     `);
 
     const initialPatients = [
-      ['bed_01', 'Elena Rostova', 34, 'Female', '2026-09-08', 'optimal', 0, 0, 0, 0, 'None', null],
-      ['bed_02', 'Marcus Vance', 58, 'Male', '2026-09-09', 'checking', 0, 0, 0, 0, 'None', null],
-      ['bed_03', 'David Chen', 62, 'Male', '2026-09-07', 'critical', 1, 1, 1, 0, 'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)', new Date().toISOString()],
-      ['bed_04', 'Sarah Connor', 35, 'Female', '2026-09-10', 'optimal', 0, 0, 0, 0, 'None', null],
-      ['bed_05', 'James Wilson', 50, 'Male', '2026-09-09', 'optimal', 0, 0, 0, 0, 'None', null],
-      ['bed_06', 'Robert Taylor', 67, 'Male', '2026-09-06', 'optimal', 0, 0, 0, 0, 'None', null]
+      ['bed_01', 'Priya Sharma', 34, 'Female', '2026-09-08', 'optimal', 0, 0, 0, 0, 'None', null],
+      ['bed_02', 'Rajesh Kumar', 58, 'Male', '2026-09-09', 'checking', 0, 0, 0, 0, 'None', null],
+      ['bed_03', 'Amit Patel', 62, 'Male', '2026-09-07', 'critical', 1, 1, 1, 0, 'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)', new Date().toISOString()],
+      ['bed_04', 'Sneha Kulkarni', 35, 'Female', '2026-09-10', 'optimal', 0, 0, 0, 0, 'None', null],
+      ['bed_05', 'Manoj Tiwari', 50, 'Male', '2026-09-09', 'optimal', 0, 0, 0, 0, 'None', null],
+      ['bed_06', 'Harish Chandra', 67, 'Male', '2026-09-06', 'optimal', 0, 0, 0, 0, 'None', null]
     ];
 
     for (const patient of initialPatients) {
@@ -66,7 +66,7 @@ function initDatabase() {
     insertAlarmStmt.run(
       'ALT-1001',
       'bed_03',
-      'David Chen',
+      'Amit Patel',
       'critical',
       'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)',
       118,
@@ -320,12 +320,12 @@ function resetDatabase() {
   `);
 
   const initialPatients = [
-    ['bed_01', 'Elena Rostova', 34, 'Female', '2026-09-08', 'optimal', 0, 0, 0, 0, 'None', null],
-    ['bed_02', 'Marcus Vance', 58, 'Male', '2026-09-09', 'checking', 0, 0, 0, 0, 'None', null],
-    ['bed_03', 'David Chen', 62, 'Male', '2026-09-07', 'critical', 1, 1, 1, 0, 'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)', new Date().toISOString()],
-    ['bed_04', 'Sarah Connor', 35, 'Female', '2026-09-10', 'optimal', 0, 0, 0, 0, 'None', null],
-    ['bed_05', 'James Wilson', 50, 'Male', '2026-09-09', 'optimal', 0, 0, 0, 0, 'None', null],
-    ['bed_06', 'Robert Taylor', 67, 'Male', '2026-09-06', 'optimal', 0, 0, 0, 0, 'None', null]
+    ['bed_01', 'Priya Sharma', 34, 'Female', '2026-09-08', 'optimal', 0, 0, 0, 0, 'None', null],
+    ['bed_02', 'Rajesh Kumar', 58, 'Male', '2026-09-09', 'checking', 0, 0, 0, 0, 'None', null],
+    ['bed_03', 'Amit Patel', 62, 'Male', '2026-09-07', 'critical', 1, 1, 1, 0, 'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)', new Date().toISOString()],
+    ['bed_04', 'Sneha Kulkarni', 35, 'Female', '2026-09-10', 'optimal', 0, 0, 0, 0, 'None', null],
+    ['bed_05', 'Manoj Tiwari', 50, 'Male', '2026-09-09', 'optimal', 0, 0, 0, 0, 'None', null],
+    ['bed_06', 'Harish Chandra', 67, 'Male', '2026-09-06', 'optimal', 0, 0, 0, 0, 'None', null]
   ];
 
   for (const patient of initialPatients) {
@@ -343,7 +343,7 @@ function resetDatabase() {
   insertAlarmStmt.run(
     'ALT-1001',
     'bed_03',
-    'David Chen',
+    'Amit Patel',
     'critical',
     'Hypoxemia: Sustained SpO2 < 88% for 15s (Clinical Desaturation)',
     118,

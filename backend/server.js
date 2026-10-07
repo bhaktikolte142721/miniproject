@@ -34,7 +34,7 @@ const START_TIME = Date.now();
 const telemetryState = {
   bed_01: {
     bedId: 'bed_01',
-    patientName: 'Elena Rostova',
+    patientName: 'Priya Sharma',
     heartRate: 72,
     spo2: 99,
     temperature: 36.8,
@@ -46,7 +46,7 @@ const telemetryState = {
   },
   bed_02: {
     bedId: 'bed_02',
-    patientName: 'Marcus Vance',
+    patientName: 'Rajesh Kumar',
     heartRate: 88,
     spo2: 94,
     temperature: 37.6,
@@ -58,7 +58,7 @@ const telemetryState = {
   },
   bed_03: {
     bedId: 'bed_03',
-    patientName: 'David Chen',
+    patientName: 'Amit Patel',
     heartRate: 118,
     spo2: 87,
     temperature: 38.6,
@@ -70,7 +70,7 @@ const telemetryState = {
   },
   bed_04: {
     bedId: 'bed_04',
-    patientName: 'Sarah Connor',
+    patientName: 'Sneha Kulkarni',
     heartRate: 76,
     spo2: 98,
     temperature: 36.9,
@@ -82,7 +82,7 @@ const telemetryState = {
   },
   bed_05: {
     bedId: 'bed_05',
-    patientName: 'James Wilson',
+    patientName: 'Manoj Tiwari',
     heartRate: 82,
     spo2: 97,
     temperature: 37.1,
@@ -94,7 +94,7 @@ const telemetryState = {
   },
   bed_06: {
     bedId: 'bed_06',
-    patientName: 'Robert Taylor',
+    patientName: 'Harish Chandra',
     heartRate: 70,
     spo2: 99,
     temperature: 36.7,
@@ -326,7 +326,7 @@ app.post('/api/alarms/trigger', (req, res) => {
 // 5. Acknowledge Alarm
 app.post('/api/alarms/acknowledge', (req, res) => {
   const alarmId = req.body.alarmId || req.body.alarm_id;
-  const nurseName = req.body.nurseName || req.body.nurse || 'Nurse Sarah Jenkins';
+  const nurseName = req.body.nurseName || req.body.nurse || 'Sister Sunita Rao';
   if (!alarmId) {
     return res.status(400).json({ error: 'Missing alarmId' });
   }
@@ -684,7 +684,7 @@ io.on('connection', (socket) => {
   // Client acknowledges alarm
   socket.on('acknowledge_alarm', (data) => {
     const alarm_id = data?.alarm_id || data?.alarmId;
-    const nurse = data?.nurse || data?.nurseName || 'Nurse Sarah Jenkins';
+    const nurse = data?.nurse || data?.nurseName || 'Sister Sunita Rao';
     if (!alarm_id) return;
 
     const alarm = activeAlarms.find(a => a.id === alarm_id);
@@ -751,15 +751,15 @@ io.on('connection', (socket) => {
 let dbVitalsLogCounter = 0;
 
 setInterval(() => {
-  // Fluctuate Bed 1 (Elena - Stable)
+  // Fluctuate Bed 1 (Priya - Stable)
   telemetryState.bed_01.heartRate = 70 + Math.floor(Math.random() * 5);
   telemetryState.bed_01.spo2 = 98 + Math.floor(Math.random() * 2);
 
-  // Fluctuate Bed 2 (Marcus - Checking)
+  // Fluctuate Bed 2 (Rajesh - Checking)
   telemetryState.bed_02.heartRate = 86 + Math.floor(Math.random() * 6);
   telemetryState.bed_02.spo2 = 93 + Math.floor(Math.random() * 3);
 
-  // Fluctuate Bed 3 (David - Critical)
+  // Fluctuate Bed 3 (Amit - Critical)
   telemetryState.bed_03.heartRate = 115 + Math.floor(Math.random() * 8);
   telemetryState.bed_03.spo2 = 86 + Math.floor(Math.random() * 4);
 

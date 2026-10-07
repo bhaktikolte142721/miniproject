@@ -55,7 +55,7 @@ class MockTelemetryService {
   void _initInitialState() {
     final now = DateTime.now();
 
-    // Bed 01 - Elena Rostova (Optimal Post-Op)
+    // Bed 01 - Priya Sharma (Optimal Post-Op)
     _currentTelemetry['bed_01'] = TelemetryData(
       bedId: 'bed_01',
       heartRate: 72,
@@ -77,7 +77,7 @@ class MockTelemetryService {
       lastSeen: now,
     );
 
-    // Bed 02 - Marcus Vance (Checking / Mild Respiratory)
+    // Bed 02 - Rajesh Kumar (Checking / Mild Respiratory)
     _currentTelemetry['bed_02'] = TelemetryData(
       bedId: 'bed_02',
       heartRate: 88,
@@ -99,7 +99,7 @@ class MockTelemetryService {
       lastSeen: now,
     );
 
-    // Bed 03 - David Chen (Critical Observation)
+    // Bed 03 - Amit Patel (Critical Observation)
     _currentTelemetry['bed_03'] = TelemetryData(
       bedId: 'bed_03',
       heartRate: 118,
@@ -126,7 +126,7 @@ class MockTelemetryService {
       AlertIncident(
         id: 'ALT-${now.millisecondsSinceEpoch}',
         bedId: 'bed_03',
-        patientName: 'David Chen',
+        patientName: 'Amit Patel',
         severity: AlertSeverity.critical,
         triggerReason: 'Sustained SpO2 < 88% for 15s (Hypoxemia)',
         timestamp: now,
@@ -173,8 +173,8 @@ class MockTelemetryService {
   void triggerTestAlarm(String bedId, String reason) {
     final now = DateTime.now();
     final patientName = bedId == 'bed_01'
-        ? 'Elena Rostova'
-        : (bedId == 'bed_02' ? 'Marcus Vance' : 'David Chen');
+        ? 'Priya Sharma'
+        : (bedId == 'bed_02' ? 'Rajesh Kumar' : 'Amit Patel');
 
     final alert = AlertIncident(
       id: 'ALT-${now.millisecondsSinceEpoch}',

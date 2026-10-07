@@ -267,7 +267,7 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dr. Sarah Johnson',
+                            'Dr. Aditi Deshmukh',
                             style: AppTextStyles.titleSmall.copyWith(
                               fontWeight: FontWeight.w700,
                             ),

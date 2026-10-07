@@ -25,19 +25,19 @@ Strictly modeled after the **3D Claymorphic Medical UI Design System** with soft
    - Hero centerpiece: Glossy 3D beating clay heart with glowing pulse ring & medical shield (`assets/images/vital_heart_3d.png`).
    - Tactile pill action button with circular forward arrow.
 2. **Shift Handover & Ward Home** (`lib/views/handover/shift_handover_screen.dart`):
-   - Nurse Sarah greeting, status indicator, notification bell with alarm badge.
+   - Sister Sunita greeting, status indicator, notification bell with alarm badge.
    - Teal gradient Hero Card featuring live ESP32 gateway telemetry and 3D vital monitor (`assets/images/vital_monitor_3d.png`).
    - 4 Claymorphic quick actions: Book Rounds, Ward Grid, Alarms Feed, Node Diagnostics.
    - Circular Ward Stability Health Score gauge (96% Optimal).
 3. **Multi-Patient Grid Dashboard** (`lib/views/ward_grid/multi_patient_grid_screen.dart`):
-   - Live telemetry cards for Bed 01 (Elena Rostova), Bed 02 (Marcus Vance), and Bed 03 (David Chen).
+   - Live telemetry cards for Bed 01 (Priya Sharma), Bed 02 (Rajesh Kumar), and Bed 03 (Amit Patel).
    - 3D vital thumbnails (`vital_heart_3d.png`, `pulse_oximeter_3d.png`, `vital_monitor_3d.png`).
    - Real-time numerical telemetry triplet: Heart Rate (BPM), SpO2 (%), Temperature (°C).
    - nRF24 wireless RSSI signal strength 4-bar indicator (-58 dBm) & battery level pill (96%).
 4. **Shift Rounds & Handover Schedule** (`lib/views/handover/schedule_handover_screen.dart`):
    - Interactive calendar selector with active day pill.
    - Shift rounds time slot pills (08:00 AM, 10:00 AM, 12:00 PM, etc.).
-   - Attending triage physician profile card (Dr. Sarah Johnson, MD • 4.9 rating).
+   - Attending triage physician profile card (Dr. Aditi Deshmukh, MD • 4.9 rating).
 5. **Detailed Patient Monitoring & Diagnostics** (`lib/views/patient_detail/patient_monitoring_screen.dart`):
    - Subtabs: Overview, Live ECG Waveform, 15m Trends.
    - Centerpiece 3D organ asset with animated rhythm sweep.

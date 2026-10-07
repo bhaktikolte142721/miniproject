@@ -44,7 +44,7 @@ void main() {
 
       // Trigger test alarm on Bed 03
       service.triggerTestAlarm('bed_03', 'Critical Hypoxemia < 88%');
-      service.acknowledgeAlert('ALT-bed_03', 'Nurse Sarah');
+      service.acknowledgeAlert('ALT-bed_03', 'Sister Sunita');
       service.dispose();
     });
 
