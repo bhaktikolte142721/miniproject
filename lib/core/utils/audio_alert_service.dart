@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'web_audio/web_audio_bridge.dart';
 
 /// Clinical Alarm Priority levels according to IEC 60601-1-8.
 enum AlarmPriority {
@@ -32,6 +32,9 @@ class AudioAlertService {
     _isMuted = !_isMuted;
     if (_isMuted) {
       stopCriticalAlarm();
+    } else {
+      unlockAudio();
+      _playCriticalBurst();
     }
     _muteStateController.add(_isMuted);
   }
@@ -40,7 +43,23 @@ class AudioAlertService {
     _isMuted = muted;
     if (_isMuted) {
       stopCriticalAlarm();
+    } else {
+      unlockAudio();
     }
+    _muteStateController.add(_isMuted);
+  }
+
+  void unlockAudio() {
+    if (kIsWeb) {
+      unlockAudioWeb();
+    }
+  }
+
+  /// Manually tests the audible medical siren chime
+  void testAlarm() {
+    _isMuted = false;
+    unlockAudio();
+    _playCriticalBurst();
     _muteStateController.add(_isMuted);
   }
 
@@ -65,6 +84,7 @@ class AudioAlertService {
   void startCriticalAlarm() {
     if (_isCriticalSirenActive) return;
     _isCriticalSirenActive = true;
+    unlockAudio();
 
     _playCriticalBurst();
     _criticalLoopTimer?.cancel();
@@ -85,7 +105,7 @@ class AudioAlertService {
   void _playCriticalBurst() {
     if (_isMuted) return;
 
-    // Standard clinical 3-pulse urgent triplet
+    // Standard clinical 3-pulse urgent triplet (IEC 60601-1-8 standard)
     const tones = [
       {'freq': 987.77, 'delay': 0, 'dur': 100},    // B5
       {'freq': 987.77, 'delay': 140, 'dur': 100},  // B5
@@ -122,38 +142,9 @@ class AudioAlertService {
       }
     } catch (_) {}
 
-    // On Web, instantiate Web Audio API synthesizer if running in browser
+    // On Web, synthesize via Web Audio API
     if (kIsWeb) {
-      _playWebAudioTone(frequency, durationMs, volume);
+      playToneWeb(frequency, durationMs, volume);
     }
-  }
-
-  void _playWebAudioTone(double freq, int durMs, double vol) {
-    // Dynamically invokes Web Audio API via JS interop on Flutter Web
-    try {
-      final script = '''
-        if (!window.__sentinelAudioCtx) {
-          window.__sentinelAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        var ctx = window.__sentinelAudioCtx;
-        if (ctx.state === 'suspended') { ctx.resume(); }
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime($freq, ctx.currentTime);
-        gain.gain.setValueAtTime($vol, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + ${durMs / 1000.0});
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + ${durMs / 1000.0});
-      ''';
-      // In web builds, this can execute through web interop
-      _evalWebScript(script);
-    } catch (_) {}
-  }
-
-  void _evalWebScript(String script) {
-    // Handled safely without crashes across mobile / desktop / web
   }
 }

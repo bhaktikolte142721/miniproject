@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/app_colors.dart';
-import '../core/theme/app_text_styles.dart';
 import '../providers/alerts_provider.dart';
 import 'handover/shift_handover_screen.dart';
 import 'ward_grid/multi_patient_grid_screen.dart';
@@ -45,7 +44,7 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
               Container(
                 width: 270,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.78),
+                  color: Colors.white.withValues(alpha: 0.78),
                   border: const Border(
                     right: BorderSide(color: AppColors.cardBorder, width: 1.5),
                   ),
@@ -348,54 +347,59 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
             if (criticalCount > 0 && _currentIndex != 3)
               Positioned(
                 top: MediaQuery.of(context).padding.top + 8,
-                left: 20,
-                right: 20,
-                child: GestureDetector(
-                  onTap: () => setState(() => _currentIndex = 3),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.alertCritical,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.alertCritical.withOpacity(0.4),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.emergency_rounded, color: Colors.white, size: 22),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            '$criticalCount CRITICAL ALARM ACTIVE • BED 03 HYPOXIA',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12,
-                              letterSpacing: 0.5,
+                left: 16,
+                right: 16,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 540),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _currentIndex = 3),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AppColors.alertCritical,
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.alertCritical.withValues(alpha: 0.4),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
                             ),
-                          ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            'RESPOND',
-                            style: TextStyle(
-                              color: AppColors.alertCritical,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 11,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.emergency_rounded, color: Colors.white, size: 22),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                '$criticalCount CRITICAL ALARM ACTIVE • BED 03 HYPOXIA',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
                             ),
-                          ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'RESPOND',
+                                style: TextStyle(
+                                  color: AppColors.alertCritical,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -403,54 +407,61 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
 
             // Floating Claymorphic Bottom Navigation Bar matching Reference UI
             Positioned(
-              left: 24,
-              right: 24,
-              bottom: 18,
-              child: Container(
-                height: 68,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.cardSurface,
-                  borderRadius: BorderRadius.circular(34),
-                  border: Border.all(color: AppColors.cardBorder, width: 1.2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x14000000),
-                      blurRadius: 20,
-                      offset: Offset(0, 10),
+              left: 16,
+              right: 16,
+              bottom: MediaQuery.of(context).padding.bottom > 0
+                  ? MediaQuery.of(context).padding.bottom + 6
+                  : 18,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Container(
+                    height: 68,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(34),
+                      border: Border.all(color: AppColors.cardBorder, width: 1.2),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x14000000),
+                          blurRadius: 20,
+                          offset: Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: Color(0xE6FFFFFF),
+                          blurRadius: 10,
+                          offset: Offset(-4, -4),
+                        ),
+                      ],
                     ),
-                    BoxShadow(
-                      color: Color(0xE6FFFFFF),
-                      blurRadius: 10,
-                      offset: Offset(-4, -4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(
+                          icon: Icons.home_rounded,
+                          index: 0,
+                          tooltip: 'Home',
+                        ),
+                        _buildNavItem(
+                          icon: Icons.grid_view_rounded,
+                          index: 1,
+                          tooltip: 'Ward Grid',
+                        ),
+                        _buildNavItem(
+                          icon: Icons.calendar_today_rounded,
+                          index: 2,
+                          tooltip: 'Rounds',
+                        ),
+                        _buildNavItem(
+                          icon: Icons.notifications_rounded,
+                          index: 3,
+                          tooltip: 'Alarms',
+                          badgeCount: criticalCount > 0 ? '$criticalCount' : null,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(
-                      icon: Icons.home_rounded,
-                      index: 0,
-                      tooltip: 'Home',
-                    ),
-                    _buildNavItem(
-                      icon: Icons.grid_view_rounded,
-                      index: 1,
-                      tooltip: 'Ward Grid',
-                    ),
-                    _buildNavItem(
-                      icon: Icons.calendar_today_rounded,
-                      index: 2,
-                      tooltip: 'Rounds',
-                    ),
-                    _buildNavItem(
-                      icon: Icons.notifications_rounded,
-                      index: 3,
-                      tooltip: 'Alarms',
-                      badgeCount: criticalCount > 0 ? '$criticalCount' : null,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

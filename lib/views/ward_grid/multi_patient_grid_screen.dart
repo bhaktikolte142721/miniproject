@@ -26,8 +26,11 @@ class MultiPatientGridScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 860),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header Bar
             Padding(
@@ -171,7 +174,7 @@ class MultiPatientGridScreen extends ConsumerWidget {
                   }).toList();
 
                   return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 100),
                     itemCount: filteredPatients.length,
                     itemBuilder: (context, index) {
                       final patient = filteredPatients[index];
@@ -222,7 +225,7 @@ class MultiPatientGridScreen extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(18),
                                       border: Border.all(
                                         color: isCritical
-                                            ? AppColors.alertCritical.withOpacity(0.3)
+                                            ? AppColors.alertCritical.withValues(alpha: 0.3)
                                             : AppColors.cardBorder,
                                         width: 1.2,
                                       ),
@@ -311,7 +314,7 @@ class MultiPatientGridScreen extends ConsumerWidget {
                                           color: (isCritical
                                                   ? AppColors.alertCritical
                                                   : AppColors.primaryMint)
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -379,7 +382,9 @@ class MultiPatientGridScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildVitalMetricPill({

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../models/alert_incident.dart';
 import '../../providers/alerts_provider.dart';
@@ -23,10 +22,13 @@ class AlertsFeedScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 860),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               Row(
@@ -38,43 +40,92 @@ class AlertsFeedScreen extends ConsumerWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  // Mute / Unmute Alarm Button
-                  GestureDetector(
-                    onTap: () {
-                      audioService.toggleMute();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isMuted
-                            ? AppColors.alertCritical.withOpacity(0.12)
-                            : AppColors.primaryMint.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isMuted ? AppColors.alertCritical : AppColors.primaryMint,
-                          width: 1.2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
-                            size: 16,
-                            color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            isMuted ? 'Muted' : 'Alarm Active',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Test Sound Button
+                      GestureDetector(
+                        onTap: () {
+                          audioService.testAlarm();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('🔊 Sounding IEC 60601-1-8 Critical Alarm Chime...'),
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.alertCritical.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.alertCritical,
+                              width: 1.2,
                             ),
                           ),
-                        ],
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.play_arrow_rounded,
+                                size: 16,
+                                color: AppColors.alertCritical,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Test Sound',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.alertCritical,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      // Mute / Unmute Alarm Button
+                      GestureDetector(
+                        onTap: () {
+                          audioService.toggleMute();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isMuted
+                                ? AppColors.alertCritical.withOpacity(0.12)
+                                : AppColors.primaryMint.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isMuted ? AppColors.alertCritical : AppColors.primaryMint,
+                              width: 1.2,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                                size: 16,
+                                color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                isMuted ? 'Muted' : 'Alarm Active',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: isMuted ? AppColors.alertCritical : AppColors.primaryTeal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -455,12 +506,14 @@ class AlertsFeedScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 100),
             ],
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildSettingsTile({

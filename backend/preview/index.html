@@ -836,18 +836,21 @@
     .mobile-bottom-nav {
       display: none;
       position: fixed;
-      bottom: 12px;
-      left: 14px;
-      right: 14px;
-      height: 56px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 28px);
+      max-width: 500px;
+      height: 60px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(14px);
-      border-radius: 28px;
+      border-radius: 30px;
       border: 1.2px solid var(--card-border);
       box-shadow: 0 10px 30px rgba(0,0,0,0.12);
       align-items: center;
       justify-content: space-around;
       z-index: 200;
+      padding: 0 8px;
     }
 
     .mobile-nav-item {
@@ -917,14 +920,33 @@
     }
 
     @media (max-width: 520px) {
+      .top-workstation-bar {
+        padding: 0 10px;
+        height: 58px;
+      }
+      .brand-titles h1 {
+        font-size: 14px;
+      }
+      .brand-logo-area img {
+        width: 32px;
+        height: 32px;
+      }
       .vitals-2x2-grid {
         grid-template-columns: 1fr;
       }
       .top-controls {
         gap: 6px;
       }
-      .btn-top-db span:not(:first-child) {
-        display: none;
+      .btn-top-db {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      .alarm-pill-btn, .test-siren-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      .main-viewport {
+        padding: 12px 10px 84px 10px;
       }
     }
   </style>

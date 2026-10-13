@@ -65,7 +65,7 @@ class _ClayButtonState extends State<ClayButton> {
             color: effectiveGradient == null ? (widget.solidColor ?? AppColors.primaryMint) : null,
             boxShadow: [
               BoxShadow(
-                color: (widget.solidColor ?? AppColors.primaryMint).withOpacity(0.35),
+                color: (widget.solidColor ?? AppColors.primaryMint).withValues(alpha: 0.35),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
@@ -89,9 +89,13 @@ class _ClayButtonState extends State<ClayButton> {
                   ),
                 )
               else ...[
-                Text(
-                  widget.label,
-                  style: AppTextStyles.buttonText.copyWith(color: widget.textColor),
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    style: AppTextStyles.buttonText.copyWith(color: widget.textColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (widget.showArrow || widget.customIcon != null) ...[
                   const Spacer(),
@@ -100,9 +104,9 @@ class _ClayButtonState extends State<ClayButton> {
                     height: 32,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.24),
+                      color: Colors.white.withValues(alpha: 0.24),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                         width: 1,
                       ),
                     ),

@@ -9,7 +9,9 @@ cd /d "%~dp0"
 
 :: 1. Launch Backend Server in a dedicated Command Prompt window
 echo [1/2] Launching Backend Server (SQLite + Socket.IO + REST on Port 3000)...
-start "SENTINEL-Ward Backend Server" cmd /k "cd /d "%~dp0backend" && npm start"
+pushd "%~dp0backend"
+start "SENTINEL-Ward Backend Server" cmd /k "npm start"
+popd
 
 :: Wait 3 seconds to ensure backend starts and initializes database
 timeout /t 3 /nobreak >nul

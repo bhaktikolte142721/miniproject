@@ -19,7 +19,6 @@ class ShiftHandoverScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final telemetryAsync = ref.watch(telemetryStreamProvider);
-    final gatewayAsync = ref.watch(gatewayStatusStreamProvider);
     final criticalCount = ref.watch(activeCriticalAlarmsCountProvider);
     final totalAlarmsCount = ref.watch(totalActiveAlarmsCountProvider);
     final patients = ref.watch(patientsListProvider);
@@ -32,10 +31,13 @@ class ShiftHandoverScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 860),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Floating Top Bar: Nurse Greeting & Avatar
               Row(
@@ -137,7 +139,7 @@ class ShiftHandoverScreen extends ConsumerWidget {
                         ),
                         child: const Center(
                           child: Text(
-                            'SJ',
+                            'SR',
                             style: TextStyle(
                               color: AppColors.primaryTeal,
                               fontWeight: FontWeight.w800,
@@ -518,12 +520,14 @@ class ShiftHandoverScreen extends ConsumerWidget {
                 error: (_, __) => const SizedBox(),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 100),
             ],
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   /// Celebratory Nurse Clinical Excellence & Attended Patients Recognition Card

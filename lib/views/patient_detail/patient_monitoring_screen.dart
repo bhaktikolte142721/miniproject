@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_button.dart';
 import '../../core/widgets/ecg_sweep_painter.dart';
@@ -11,7 +10,6 @@ import '../../core/widgets/sentinel_vitals_grid.dart';
 import '../../models/patient.dart';
 import '../../models/telemetry_data.dart';
 import '../../providers/telemetry_provider.dart';
-import '../../providers/alerts_provider.dart';
 
 /// Screen 5: Detailed Patient Monitoring & Waveform View (Reference: Bottom-Center).
 class PatientMonitoringScreen extends ConsumerStatefulWidget {
@@ -36,7 +34,10 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: Column(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Column(
             children: [
               // Top Bar
               Padding(
@@ -163,13 +164,13 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                                     color: (isCritical
                                             ? AppColors.alertCritical
                                             : AppColors.primaryMint)
-                                        .withOpacity(0.12),
+                                        .withValues(alpha: 0.12),
                                     boxShadow: [
                                       BoxShadow(
                                         color: (isCritical
                                                 ? AppColors.alertCritical
                                                 : AppColors.primaryMint)
-                                            .withOpacity(0.25),
+                                            .withValues(alpha: 0.25),
                                         blurRadius: 40,
                                         spreadRadius: 10,
                                       ),
@@ -352,7 +353,7 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
                                       belowBarData: BarAreaData(
                                         show: true,
                                         color: (isCritical ? AppColors.alertCritical : AppColors.primaryMint)
-                                            .withOpacity(0.15),
+                                            .withValues(alpha: 0.15),
                                       ),
                                     ),
                                   ],
@@ -407,6 +408,8 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
           ),
         ),
       ),
+    ),
+  ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showDialog(
@@ -485,98 +488,6 @@ class _PatientMonitoringScreenState extends ConsumerState<PatientMonitoringScree
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailMetricTile({
-    required String label,
-    required String value,
-    required String unit,
-    required String status,
-    required Color color,
-  }) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-      decoration: BoxDecoration(
-        color: AppColors.cardSurface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardBorder, width: 1.2),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Color(0xD9FFFFFF),
-            blurRadius: 8,
-            offset: Offset(-2, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(label, style: AppTextStyles.bodySmall),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                value,
-                style: AppTextStyles.telemetryMedium.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
-              ),
-              if (unit.isNotEmpty) ...[
-                const SizedBox(width: 2),
-                Text(
-                  unit,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              status,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRangeRow(String label, String normalRange, String current, bool isViolation) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-            Text('Target: $normalRange', style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted)),
-          ],
-        ),
-        Text(
-          current,
-          style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w700,
-            color: isViolation ? AppColors.alertCritical : AppColors.textPrimary,
-          ),
-        ),
-      ],
     );
   }
 }

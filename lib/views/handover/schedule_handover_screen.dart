@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/widgets/clay_container.dart';
 import '../../core/widgets/clay_card.dart';
 import '../../core/widgets/clay_button.dart';
 
@@ -31,10 +30,13 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 860),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top Header
               Row(
@@ -319,11 +321,13 @@ class _ScheduleHandoverScreenState extends State<ScheduleHandoverScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 100),
             ],
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

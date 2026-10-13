@@ -10,6 +10,67 @@
   <meta name="apple-mobile-web-app-title" content="SENTINEL-Ward">
   <title>SENTINEL-Ward • Acute Vitals Telemetry</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+    // SENTINEL-Ward IEC 60601-1-8 Web Audio Synthesizer
+    window.__sentinelAudioCtx = null;
+
+    function getOrCreateAudioContext() {
+      try {
+        if (!window.__sentinelAudioCtx) {
+          var AudioClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioClass) {
+            window.__sentinelAudioCtx = new AudioClass();
+          }
+        }
+        if (window.__sentinelAudioCtx && window.__sentinelAudioCtx.state === 'suspended') {
+          window.__sentinelAudioCtx.resume().catch(function() {});
+        }
+      } catch (e) {
+        console.warn("Audio init warning:", e);
+      }
+      return window.__sentinelAudioCtx;
+    }
+
+    window.unlockSentinelAudio = function() {
+      getOrCreateAudioContext();
+    };
+
+    // Unlock on any user touch/click/key interaction to satisfy browser autoplay policy
+    ['click', 'pointerdown', 'keydown', 'touchstart'].forEach(function(evt) {
+      window.addEventListener(evt, function() {
+        window.unlockSentinelAudio();
+      }, { passive: true, capture: true });
+    });
+
+    window.playSentinelAlarmTone = function(freq, durMs, vol) {
+      try {
+        var ctx = getOrCreateAudioContext();
+        if (!ctx) return;
+        
+        var now = ctx.currentTime;
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq || 987.77, now);
+
+        var durationSec = (durMs || 120) / 1000.0;
+        var volume = (vol !== undefined && vol !== null) ? vol : 0.4;
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(volume, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + durationSec);
+      } catch (e) {
+        console.warn("Web audio playback warning:", e);
+      }
+    };
+  </script>
 </head>
 <body style="margin: 0; background: #F5F9FA; font-family: sans-serif;">
   <script src="flutter.js" defer></script>
