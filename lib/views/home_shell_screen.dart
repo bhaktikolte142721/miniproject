@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/app_colors.dart';
+import '../core/widgets/connection_status_pill.dart';
 import '../providers/alerts_provider.dart';
 import 'handover/shift_handover_screen.dart';
 import 'ward_grid/multi_patient_grid_screen.dart';
@@ -105,6 +106,8 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 6),
+                              const ConnectionStatusPill(),
                             ],
                           ),
                         ),
@@ -343,19 +346,25 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
               children: screens,
             ),
 
-            // Top Persistent Emergency Alert Banner if Critical Alarms Active
-            if (criticalCount > 0 && _currentIndex != 3)
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 8,
-                left: 16,
-                right: 16,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 540),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _currentIndex = 3),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            // Top Persistent Alerts & Status Pill for Mobile
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 8,
+              left: 16,
+              right: 16,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 540),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const ConnectionStatusPill(),
+                      if (criticalCount > 0 && _currentIndex != 3) ...[
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () => setState(() => _currentIndex = 3),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
                           color: AppColors.alertCritical,
                           borderRadius: BorderRadius.circular(18),
@@ -401,9 +410,12 @@ class _HomeShellScreenState extends ConsumerState<HomeShellScreen> {
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  ],
+                ],
               ),
+            ),
+          ),
+        ),
 
             // Floating Claymorphic Bottom Navigation Bar matching Reference UI
             Positioned(

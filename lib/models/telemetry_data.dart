@@ -28,6 +28,50 @@ class TelemetryData {
     this.recentTempHistory = const [],
   });
 
+  /// Factory constructor to parse real telemetry JSON payload from backend Socket.IO
+  factory TelemetryData.fromJson(
+    String bedId,
+    Map<String, dynamic> json, {
+    List<double> previousBpmHistory = const [],
+    List<double> previousSpo2History = const [],
+    List<double> previousTempHistory = const [],
+  }) {
+    final hr = (json['heartRate'] as num?)?.toInt() ?? 75;
+    final sp = (json['spo2'] as num?)?.toInt() ?? 98;
+    final temp = (json['temperature'] as num?)?.toDouble() ?? 37.0;
+
+    final bpmHistory = List<double>.from(previousBpmHistory);
+    bpmHistory.add(hr.toDouble());
+    if (bpmHistory.length > 25) bpmHistory.removeAt(0);
+
+    final spo2History = List<double>.from(previousSpo2History);
+    spo2History.add(sp.toDouble());
+    if (spo2History.length > 25) spo2History.removeAt(0);
+
+    final tempHistory = List<double>.from(previousTempHistory);
+    tempHistory.add(temp);
+    if (tempHistory.length > 25) tempHistory.removeAt(0);
+
+    DateTime parsedTimestamp = DateTime.now();
+    if (json['timestamp'] != null) {
+      parsedTimestamp = DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now();
+    }
+
+    return TelemetryData(
+      bedId: bedId,
+      heartRate: hr,
+      spo2: sp,
+      temperature: temp,
+      respiratoryRate: (json['respiratoryRate'] as num?)?.toInt() ?? 16,
+      bloodPressureSys: (json['bloodPressureSys'] as num?)?.toInt() ?? 120,
+      bloodPressureDia: (json['bloodPressureDia'] as num?)?.toInt() ?? 80,
+      timestamp: parsedTimestamp,
+      recentBpmHistory: bpmHistory,
+      recentSpo2History: spo2History,
+      recentTempHistory: tempHistory,
+    );
+  }
+
   PatientStatus get status {
     if (spo2 < 90 || heartRate > 120 || heartRate < 48 || temperature > 38.3) {
       return PatientStatus.critical;

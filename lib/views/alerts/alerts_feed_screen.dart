@@ -406,7 +406,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                   if (!alert.isAcknowledged)
                                     GestureDetector(
                                       onTap: () {
-                                        mockService.acknowledgeAlert(alert.id, 'Sister Sunita');
+                                        acknowledgeAlertAction(ref, alert.id, 'Sister Sunita Rao');
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -426,7 +426,7 @@ class AlertsFeedScreen extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   GestureDetector(
                                     onTap: () {
-                                      mockService.clearAlert(alert.id);
+                                      clearAlertAction(ref, alert.id);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

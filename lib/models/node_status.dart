@@ -14,6 +14,17 @@ class NodeStatus {
     required this.lastSeen,
   });
 
+  /// Factory constructor to parse node health from backend Socket.IO / REST
+  factory NodeStatus.fromJson(String bedId, Map<String, dynamic> json) {
+    return NodeStatus(
+      bedId: bedId,
+      rssi: (json['rssi'] as num?)?.toInt() ?? -60,
+      batteryPercent: (json['batteryPercent'] as num?)?.toInt() ?? 100,
+      isOnline: json['isOnline'] == true,
+      lastSeen: DateTime.now(),
+    );
+  }
+
   NodeStatus copyWith({
     int? rssi,
     int? batteryPercent,

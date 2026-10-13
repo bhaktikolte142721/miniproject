@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import '../models/patient.dart';
 import '../models/telemetry_data.dart';
 import '../models/node_status.dart';
 import '../models/alert_incident.dart';

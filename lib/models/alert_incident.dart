@@ -30,6 +30,36 @@ class AlertIncident {
     this.escalationLevel = 1,
   });
 
+  /// Factory constructor to parse real alarm incidents from backend Socket.IO
+  factory AlertIncident.fromJson(Map<String, dynamic> json) {
+    final severityStr = (json['severity'] ?? 'warning').toString().toLowerCase();
+    AlertSeverity sev = AlertSeverity.warning;
+    if (severityStr == 'critical') {
+      sev = AlertSeverity.critical;
+    } else if (severityStr == 'advisory' || severityStr == 'info') {
+      sev = AlertSeverity.info;
+    }
+
+    DateTime parsedTimestamp = DateTime.now();
+    if (json['timestamp'] != null || json['triggered_at'] != null) {
+      final raw = (json['timestamp'] ?? json['triggered_at']).toString();
+      parsedTimestamp = DateTime.tryParse(raw) ?? DateTime.now();
+    }
+
+    return AlertIncident(
+      id: (json['id'] ?? json['alarm_id'] ?? '').toString(),
+      bedId: (json['bedId'] ?? json['bed_id'] ?? '').toString(),
+      patientName: (json['patientName'] ?? json['patient_name'] ?? 'Patient').toString(),
+      severity: sev,
+      triggerReason: (json['triggerReason'] ?? json['critical_condition'] ?? 'Telemetry alert').toString(),
+      timestamp: parsedTimestamp,
+      secondsRemaining: (json['secondsRemaining'] as num?)?.toInt() ?? 60,
+      isAcknowledged: json['isAcknowledged'] == true || json['status'] == 'acknowledged',
+      acknowledgedBy: json['acknowledgedBy']?.toString() ?? json['acknowledged_by']?.toString(),
+      escalationLevel: (json['escalationLevel'] as num?)?.toInt() ?? (json['escalation_level'] as num?)?.toInt() ?? 1,
+    );
+  }
+
   String get escalationStageLabel {
     switch (escalationLevel) {
       case 1:
